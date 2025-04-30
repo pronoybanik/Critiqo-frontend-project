@@ -2,7 +2,17 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Github, Facebook, Upload, X, User, Mail, Lock } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Github,
+  Facebook,
+  Upload,
+  X,
+  User,
+  Mail,
+  Lock,
+} from "lucide-react";
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,18 +25,18 @@ export default function Register() {
     profileImage: null,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = (e: any) => {
     const file = e.target.files[0];
     if (file) {
       setFormData((prev) => ({ ...prev, profileImage: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result);
+        setPreview(reader.result as any);
       };
       reader.readAsDataURL(file);
     }
@@ -40,13 +50,13 @@ export default function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     // Handle registration logic here
     console.log("Register form submitted:", formData);
   };
 
-  const handleSocialLogin = (provider) => {
+  const handleSocialLogin = (provider: any) => {
     // Handle social login logic here
     console.log(`Registering with ${provider}`);
   };
@@ -59,32 +69,61 @@ export default function Register() {
           <div className="w-full max-w-md">
             <h2 className="text-4xl font-bold mb-6">Join our community</h2>
             <p className="text-lg opacity-90 mb-8">
-              Create an account to access premium features and connect with other users.
+              Create an account to access premium features and connect with
+              other users.
             </p>
             <div className="space-y-4">
               <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl">
                 <div className="flex items-start space-x-4">
                   <div className="bg-white/20 rounded-full p-2">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                      ></path>
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">100% Private</h3>
-                    <p className="text-white/80 mt-1">Your information is secure and will never be shared with third parties.</p>
+                    <p className="text-white/80 mt-1">
+                      Your information is secure and will never be shared with
+                      third parties.
+                    </p>
                   </div>
                 </div>
               </div>
               <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl">
                 <div className="flex items-start space-x-4">
                   <div className="bg-white/20 rounded-full p-2">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      ></path>
                     </svg>
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold">Lightning Fast</h3>
-                    <p className="text-white/80 mt-1">Experience the fastest platform with optimized performance.</p>
+                    <p className="text-white/80 mt-1">
+                      Experience the fastest platform with optimized
+                      performance.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -92,7 +131,7 @@ export default function Register() {
           </div>
         </div>
       </div>
-      
+
       {/* Right Side - Form */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-6">
@@ -126,10 +165,12 @@ export default function Register() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or register with email</span>
+              <span className="px-4 bg-white text-gray-500">
+                Or register with email
+              </span>
             </div>
           </div>
-          
+
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="relative rounded-xl shadow-sm">
@@ -165,7 +206,7 @@ export default function Register() {
                   onChange={handleChange}
                 />
               </div>
-              
+
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -193,7 +234,7 @@ export default function Register() {
                   )}
                 </button>
               </div>
-              
+
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Profile Picture
@@ -219,7 +260,7 @@ export default function Register() {
                       <User className="h-8 w-8 text-gray-400" />
                     </div>
                   )}
-                  
+
                   <div>
                     <label
                       htmlFor="profile-image"
@@ -251,11 +292,14 @@ export default function Register() {
               </button>
             </div>
           </form>
-          
+
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <Link
+                href="/login"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Sign in
               </Link>
             </p>
