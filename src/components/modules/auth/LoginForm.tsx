@@ -10,18 +10,18 @@ export default function Login() {
     password: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     // Handle login logic here
     console.log("Login form submitted:", formData);
   };
 
-  const handleSocialLogin = (provider) => {
+  const handleSocialLogin = (provider: any) => {
     // Handle social login logic here
     console.log(`Logging in with ${provider}`);
   };
@@ -35,7 +35,9 @@ export default function Login() {
             <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
               Welcome Back
             </h1>
-            <p className="mt-3 text-gray-500">Sign in to continue your experience</p>
+            <p className="mt-3 text-gray-500">
+              Sign in to continue your experience
+            </p>
           </div>
 
           <div className="flex justify-center gap-4 mt-8">
@@ -61,10 +63,12 @@ export default function Login() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">Or continue with email</span>
+              <span className="px-4 bg-white text-gray-500">
+                Or continue with email
+              </span>
             </div>
           </div>
-          
+
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
             <div className="space-y-5">
               <div className="relative rounded-xl shadow-sm">
@@ -83,7 +87,7 @@ export default function Login() {
                   onChange={handleChange}
                 />
               </div>
-              
+
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -121,13 +125,19 @@ export default function Login() {
                   type="checkbox"
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                <a
+                  href="#"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
                   Forgot password?
                 </a>
               </div>
@@ -142,36 +152,56 @@ export default function Login() {
               </button>
             </div>
           </form>
-          
+
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Don not have an account?{" "}
+              <Link
+                href="/register"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
                 Register now
               </Link>
             </p>
           </div>
         </div>
       </div>
-      
+
       {/* Right Side - Image/Decoration */}
       <div className="hidden md:block md:w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 p-12">
         <div className="h-full flex flex-col justify-center items-center text-white">
           <div className="w-full max-w-md">
-            <h2 className="text-4xl font-bold mb-6">Start your journey with us</h2>
+            <h2 className="text-4xl font-bold mb-6">
+              Start your journey with us
+            </h2>
             <p className="text-lg opacity-90 mb-8">
-              Access all features and enjoy a personalized experience tailored just for you.
+              Access all features and enjoy a personalized experience tailored
+              just for you.
             </p>
             <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl">
               <div className="flex items-start space-x-4">
                 <div className="bg-white/20 rounded-full p-2">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 13l4 4L19 7"
+                    ></path>
                   </svg>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Secure & Fast</h3>
-                  <p className="text-white/80 mt-1">Your data is always protected with our advanced security features.</p>
+                  <p className="text-white/80 mt-1">
+                    Your data is always protected with our advanced security
+                    features.
+                  </p>
                 </div>
               </div>
             </div>
