@@ -1,10 +1,11 @@
 "use client";
-import { useState, ChangeEvent, FormEvent } from "react";import Link from "next/link";
+import { useState, ChangeEvent, FormEvent } from "react";
+import Link from "next/link";
 import { Eye, EyeOff, Github, Facebook, Mail, Lock } from "lucide-react";
 import { loginUser } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
+import { useUser } from "@/context/UserContext";
 
 interface LoginForm {
   email: string;
@@ -12,6 +13,7 @@ interface LoginForm {
 }
 
 export default function Login() {
+  const { setIsLoading } = useUser();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<LoginForm>({
     email: "",
@@ -32,7 +34,10 @@ export default function Login() {
       const res = await loginUser(formData);
       if (res?.success) {
         toast.success(res.message || "Login successful!");
-        router.push("/"); // <-- Change this to your desired redirect
+        setTimeout(() => {
+          router.push("/"); 
+          setIsLoading(true);
+        }, 1000);
       } else {
         toast.error(res.message || "Login failed.");
       }
