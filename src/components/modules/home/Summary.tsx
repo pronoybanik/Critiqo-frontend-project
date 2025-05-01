@@ -20,7 +20,7 @@ const Summary = () => {
   };
   return (
     <div className='mt-10'>
-      <div className="bg-gray-800 py-10">
+      <div className="bg-gray-800  py-10">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Reviews/Ratings Card */}
@@ -44,7 +44,7 @@ const Summary = () => {
               "flex items-center gap-4 p-6 rounded-lg",
               "bg-gradient-to-r from-blue-500/10 to-blue-600/10",
               "border border-blue-500/20",
-              "shadow-lg"
+              "shadow-lg "
             )}>
               <Users className="w-10 h-10 text-blue-400" />
               <div>
