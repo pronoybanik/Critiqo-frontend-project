@@ -10,6 +10,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "typeRoots":["./src/interfaces"],
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,

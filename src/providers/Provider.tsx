@@ -1,5 +1,7 @@
 
 const provider = () => {
-  return ()
+  return (
+    <div></div>
+  )
 }
-export provider
+export default provider
