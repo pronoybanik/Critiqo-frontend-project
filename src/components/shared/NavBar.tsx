@@ -36,10 +36,12 @@ export default function Navbar() {
 
     const navLinks = [
         { href: "/", label: "Home" },
-        { href: "/all-reviews", label: "All Reviews" },
-        { href: "/aboutUs", label: "About Us" },
-        { href: "/contact", label: "Contact" },
+        { href: "/reviews", label: "All Reviews" },
+        { href: "/about", label: "About Us" },
+        { href: "/contactus", label: "Contact" },
         { href: "/blog", label: "Blog" },
+        { href: "/login", label: "login" },
+        { href: "/register", label: "register" },
 
     ];
     const user = {

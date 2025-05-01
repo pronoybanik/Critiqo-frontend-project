@@ -10,7 +10,6 @@ const HomePage = () => {
             <Slider></Slider>
             <Summary></Summary>
             <LatestReview></LatestReview>
-
         </div>
     );
 };
