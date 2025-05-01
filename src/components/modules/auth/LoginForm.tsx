@@ -1,28 +1,50 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
+import { useState, ChangeEvent, FormEvent } from "react";import Link from "next/link";
 import { Eye, EyeOff, Github, Facebook, Mail, Lock } from "lucide-react";
+import { loginUser } from "@/services/AuthService";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+
+interface LoginForm {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginForm>({
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login form submitted:", formData);
+    setLoading(true);
+    try {
+      const res = await loginUser(formData);
+      if (res?.success) {
+        toast.success(res.message || "Login successful!");
+        router.push("/"); // <-- Change this to your desired redirect
+      } else {
+        toast.error(res.message || "Login failed.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSocialLogin = (provider: any) => {
-    // Handle social login logic here
+  const handleSocialLogin = (provider: "GitHub" | "Facebook") => {
     console.log(`Logging in with ${provider}`);
   };
 
@@ -148,7 +170,7 @@ export default function Login() {
                 type="submit"
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                Sign in
+                {loading ? "loging..." : "Sign in"}
               </button>
             </div>
           </form>

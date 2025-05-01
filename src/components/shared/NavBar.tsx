@@ -46,7 +46,7 @@ export default function Navbar() {
     ];
     const user = {
         email: 'samratuap52@gmail.com',
-        role: 'Admin'
+        role: 'admin'
     }
     return (
         <header className="border-b bg-[#d7d7d7]  w-full sticky top-0 z-10">
@@ -99,7 +99,7 @@ export default function Navbar() {
                                     <DropdownMenuSeparator />
 
                                     <DropdownMenuItem>
-                                        <Link href={`/${user?.role}/dashboard`}>Dashboard</Link>
+                                        <Link href={`/${user?.role}`}>Dashboard</Link>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem>
 
