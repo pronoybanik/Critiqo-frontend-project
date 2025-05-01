@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
-
 import Image from "next/image";
 import { protectedRoutes } from "@/app/contants";
 import { useUser } from "@/context/UserContext";
@@ -86,10 +85,12 @@ export default function Navbar() {
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem>
-                    <Link href={`/${user?.role}`}>Dashboard</Link>
+                    <Link href={`/${user?.role.toLocaleLowerCase()}`}>
+                      Dashboard
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <div className=" md:hidden ">
+                    <div className="md:hidden">
                       {navLinks.map(({ href, label }) => (
                         <DropdownMenuItem key={href}>
                           <Link
