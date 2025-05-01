@@ -1,5 +1,6 @@
 
 import AllProduct from '@/components/modules/home/AllProduct';
+import FaqSection from '@/components/modules/home/Faq';
 import LatestReview from '@/components/modules/home/LatestReview';
 import ProductMarketing from '@/components/modules/home/ProductMarketing';
 import Slider from '@/components/modules/home/Slider';
@@ -17,6 +18,7 @@ const HomePage = () => {
             <TopCategories></TopCategories>
             <AllProduct></AllProduct>
             <ProductMarketing></ProductMarketing>
+            <FaqSection></FaqSection>
             <TopBrand></TopBrand>
         </div>
     );
