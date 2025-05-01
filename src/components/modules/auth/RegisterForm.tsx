@@ -1,5 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
+
+import { useState, useRef, ChangeEvent, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -12,53 +13,93 @@ import {
   User,
   Mail,
   Lock,
+  CircleUserRound,
 } from "lucide-react";
+import { registerUser } from "@/services/AuthService";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
+interface FormFields {
+  name: string;
+  email: string;
+  password: string;
+  contactNumber: string;
+  file: File | null;
+}
 
 export default function Register() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const fileInputRef = useRef(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormFields>({
     name: "",
     email: "",
     password: "",
-    profileImage: null,
+    contactNumber: "",
+    file: null,
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e: any) => {
-    const file = e.target.files[0];
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, profileImage: file }));
+      setFormData((prev) => ({ ...prev, file }));
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as any);
-      };
+      reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(file);
     }
   };
 
   const removeImage = () => {
     setPreview(null);
-    setFormData((prev) => ({ ...prev, profileImage: null }));
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+    setFormData((prev) => ({ ...prev, file: null }));
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    setLoading(true);
+    e.preventDefault();
+    const data = new FormData();
+
+    const payload = {
+      password: formData.password,
+      guest: {
+        name: formData.name,
+        email: formData.email,
+        contactNumber: formData.contactNumber,
+      },
+    };
+
+    data.append("data", JSON.stringify(payload));
+    if (formData.file) {
+      data.append("file", formData.file);
+    }
+
+    try {
+      const res = await registerUser(data);
+      if (res?.success) {
+        setLoading(false);
+        toast.success(res.message || "Registration successful!");
+        router.push("/login");
+        // Optionally reset form
+      } else {
+        toast.error(res.message || "Registration failed.");
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    // Handle registration logic here
-    console.log("Register form submitted:", formData);
-  };
-
-  const handleSocialLogin = (provider: any) => {
-    // Handle social login logic here
+  const handleSocialLogin = (provider: string) => {
     console.log(`Registering with ${provider}`);
+    // Add OAuth logic if needed
   };
 
   return (
@@ -209,6 +250,23 @@ export default function Register() {
 
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <CircleUserRound className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="contactNumber"
+                  name="contactNumber"
+                  type="number"
+                  autoComplete="contactNumber"
+                  required
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-150"
+                  placeholder="Contact Number"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="relative rounded-xl shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
@@ -243,6 +301,8 @@ export default function Register() {
                   {preview ? (
                     <div className="relative h-20 w-20">
                       <Image
+                        width={100}
+                        height={100}
                         src={preview}
                         alt="Profile preview"
                         className="h-20 w-20 rounded-full object-cover border-4 border-indigo-100"
@@ -288,7 +348,7 @@ export default function Register() {
                 type="submit"
                 className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                Create Account
+               {loading ? "Submiteing..." : "Create Account"} 
               </button>
             </div>
           </form>
