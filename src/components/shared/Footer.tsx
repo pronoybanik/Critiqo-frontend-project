@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import openion2 from '../../assets/logo/opinion16.png'
+import logo from '../../assets/logo/2-removebg-preview.png'
 import google from '../../assets/logo/google.png'
 import apple from '../../assets/logo/apple.png'
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
@@ -96,7 +96,7 @@ const Footer = () => {
                 <div className="mt-12 bg-gray-900 py-4 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between px-10">
                     <div className="mb-4 md:mb-0">
                         <span className="text-xl font-semibold text-white">
-                            <Image src={openion2} alt='footer logo' height={170} width={250} />
+                            <Image src={logo} alt='footer logo' height={170} width={250} />
 
 
                         </span>

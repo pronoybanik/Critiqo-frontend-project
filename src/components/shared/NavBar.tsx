@@ -1,5 +1,5 @@
 "use client";
-import openion1 from "../../assets/logo/opinion7.png";
+import logo from "../../assets/logo/1-removebg-preview (2).png";
 import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
@@ -48,10 +48,10 @@ export default function Navbar() {
         <Link href="/">
           <h1 className="text-2xl py-4 font-black flex items-center">
             <Image
-              src={openion1}
+              src={logo}
               alt="etutor"
-              width={180}
-              height={42}
+              width={150}
+              height={10}
               className="py-2"
             />
           </h1>
