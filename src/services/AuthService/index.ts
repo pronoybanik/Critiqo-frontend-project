@@ -1,5 +1,6 @@
 "use server"
 
+import { jwtDecode } from "jwt-decode";
 import { cookies } from "next/headers";
 
 export const registerUser = async (userData: FormData) => {
@@ -40,3 +41,19 @@ export const loginUser = async (userData: any) => {
     return Error(error);
   }
 };
+
+export const getCurrentUser = async () => {
+  const accessToken = (await cookies()).get("accessToken")?.value
+  let decodeData = null;
+
+  if (accessToken) {
+    decodeData = await jwtDecode(accessToken);
+    return decodeData;
+  } else {
+    return null;
+  }
+};
+
+export const logout = async () => {
+  (await cookies()).delete("accessToken");
+}
