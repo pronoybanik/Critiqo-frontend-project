@@ -1,6 +1,7 @@
 "use server"
 
 import { jwtDecode } from "jwt-decode";
+import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 export const registerUser = async (userData: FormData) => {
@@ -54,6 +55,52 @@ export const getCurrentUser = async () => {
   }
 };
 
+
+export const getMyProfile = async () => {
+  try {
+    const accessToken = (await cookies()).get("accessToken")?.value;
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/me`, {
+      headers: {
+        Authorization: `${accessToken}`,
+       
+      },
+      next: {
+        tags: ["Profile"],
+      },
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
+};
+
+
+export const updateProfile = async (formData: FormData) => {
+  try {
+    const accessToken = (await cookies()).get("accessToken")?.value;
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/update-my-profile`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+      body: formData,
+    })
+
+    revalidateTag("Profile");
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return Error(error)
+  }
+};
+
+
 export const logout = async () => {
   (await cookies()).delete("accessToken");
-}
+};
+
+
