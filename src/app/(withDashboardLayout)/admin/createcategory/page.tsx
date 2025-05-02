@@ -1,11 +1,15 @@
-import React from 'react';
+import ManageCategories from "@/components/modules/admin/category";
+import { getAllCategories } from "@/services/Category";
 
-const CreateCategoryPage = () => {
-    return (
-        <div>
-            create category page
-        </div>
-    );
+const ProductCategoryPage = async () => {
+  const { data } = await getAllCategories();
+  
+
+  return (
+    <div>
+      <ManageCategories categories={data} />
+    </div>
+  );
 };
 
-export default CreateCategoryPage;
+export default ProductCategoryPage;
