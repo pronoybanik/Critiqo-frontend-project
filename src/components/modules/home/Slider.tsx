@@ -7,13 +7,13 @@ import 'swiper/css/effect-fade';
 import img1 from '../../../assets/hero/review1.webp';
 import img2 from '../../../assets/hero/review2.jpg';
 import Image from 'next/image';
-import { useState } from 'react';
+// import { useState } from 'react';
 // import { Button } from '@/components/ui/button';
 // import { useSearchParams } from 'next/navigation';
 
 const Slider = () => {
     //   const [search, setSearch] = useState('');
-    const [searchText, setSearchText] = useState('');
+    // const [searchText, setSearchText] = useState('');
     //   const [getDatas, setGetDatas] = useState<any>([]);
 
 
@@ -102,44 +102,7 @@ const Slider = () => {
                 {/* <div className="carousel w-full h-[600px]  object-fill mt-7">
       </div> */}
             </div>
-            <form >
-                <div className=" p-1 overflow-hidden  z-10    focus-within:border-blue-400 absolute -translate-y-44 left-72 hidden md:flex">
-                    <input
-                        className="px-2 w-72 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent border-[#C24340] rounded-l-lg border-2"
-                        type="text"
-                        onChange={e => setSearchText(e.target.value)}
-                        value={searchText}
-                        name="search"
-                        placeholder="Enter subject"
-                        aria-label="Enter subject"
-                    />
 
-                    <button
-                        type="submit"
-                        className="px-1 md:px-6 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-[#C24340] rounded-r-lg  hover:bg-gray-600 focus:bg-[#C24340] focus:outline-none"
-                    >
-                        Search
-                    </button>
-                    <button
-
-                        className="px-1 md:px-6 py-3 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-[#C24340] rounded-lg  hover:bg-gray-600 focus:bg-[#C24340] focus:outline-none ml-2"
-                    >
-                        Share Review
-                    </button>
-                    {/* {search && (
-            <Button
-              onClick={() => {
-                setSearch(' ')
-
-              }}
-              size="sm"
-              className="bg-[#11A171] hover:bg-gray-700 ml-5"
-            >
-              Clear
-            </Button>
-          )} */}
-                </div>
-            </form>
 
         </div>
     );
