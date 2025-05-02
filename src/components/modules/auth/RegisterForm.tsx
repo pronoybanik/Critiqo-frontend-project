@@ -18,6 +18,7 @@ import {
 import { registerUser } from "@/services/AuthService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
 interface FormFields {
   name: string;
@@ -344,12 +345,9 @@ export default function Register() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-               {loading ? "Submiteing..." : "Create Account"} 
-              </button>
+              <PrimaryButton type="submit">
+                {loading ? "Submiteing..." : "Create Account"}
+              </PrimaryButton>
             </div>
           </form>
 
