@@ -6,6 +6,7 @@ import { loginUser } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useUser } from "@/context/UserContext";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
 interface LoginForm {
   email: string;
@@ -35,7 +36,7 @@ export default function Login() {
       if (res?.success) {
         toast.success(res.message || "Login successful!");
         setTimeout(() => {
-          router.push("/"); 
+          router.push("/");
           setIsLoading(true);
         }, 1000);
       } else {
@@ -171,12 +172,9 @@ export default function Login() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                {loading ? "loging..." : "Sign in"}
-              </button>
+              <PrimaryButton type="submit">
+                {loading ? "Logging..." : "Sign in"}
+              </PrimaryButton>
             </div>
           </form>
 

@@ -86,6 +86,13 @@ export default function Navbar() {
                     <Link href={`/${user?.role.toLocaleLowerCase()}`}>
                       Dashboard
                     </Link>
+
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Link href={`/profile`}>
+                      profile
+                    </Link>
+
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <div className="md:hidden">
