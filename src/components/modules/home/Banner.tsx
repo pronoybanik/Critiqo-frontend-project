@@ -12,7 +12,7 @@ const CapterraSearch = () => {
         <div className='col-span-2 flex justify-start items-baseline-last'>
           <div className=" mb-8 md:mb-0   ">
             <h1 className="text-4xl font-stretch-semi-expanded font-bold text-gray-700 mb-4">
-              Find the right Product Review and services
+              Find the right Product Review  <br /> and services
             </h1>
             <p className="text-lg text-gray-600 mb-8">
               Capterra helps you find the best solutions for your business. Evaluate <br />
