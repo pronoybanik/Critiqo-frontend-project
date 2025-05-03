@@ -1,7 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import img1 from "../../../assets/faq.jpg"
+import img1 from "../../../assets/faq2.png"
 import Image from 'next/image';
+import { motion } from "framer-motion";
 
 const faqs = [
   {
@@ -55,15 +56,29 @@ const FaqSection = () => {
         </div>
 
         {/* Right: Image */}
-        <div className="flex items-center justify-center">
-          <Image
-            src={img1} // Replace with your actual image
-            alt="Review illustration"
-            width={400}
-            height={400}
-            className="rounded-lg shadow-md object-contain"
-          />
-        </div>
+        <motion.div
+          initial={{ x: -10 }}
+          animate={{ x: 10 }}
+          whileHover={{ x: 0 }} // Stops moving on hover
+          transition={{
+            repeat: Infinity,
+            repeatType: "reverse",
+            duration: 1.5,
+            ease: "easeInOut",
+          }}
+          className="flex flex-col items-center text-center"
+        >
+
+          <div className="flex items-center justify-center">
+            <Image
+              src={img1} // Replace with your actual image
+              alt="Review illustration"
+              width={400}
+              height={600}
+              className="rounded-lg  object-contain"
+            />
+          </div>
+        </motion.div>
       </section>
     </div>
   );
