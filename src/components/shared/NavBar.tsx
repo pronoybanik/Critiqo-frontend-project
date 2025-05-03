@@ -19,7 +19,7 @@ import { logout } from "@/services/AuthService";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
-  console.log("root-user", user);
+  // console.log("root-user", user);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -38,8 +38,7 @@ export default function Navbar() {
     { href: "/about", label: "About Us" },
     { href: "/contactus", label: "Contact" },
     { href: "/blog", label: "Blog" },
-    { href: "/login", label: "login" },
-    { href: "/register", label: "register" },
+
   ];
 
   return (
@@ -61,11 +60,10 @@ export default function Navbar() {
             <Link
               key={href}
               href={href}
-              className={`${
-                pathname === href
-                  ? "text-[#C24340] font-bold"
-                  : "text-gray-700 hover:text-6eal-700"
-              }`}
+              className={`${pathname === href
+                ? "text-[#50bdbbfb] font-bold"
+                : "text-gray-700 hover:text-6eal-700"
+                }`}
             >
               {label}
             </Link>
@@ -95,11 +93,10 @@ export default function Navbar() {
                         <DropdownMenuItem key={href}>
                           <Link
                             href={href}
-                            className={`${
-                              pathname === href
-                                ? "text-[#139460] font-bold"
-                                : "text-gray-700 hover:text-6eal-700"
-                            }`}
+                            className={`${pathname === href
+                              ? "text-[#139460] font-bold"
+                              : "text-gray-700 hover:text-6eal-700"
+                              }`}
                           >
                             {label}
                           </Link>
