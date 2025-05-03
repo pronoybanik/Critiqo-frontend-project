@@ -54,7 +54,6 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  console.log("t", userData);
   
 
   const navLinks = [
@@ -78,7 +77,6 @@ export default function Navbar() {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-48 md:w-40">
               <Image
-                
                 src={ logo}
                 alt="etutor"
                 layout="fill"
@@ -119,9 +117,7 @@ export default function Navbar() {
                         {user?.email?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden md:inline text-sm font-medium text-gray-700">
-                      {userData?.email?.split("@")[0]}
-                    </span>
+                    
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 mt-1 p-1 bg-white rounded-lg shadow-lg border border-gray-100 animate-in zoom-in-90 duration-300">
@@ -171,7 +167,8 @@ export default function Navbar() {
                   </PrimaryButton>
                 </Link>
                 <Link href="/register" className="hidden sm:block">
-                  <SecondaryButton className="text-sm px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
+                  <SecondaryButton 
+                  className="text-sm px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
                     Sign up
                   </SecondaryButton>
                 </Link>

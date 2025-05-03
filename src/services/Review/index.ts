@@ -25,10 +25,10 @@ export const getAllReview = async (page?: string, limit?: string, query?: { [key
     //   params.append("ratings", query?.rating.toString())
     // }
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/tutors?page=${page}&limit=${limit}&${params}`,
+      `${process.env.NEXT_PUBLIC_BASE_API}/reviews`,
       {
         next: {
-          tags: ["TUTORS"],
+          tags: ["REVIEWS"],
         },
       }
     );
