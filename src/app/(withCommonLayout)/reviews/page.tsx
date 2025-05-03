@@ -1,9 +1,12 @@
+
+import AllReviews from '@/components/modules/All Review/AllReviews';
 import React from 'react';
 
 const ReviewsPage = () => {
+
     return (
         <div>
-            Reviews Page
+            <AllReviews></AllReviews>
         </div>
     );
 };
