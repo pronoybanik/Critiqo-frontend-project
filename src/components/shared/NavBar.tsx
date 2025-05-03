@@ -19,7 +19,6 @@ import { logout } from "@/services/AuthService";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
-  console.log("root-user", user);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -88,6 +87,13 @@ export default function Navbar() {
                     <Link href={`/${user?.role.toLocaleLowerCase()}`}>
                       Dashboard
                     </Link>
+                    
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                  <Link href={`/profile`}>
+                      profile
+                    </Link>
+                    
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <div className="md:hidden">
