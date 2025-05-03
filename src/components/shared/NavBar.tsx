@@ -41,7 +41,7 @@ export default function Navbar() {
   useEffect(() => {
     const fetchUser = async () => {
       const userData = await getMyProfile();
-      setUserData(userData);
+      setUserData(userData?.data);
     };
 
     fetchUser();
@@ -54,6 +54,8 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  console.log("t", userData);
+  
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -64,7 +66,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header
+    <section
       className={`w-full sticky top-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-white shadow-md py-2"
           : "bg-gradient-to-r from-blue-50 to-gray-50 py-4"
@@ -76,8 +78,8 @@ export default function Navbar() {
           <Link href="/" className="flex items-center">
             <div className="relative h-10 w-48 md:w-40">
               <Image
-
-                src={userData?.profilePhoto || logo}
+                
+                src={ logo}
                 alt="etutor"
                 layout="fill"
                 objectFit="contain"
@@ -112,13 +114,13 @@ export default function Navbar() {
                 <DropdownMenuTrigger className="focus:outline-none group">
                   <div className="flex items-center gap-2 p-1 rounded-full border border-transparent hover:border-gray-200 hover:bg-gray-50 transition-all duration-200">
                     <Avatar className="h-8 w-8 ring-2 ring-offset-2 ring-blue-500 transition-all duration-300 group-hover:ring-blue-400">
-                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarImage src={userData?.profilePhoto || "https://github.com/shadcn.png"} />
                       <AvatarFallback className="bg-blue-100 text-blue-600">
                         {user?.email?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <span className="hidden md:inline text-sm font-medium text-gray-700">
-                      {user?.email?.split("@")[0]}
+                      {userData?.email?.split("@")[0]}
                     </span>
                   </div>
                 </DropdownMenuTrigger>
@@ -221,6 +223,6 @@ export default function Navbar() {
           </div>
         )}
       </div>
-    </header>
+    </section>
   );
 }
