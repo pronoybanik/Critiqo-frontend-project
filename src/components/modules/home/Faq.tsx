@@ -35,7 +35,7 @@ const FaqSection = () => {
   };
 
   return (
-    <div className='max-w-7xl mx-auto mt-6 bg-gray-100 shadow-2xl'>
+    <div className='max-w-7xl mx-auto mt-6 bg-gray-100 shadow-2xl my-10'>
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6  rounded-md shadow">
         {/* Left: FAQ */}
         <div>

@@ -1,26 +1,35 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { getMyProfile, logout } from "@/services/AuthService";
+import { useUser } from "@/context/UserContext";
+import { IProfile } from "@/types/profile";
 
 const AdminHeader = () => {
+  const { setIsLoading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  //   const [user, setUser] = useState<any>(null);
-
+  const [user, setUser] = useState<IProfile | null>(null);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
-  //   useEffect(() => {
-  //     const fetchUser = async () => {
-  //       const userData = await getCurrentUser();
-  //       setUser(userData);
-  //       console.log("user", userData);
-  //     };
-  //     fetchUser();
-  //   }, []);
+  const handleLogout = () => {
+    logout();
+    setIsLoading(true);
+    // if (protectedRoutes.some((route) => pathname.match(route))) {
+    //   router.push("/");
+    // }
+  };
 
-  //   console.log(user);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getMyProfile();
+      setUser(userData?.data);
+    };
+    fetchUser();
+  }, []);
+
 
   return (
     <header className="bg-white shadow-sm z-10">
@@ -98,11 +107,10 @@ const AdminHeader = () => {
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg overflow-hidden z-20">
                 <div className="p-3 border-b border-gray-200">
                   <p className="font-medium text-gray-800">
-                    {/* {user?.name ?? "Admin"} */} name: admin
+                    {user?.name ?? "Admin"}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {/* {user?.email ?? "admin@reviewportal.com"} */}
-                    Gmail: admin@reviewportal.com
+                    {user?.email ?? "admin@reviewportal.com"}
                   </p>
                 </div>
                 <div>
@@ -111,7 +119,10 @@ const AdminHeader = () => {
 
                     <span>Profile</span>
                   </button>
-                  <button className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100">
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100"
+                  >
                     <LogOut size={16} className="mr-2 text-gray-600" />
                     <span>Logout</span>
                   </button>
