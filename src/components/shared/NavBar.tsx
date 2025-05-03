@@ -66,7 +66,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header
+    <section
       className={`w-full sticky top-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-white shadow-md py-2"
           : "bg-gradient-to-r from-blue-50 to-gray-50 py-4"
@@ -86,7 +86,7 @@ export default function Navbar() {
                 className="transition-all duration-300 hover:opacity-80"
               />
             </div>
-          </Link
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
@@ -223,6 +223,6 @@ export default function Navbar() {
           </div>
         )}
       </div>
-    </header>
+    </section>
   );
 }
