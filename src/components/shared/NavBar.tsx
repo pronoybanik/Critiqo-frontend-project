@@ -144,12 +144,7 @@ export default function Navbar() {
                     </Link>
 
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Link href={`/profile`}>
-                      profile
-                    </Link>
-
-                  </DropdownMenuItem>
+                 
 
                   <DropdownMenuItem className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-blue-50 transition-colors">
                     <Link href={`/profile`} className="flex-1">
