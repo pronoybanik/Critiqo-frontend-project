@@ -97,8 +97,7 @@ const AdminHeader = () => {
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
             >
               <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-medium">
-                {/* {user?.name?.[0] ?? "A"} */}
-                {"A"}
+                {user?.name?.[0] ?? "A"}
               </div>
               <ChevronDown size={16} />
             </button>
@@ -111,6 +110,9 @@ const AdminHeader = () => {
                   </p>
                   <p className="text-xs text-gray-500">
                     {user?.email ?? "admin@reviewportal.com"}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {user?.role ?? "NULL"}
                   </p>
                 </div>
                 <div>
