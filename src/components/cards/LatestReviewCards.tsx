@@ -1,35 +1,40 @@
-"use client"
+"use client";
 import React from "react";
-import { MessageCircle, User, Calendar, Star } from "lucide-react";
-import { cn } from "@/lib/utils"; // Utility for combining class names
+import { MessageCircle, User, Calendar, Star, ShoppingCart, CheckCircle, Clock } from "lucide-react";
 import Image from "next/image";
-import PrimaryButton from "../shared/PrimayButton";
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
+import { formatDistanceToNow } from "date-fns";
+import { IReview } from "@/types/reviews";
+import SecondaryButton from "../shared/SecondaryButton";
 
-interface ProductReviewCardProps {
-  id?: string,
-  images: string[];
-  title: string;
-  category: string;
-  author: string;
-  createdAt: string;
-  comments: number;
-  rating: number;
-}
 
-const LatestReviewCard: React.FC<ProductReviewCardProps> = ({
-  id,
-  images,
-  title,
-  category,
-  author,
-  createdAt,
-  comments,
-  rating,
-}) => {
-  // console.log(images)
+
+const LatestReviewCard = ({ review }: { review: IReview }) => {
   const router = useRouter();
+  const {
+    id,
+    title,
+    description,
+    isPremium,
+    premiumPrice,
+    author,
+    category,
+    comments,
+    createdAt,
+    images,
+    purchaseSource,
+    rating,
+    status
+  } = review;
+
+  // Format date to relative time (e.g. "2 days ago")
+  const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+  
+  // Truncate description for preview
+  const truncatedDescription = description.length > 120 ? 
+    `${description.substring(0, 120)}...` : description;
+
+  // Function to render star ratings
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -39,10 +44,7 @@ const LatestReviewCard: React.FC<ProductReviewCardProps> = ({
         ); // Full star
       } else if (i - 0.5 === rating) {
         stars.push(
-          <Star
-            key={i}
-            className="w-4 h-4 text-yellow-400 fill-yellow-400/50"
-          />
+          <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400/50" />
         ); // Half star
       } else {
         stars.push(<Star key={i} className="w-4 h-4 text-yellow-400" />); // Empty star
@@ -50,82 +52,105 @@ const LatestReviewCard: React.FC<ProductReviewCardProps> = ({
     }
     return stars;
   };
+
   return (
-    <div className="bg-gray-100 ">
-      <div
-        className={cn(
-          "bg-white text-gray-950", // Light background, adjust opacity as needed
-          "rounded-lg shadow-xl",
-          "p-4 md:p-6",
-          "transition-all duration-300",
-          "hover:shadow-lg hover:scale-[1.01]", // Subtle hover effect
-          "border border-gray-800/50" // Add a border that matches the background
-        )}
-      >
+    <div className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl rounded-xl">
+      {/* Premium Badge */}
+      {isPremium && (
+        <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-amber-500 to-yellow-400 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+          <CheckCircle className="w-3 h-3" />
+          Premium
+        </div>
+      )}
+      
+      {/* Status Badge */}
+      <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
+        ${status === "PUBLISHED" ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
+        <Clock className="w-3 h-3" />
+        {status}
+      </div>
+
+      {/* Card Content */}
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-lg transition-all duration-300 group-hover:translate-y-[-4px]">
         {/* Image */}
-
-
-        {images?.map((image: string, index: number) => (
-
-          <div className="relative w-full h-60 aspect-video mb-4 rounded-lg overflow-hidden bg-blue-50 flex justify-center items-center" key={index}>
+        <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+          {images && images.length > 0 ? (
             <Image
-              src={image}
+              src={images[0]}
               alt={title}
-              height={150}
-              width={250}
-              // layout="fill"
-              // objectFit="cover"
-              className="transition-transform duration-300 hover:scale-105 p-2" // Image zoom on hover
+              fill
+              style={{ objectFit: "cover" }}
+              className="transition-transform duration-500 group-hover:scale-110"
             />
-          </div>
-        ))}
-
-        {/* Title and Category */}
-        <h2 className="text-xl font-semibold text-gray-950 mb-2 line-clamp-2">
-          {title}
-        </h2>
-        <p className="text-sm text-gray-950 mb-4 ">
-          Category:{" "}
-          <span className="font-medium bg-[#e8d5d5] p-1 rounded-full text-[#C24340]">
-            {category}
-          </span>
-        </p>
-
-        {/* Star Rating */}
-        <div className="flex items-center mb-4">
-          {renderStars(rating)}
-          <span className="text-sm text-gray-400 ml-2">({rating} )</span>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              No Image Available
+            </div>
+          )}
         </div>
 
-        {/* Author and Posted Date */}
-        <div className="flex items-center text-sm text-gray-500 mb-4">
-          <User className="w-4 h-4 mr-1" />
-          <span>{author}</span>
-          <span className="mx-2">•</span>
-          <Calendar className="w-4 h-4 mr-1" />
-          <span>{createdAt}</span>
-        </div>
-
-        {/* Comment Count */}
-        <div className="flex justify-between items-center text-sm text-gray-400 mt-2">
-          <div className="flex items-center">
-            <MessageCircle className="w-4 h-4 mr-1" />
-            <span>{comments} Comments</span>
+        {/* Content */}
+        <div className="p-5">
+          {/* Category & Source */}
+          <div className="flex justify-between items-center mb-3">
+            <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
+              {category}
+            </span>
+            <div className="flex items-center text-gray-500 text-xs">
+              <ShoppingCart className="w-3 h-3 mr-1" />
+              {purchaseSource}
+            </div>
           </div>
-          <Button
-            onClick={() =>
-              router.push(
-                `/reviews/${id}`
-              )
-            }
-            className="px-1 md:px-6 py-2 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-[#06D6D1] rounded-lg  hover:bg-gray-600 focus:bg-[#06D6D1] focus:outline-none ml-2"
-          >
-            Detail
-          </Button>
-          <PrimaryButton type="submit"
-            className="w-32  text-sm px-4 py-1.5 uppercase">
-            details
-          </PrimaryButton>
+
+          {/* Title */}
+          <h2 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+            {title}
+          </h2>
+
+          {/* Rating */}
+          <div className="flex items-center mb-3">
+            <div className="flex mr-2">{renderStars(rating)}</div>
+            <span className="text-sm text-gray-500">({rating.toFixed(1)})</span>
+          </div>
+
+          {/* Description */}
+          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            {truncatedDescription}
+          </p>
+
+          {/* Author & Date */}
+          <div className="flex items-center text-xs text-gray-500 mb-4 border-t border-gray-100 pt-3">
+            <User className="w-3 h-3 mr-1" />
+            <span className="font-medium mr-2">{author}</span>
+            <span className="mx-1">•</span>
+            <Calendar className="w-3 h-3 mx-1" />
+            <span>{formattedDate}</span>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center text-gray-500 text-xs">
+              <MessageCircle className="w-3 h-3 mr-1" />
+              <span>{comments} Comments</span>
+            </div>
+            
+            <SecondaryButton
+              handler={() => router.push(`/reviews/${id}`)}
+              className="px-4 py-2 w-52  text-xs font-medium rounded-lg "
+            >
+              Read Review
+            </SecondaryButton>
+          </div>
+          
+          {/* Premium Price Tag */}
+          {isPremium && premiumPrice && (
+            <div className="mt-3 bg-gray-50 -mx-5 -mb-5 px-5 py-3 border-t border-gray-100">
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Premium Content</span>
+                <span className="text-sm font-bold text-green-600">${premiumPrice.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
