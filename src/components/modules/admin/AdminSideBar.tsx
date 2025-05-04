@@ -7,11 +7,10 @@ import {
   CheckCircle,
   XCircle,
   MessageCircle,
-  Crown,
   BarChart2,
-  Settings,
   ChevronRight,
   LayoutDashboard,
+  UsersRound,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,6 +32,13 @@ const AdminSideBar = () => {
       icon: <LayoutDashboard size={20} />,
       link: "/admin",
     },
+    {
+      id: "user",
+      label: "All user",
+      icon: <UsersRound size={20} />,
+      link: "/admin/user",
+    },
+
     {
       id: "reviews",
       label: "Reviews",
@@ -57,15 +63,18 @@ const AdminSideBar = () => {
         },
       ],
     },
-    { id: "comments", label: "Comments", icon: <MessageCircle size={20} /> },
-    { id: "premium", label: "Premium Reviews", icon: <Crown size={20} /> },
+    {
+      id: "comments",
+      label: "Comments",
+      icon: <MessageCircle size={20} />,
+      link: "/admin/comments",
+    },
     {
       id: "Category",
       label: "Create Category",
       icon: <BarChart2 size={20} />,
       link: "/admin/createcategory",
     },
-    { id: "settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
   const toggleSidebar = () => {
@@ -104,12 +113,12 @@ const AdminSideBar = () => {
             <Link href={`${item?.link}`} key={item.id} className="mb-1">
               <button
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center w-full ${
+                className={`flex items-center  w-full ${
                   sidebarOpen ? "px-6" : "px-4 justify-center"
                 } py-3 hover:bg-indigo-700 
                     ${
-                      activeTab === item.id ? "bg-indigo-700" : ""
-                    } rounded-lg transition-colors duration-200`}
+                      activeTab === item.id ? "bg-indigo-700 py-2" : ""
+                    } rounded-lg transition-colors duration-200 `}
               >
                 <span className={sidebarOpen ? "mr-3" : ""}>{item.icon}</span>
                 {sidebarOpen && <span>{item.label}</span>}

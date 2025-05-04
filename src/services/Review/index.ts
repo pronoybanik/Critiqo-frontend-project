@@ -38,6 +38,7 @@ export const getAllReview = async (page?: string, limit?: string, query?: { [key
     return Error(error.message);
   }
 };
+
 export const featuredReview = async (page?: string, limit?: string,) => {
   console.log(page, limit)
   try {
@@ -89,6 +90,7 @@ export const addComment = async (data: Partial<Comment>) => {
   revalidateTag("REVIEW");
   return res.json();
 };
+
 export const addVotes = async (data: any) => {
   console.log("with data 76:", data);
 

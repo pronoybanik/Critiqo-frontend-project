@@ -1,13 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Bell, User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import {
+  Bell,
+  User,
+  LogOut,
+  ChevronDown,
+  Menu,
+  X,
+  PenTool,
+} from "lucide-react";
 import { getMyProfile, logout } from "@/services/AuthService";
 import { useUser } from "@/context/UserContext";
 import { IProfile } from "@/types/profile";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
 const AdminHeader = () => {
-  const { setIsLoading } = useUser();
+  const { user: userInfo, setIsLoading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -29,7 +38,6 @@ const AdminHeader = () => {
     };
     fetchUser();
   }, []);
-
 
   return (
     <header className="bg-white shadow-sm z-10">
@@ -89,6 +97,13 @@ const AdminHeader = () => {
               </div>
             )}
           </div>
+
+          {userInfo?.role === "GUEST" ? (
+            <PrimaryButton className="flex items-center space-x-1 w-38 text-white px-4 py-2 rounded-lg">
+              <PenTool size={16} />
+              <span>Create Review</span>
+            </PrimaryButton>
+          ) : null}
 
           {/* User Menu */}
           <div className="relative">
