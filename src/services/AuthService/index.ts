@@ -99,6 +99,8 @@ export const updateProfile = async (formData: FormData) => {
 };
 
 
+
+
 export const logout = async () => {
   (await cookies()).delete("accessToken");
 };

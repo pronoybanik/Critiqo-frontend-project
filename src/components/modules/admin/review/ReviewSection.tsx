@@ -169,7 +169,7 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
   const reviewCounts = reviewData.reduce(
     (acc, review) => {
       if (review.status === "PUBLISHED") acc.published += 1;
-      else if (review.status === "PENDING") acc.pending += 1;
+      else if (review.status === "DRAFT") acc.pending += 1;
       else acc.unpublished += 1;
       return acc;
     },
