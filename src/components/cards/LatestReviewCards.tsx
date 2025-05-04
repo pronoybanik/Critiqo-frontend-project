@@ -11,6 +11,7 @@ import SecondaryButton from "../shared/SecondaryButton";
 
 const LatestReviewCard = ({ review }: { review: IReview }) => {
   const router = useRouter();
+  if (!review) return null;
   const {
     id,
     title,
@@ -29,9 +30,9 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
 
   // Format date to relative time (e.g. "2 days ago")
   const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
-  
+
   // Truncate description for preview
-  const truncatedDescription = description.length > 120 ? 
+  const truncatedDescription = description.length > 120 ?
     `${description.substring(0, 120)}...` : description;
 
   // Function to render star ratings
@@ -62,7 +63,7 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
           Premium
         </div>
       )}
-      
+
       {/* Status Badge */}
       <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
         ${status === "PUBLISHED" ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
@@ -130,10 +131,10 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
           {/* Footer */}
           <div className="flex justify-between items-center">
             <div className="flex items-center text-gray-500 text-xs">
-              <MessageCircle className="w-3 h-3 mr-1" />
-              <span>{comments} Comments</span>
+              <MessageCircle className="w-3 h-3 mr-1 text-indigo-700" />
+              <span>{comments} </span>
             </div>
-            
+
             <SecondaryButton
               handler={() => router.push(`/reviews/${id}`)}
               className="px-4 py-2 w-52  text-xs font-medium rounded-lg "
@@ -141,7 +142,7 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
               Read Review
             </SecondaryButton>
           </div>
-          
+
           {/* Premium Price Tag */}
           {isPremium && premiumPrice && (
             <div className="mt-3 bg-gray-50 -mx-5 -mb-5 px-5 py-3 border-t border-gray-100">

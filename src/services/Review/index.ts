@@ -28,7 +28,7 @@ export const getAllReview = async (page?: string, limit?: string, query?: { [key
       `${process.env.NEXT_PUBLIC_BASE_API}/reviews`,
       {
         next: {
-          tags: ["REVIEWS"],
+          tags: ["REVIEW"],
         },
       }
     );
@@ -95,6 +95,20 @@ export const addVotes = async (data: any) => {
   console.log("with data 76:", data);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/votes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await cookies()).get("accessToken")?.value || "",
+    },
+    body: JSON.stringify(data),
+  });
+  revalidateTag("REVIEW");
+  return res.json();
+};
+export const createReview = async (data: any) => {
+  console.log("with data 76:", data);
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
