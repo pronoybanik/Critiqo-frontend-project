@@ -105,6 +105,7 @@ export const addVotes = async (data: any) => {
   revalidateTag("REVIEW");
   return res.json();
 };
+
 export const createReview = async (data: any) => {
   console.log("with data 76:", data);
 
@@ -118,4 +119,24 @@ export const createReview = async (data: any) => {
   });
   revalidateTag("REVIEW");
   return res.json();
+};
+
+export const getAllReviewAdmin = async () => {
+  try {
+    const accessToken = (await cookies()).get("accessToken")?.value;
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/admin/reviews`, {
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+      next: {
+        tags: ["REVIEW"],
+      },
+    });
+
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    return Error(error.message);
+  }
 };
