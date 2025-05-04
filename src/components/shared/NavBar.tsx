@@ -54,7 +54,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -67,17 +67,17 @@ export default function Navbar() {
   return (
     <section
       className={`w-full sticky top-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-white shadow-md py-2"
-          : "bg-gradient-to-r from-blue-50 to-gray-50 py-4"
+        ? "bg-white shadow-md py-2"
+        : "bg-gradient-to-r from-blue-50 to-gray-50 py-4"
         }`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div className="relative h-10 w-48 md:w-40">
+            <div className="relative h-10 w-48 md:w-54">
               <Image
-                src={ logo}
+                src={logo}
                 alt="etutor"
                 layout="fill"
                 objectFit="contain"
@@ -93,8 +93,8 @@ export default function Navbar() {
                 key={href}
                 href={href}
                 className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${pathname === href
-                    ? "text-purple-700 bg-blue-50"
-                    : "text-gray-700 hover:text-purple-700  hover:bg-blue-50"
+                  ? "text-purple-700 bg-blue-50"
+                  : "text-gray-700 hover:text-purple-700  hover:bg-blue-50"
                   }`}
               >
                 {label}
@@ -117,7 +117,7 @@ export default function Navbar() {
                         {user?.email?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 mt-1 p-1 bg-white rounded-lg shadow-lg border border-gray-100 animate-in zoom-in-90 duration-300">
@@ -140,7 +140,7 @@ export default function Navbar() {
                     </Link>
 
                   </DropdownMenuItem>
-                 
+
 
                   <DropdownMenuItem className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-blue-50 transition-colors">
                     <Link href={`/profile`} className="flex-1">
@@ -167,8 +167,8 @@ export default function Navbar() {
                   </PrimaryButton>
                 </Link>
                 <Link href="/register" className="hidden sm:block">
-                  <SecondaryButton 
-                  className="text-sm px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
+                  <SecondaryButton
+                    className="text-sm px-4 py-1.5 rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
                     Sign up
                   </SecondaryButton>
                 </Link>
@@ -194,8 +194,8 @@ export default function Navbar() {
                   key={href}
                   href={href}
                   className={`px-4 py-2 rounded-lg transition-colors ${pathname === href
-                      ? "bg-blue-50 text-blue-600 font-medium"
-                      : "text-gray-700 hover:bg-gray-50"
+                    ? "bg-blue-50 text-blue-600 font-medium"
+                    : "text-gray-700 hover:bg-gray-50"
                     }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >

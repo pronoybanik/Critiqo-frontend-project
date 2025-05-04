@@ -1,161 +1,215 @@
 'use client';
-import { createReview } from '@/services/Review';
-import React, { useState } from 'react';
+
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
+import { createReview } from '@/services/Review'; // your API function
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from "@/components/ui/form";
+import {
+  Input
+} from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
-const ReviewForm = () => {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+interface ReviewFormProps {
+  categories: { id: string; name: string }[];
+}
+
+export default function ReviewForm({ categories }: ReviewFormProps) {
+  const form = useForm({
     defaultValues: {
-      title: 'This bag lather is goog',
+      title: 'This bag lather is good',
       description: 'This is a detailed review of the product...',
       rating: 5,
       purchaseSource: 'Amazon',
-      categoryId: 'Choose category',
+      categoryId: '',
       isPremium: false,
-
     }
   });
 
+  const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-  const handleRating = (val: number) => {
-    setValue('rating', val);
-  };
-
-  const onSubmit = async (data: any) => {
-    const photo = data.photo?.[0];
-    // const formData = new FormData();
-    // formData.append("data", JSON.stringify(data));
-    // formData.append("images", photo)
-    const rData = {
-      title: data.title,
-      description: data.description,
-      rating: data.rating,
-      purchaseSource: data.purchaseSource,
-      categoryId: data.categoryId,
-      isPremium: data.isPremium,
-
-    }
-    const formData = {
-      images: photo,
-      data: (JSON.stringify(rData))
-    }
-    console.log(formData)
-    try {
-      const res = await createReview(formData)
-      if (res.success) {
-        toast.success("Review Create successfully")
-      }
-    } catch (err: any) {
-      console.log(err)
-    }
-
-  };
-
-  const watchPhoto = watch("photo");
-
-  React.useEffect(() => {
-    const file = watchPhoto?.[0];
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
+      setPhoto(file);
       const reader = new FileReader();
       reader.onloadend = () => setPhotoPreview(reader.result as string);
       reader.readAsDataURL(file);
-    } else {
-      setPhotoPreview(null);
     }
-  }, [watchPhoto]);
+  };
+
+  const handleRatingClick = (value: number) => {
+    form.setValue("rating", value);
+  };
+
+  const onSubmit = async (data: any) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(data));
+    if (photo) {
+      formData.append('images', photo);
+    }
+
+
+
+    // ✅ Confirm data is appended
+    for (const pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    const midifiedData = {
+      images: photo,
+      ...data
+    }
+    console.log(midifiedData)
+
+    try {
+      const res = await createReview(midifiedData);
+      if (res.success) {
+        toast.success('Review created successfully');
+        form.reset();
+        setPhoto(null);
+        setPhotoPreview(null);
+      }
+    } catch (err) {
+      console.error('Upload failed:', err);
+      toast.error('Something went wrong');
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow">
-      <h2 className="text-2xl font-semibold mb-4">Create Your Review</h2>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow space-y-4">
+        <h2 className="text-2xl font-semibold mb-4">Create Your Review</h2>
 
-      {/* Star Rating */}
-      <div className="flex mb-4">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            onClick={() => handleRating(star)}
-            className={`cursor-pointer text-3xl ${watch("rating") >= star ? 'text-yellow-400' : 'text-gray-300'}`}
-          >
-            ★
-          </span>
-        ))}
-      </div>
+        {/* Star Rating */}
+        <div className="flex space-x-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => handleRatingClick(star)}
+              className={`cursor-pointer text-3xl ${form.watch("rating") >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+            >
+              ★
+            </span>
+          ))}
+        </div>
 
-      {/* Title */}
-      <label className="font-medium">Title *</label>
-      <input
-        {...register('title', { required: true })}
-        className="w-full p-2 border rounded mb-4"
-      />
-      {errors.title && <p className="text-red-500 text-sm mb-2">Title is required</p>}
-
-      {/* Description */}
-      <label className="font-medium">Description *</label>
-      <textarea
-        {...register('description', { required: true })}
-        className="w-full p-2 border rounded mb-4"
-        rows={3}
-      />
-      {errors.description && <p className="text-red-500 text-sm mb-2">Description is required</p>}
-
-      {/* Category */}
-      <label className="font-medium">Select Category *</label>
-      <select
-        {...register('categoryId', { required: true })}
-        className="w-full p-2 border-2 border-gray-300 rounded mb-4"
-      >
-        <option value="">-- Select a category --</option>
-        <option value="5f9c7372-2aff-46d5-b55f-51e53b9ff717">Electronics</option>
-        <option value="5f9c7372-2aff-46d5-b55f-51e53b9ff717">Sports</option>
-        <option value="5f9c7372-2aff-46d5-b55f-51e53b9ff717">Appliance</option>
-      </select>
-      {errors.categoryId && <p className="text-red-500 text-sm mb-2">Category is required</p>}
-
-      {/* Purchase Source */}
-      <label className="font-medium">Where did you purchase this?</label>
-      <select
-        {...register('purchaseSource')}
-        className="w-full p-2 border rounded mb-4"
-      >
-        <option value="">Select Source</option>
-        <option value="Amazon">Amazon</option>
-        <option value="eBay">eBay</option>
-        <option value="Walmart">Walmart</option>
-        <option value="Other">Other</option>
-      </select>
-
-      {/* isPremium */}
-      <div className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          {...register('isPremium')}
-          className="mr-2"
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        <label>Is this a premium product?</label>
-      </div>
 
-      {/* Photo Upload */}
-      <label className="font-medium">Upload Photo</label>
-      <input
-        type="file"
-        accept="image/*"
-        {...register('photo')}
-        className="w-full p-2 border-2 border-blue-500 rounded mb-4"
-      />
-      {photoPreview && (
-        <img src={photoPreview} alt="Preview" className="w-32 h-32 object-cover rounded mb-4" />
-      )}
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea rows={3} {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-      >
-        Continue
-      </button>
-    </form>
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="purchaseSource"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Purchase Source</FormLabel>
+              <FormControl>
+                <select className="w-full p-2 border rounded" {...field}>
+                  <option value="">Select Source</option>
+                  <option value="Amazon">Amazon</option>
+                  <option value="eBay">eBay</option>
+                  <option value="Walmart">Walmart</option>
+                  <option value="Other">Other</option>
+                </select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isPremium"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center space-x-2">
+              <FormControl>
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <FormLabel>Is this a premium product?</FormLabel>
+            </FormItem>
+          )}
+        />
+
+        <FormItem>
+          <FormLabel>Upload Photo</FormLabel>
+          <FormControl>
+            <Input type="file" accept="image/*" onChange={handlePhotoChange} />
+          </FormControl>
+          {photoPreview && (
+            <img src={photoPreview} alt="Preview" className="w-32 h-32 object-cover rounded mt-2" />
+          )}
+        </FormItem>
+
+        <Button type="submit" className="w-full">
+          Submit Review
+        </Button>
+      </form>
+    </Form>
   );
-};
-
-export default ReviewForm;
+}
