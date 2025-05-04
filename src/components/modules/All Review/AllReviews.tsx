@@ -1,5 +1,6 @@
 "use client"
 import LatestReviewCard from '@/components/cards/LatestReviewCards';
+import { IReview } from '@/types/reviews';
 import React, { useEffect, useState } from 'react';
 
 const AllReviews = () => {
@@ -19,7 +20,7 @@ const AllReviews = () => {
         `${process.env.NEXT_PUBLIC_BASE_API}/reviews?page=${page}&limit=${limit}&${params}`,
         {
           next: {
-            tags: ["TUTORS"],
+            tags: ["REVIEW"],
           },
         }
       );
@@ -66,6 +67,7 @@ const AllReviews = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+  console.log(getDatas)
   return (
     <div className='max-w-7xl mx-auto'>
 
@@ -157,8 +159,8 @@ const AllReviews = () => {
       </div>
 
       <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {getDatas.map((review: any, index: number) => (
-          <LatestReviewCard key={index} {...review} />
+        {getDatas?.map((review: IReview, index: number) => (
+          <LatestReviewCard key={index} review={review} />
         ))}
       </div>
 
