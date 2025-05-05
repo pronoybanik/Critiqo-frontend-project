@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Star, ShoppingCart, CheckCircle, Loader2, MessageCircle } from 'lucide-react';
+import { Star, ShoppingCart, CheckCircle, Loader2, MessageCircle, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 // import { cn } from '@/lib/utils';
@@ -11,11 +11,12 @@ import { Textarea } from "@/components/ui/textarea"
 import Image from 'next/image';
 import CommentComponent from './CommentComponent';
 import { Comment, Review } from '@/types/review';
-import { addComment, addVotes } from '@/services/Review';
+import { addComment, addVotes, deleteReview } from '@/services/Review';
 import { useUser } from '@/context/UserContext';
 import VoteCounter from './VottingComponent';
 import { toast } from 'sonner';
 import ReviewDescription from './ReviewDescription';
+import { useRouter } from 'next/navigation';
 
 // Mock data types (replace with your actual types from your GraphQL schema or Prisma)
 
@@ -134,6 +135,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
   const [submittingComment, setSubmittingComment] = useState(false);
   // const [myReviewVotes, setMyReviewVotes] = useState(10);
   const { user } = useUser();
+  const router = useRouter();
   console.log(user)
   useEffect(() => {
     // Simulate data fetching
@@ -221,6 +223,19 @@ const ReviewDetailsCard = (reviewDetails: any) => {
 
   };
 
+  const handleDelete = async () => {
+    try {
+      const res = await deleteReview(reviewDetails?.review?.id);
+      console.log(res)
+      if (res.success) {
+        toast.success("Review delete successfully");
+        router.push('/reviews')
+      }
+    } catch (err: any) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className="bg-white min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -258,7 +273,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
 
               </div>
               <div className='shadow-xl bg-gray-100 col-span-1 rounded-xl'>
-                <VoteCounter initialVotes={reviewDetails?.review?.votes.userVotes} onVoteChange={handleVoteChange}></VoteCounter>
+                <VoteCounter initialVotes={reviewDetails?.review?.votes.upvotes}
+                  dVotes={reviewDetails?.review?.votes.downvotes}
+                  onVoteChange={handleVoteChange}></VoteCounter>
 
               </div>
 
@@ -289,28 +306,62 @@ const ReviewDetailsCard = (reviewDetails: any) => {
             )}
             <ReviewDescription description={reviewDetails?.review?.description} />
 
-            <div className="mt-6 flex flex-wrap gap-4 items-center">
-              {reviewDetails?.review?.purchaseSource && (
-                <div className="flex items-center gap-1">
-                  <ShoppingCart className="w-4 h-4 text-blue-400" />
-                  <span className="text-gray-600">Purchase Source: {review.purchaseSource}</span>
-                </div>
-              )}
-              {reviewDetails?.review?.isPremium && (
-                <Badge variant="premium" className="bg-yellow-800/80 text-yellow-300 border-yellow-700 flex items-center gap-1.5">
-                  <CheckCircle className="w-4 h-4" /> Premium Review
-                  {reviewDetails?.review?.premiumPrice && (
-                    <span className="ml-1.5"> (+${reviewDetails?.review?.premiumPrice.toFixed(2)})</span>
-                  )}
-                </Badge>
-              )}
-              {/* Add Category Badge */}
-              {reviewDetails?.review?.categoryId && (
-                <Badge className="bg-purple-800/80 text-purple-300 border-purple-700">
-                  Category: {reviewDetails?.review?.category}
-                </Badge>
-              )}
-              {/* Add User Info (Simplified) */}
+            <div className="mt-6 flex justify-between gap-4 items-center">
+              <div className='flex flex-wrap gap-4 items-center'>
+                {reviewDetails?.review?.purchaseSource && (
+                  <div className="flex items-center gap-1">
+                    <ShoppingCart className="w-4 h-4 text-blue-400" />
+                    <span className="text-gray-600">Purchase Source: {review.purchaseSource}</span>
+                  </div>
+                )}
+                {reviewDetails?.review?.isPremium && (
+                  <Badge variant="premium" className="bg-yellow-800/80 text-yellow-300 border-yellow-700 flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4" /> Premium Review
+                    {reviewDetails?.review?.premiumPrice && (
+                      <span className="ml-1.5"> (+${reviewDetails?.review?.premiumPrice.toFixed(2)})</span>
+                    )}
+                  </Badge>
+                )}
+                {/* Add Category Badge */}
+                {reviewDetails?.review?.categoryId && (
+                  <Badge className="bg-purple-800/80 text-purple-300 border-purple-700">
+                    Category: {reviewDetails?.review?.category}
+                  </Badge>
+                )}
+              </div>
+              {/* Add User Info activities */}
+              {
+                user?.id === reviewDetails?.review?.authorId && (
+
+                  <div>
+                    <div className="flex space-x-4">
+                      {/* Update Button with Tooltip and Animated Border */}
+                      <div className="relative group">
+                        <button className="p-2 rounded border border-transparent hover:border-blue-500 transition-all duration-300 text-blue-600 hover:text-blue-800"
+
+                        >
+                          <Pencil size={20} />
+                        </button>
+                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Update
+                        </div>
+                      </div>
+
+                      {/* Delete Button with Tooltip and Animated Border */}
+                      <div className="relative group">
+                        <button className="p-2 rounded border border-transparent hover:border-red-500 transition-all duration-300 text-red-600 hover:text-red-800"
+                          onClick={handleDelete}
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          Delete
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
 
             </div>
 

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, ArrowUp, ArrowDown } from 'lucide-react'; // Changed ThumbUp, ThumbDown
+import { ThumbsUp, ArrowUp, ArrowDown, ThumbsDown } from 'lucide-react'; // Changed ThumbUp, ThumbDown
 import { cn } from '@/lib/utils';
 
 interface VoteCounterProps {
   initialVotes: number;
+  dVotes: number;
   onVoteChange?: (newVotes: number, type: 'upvote' | 'downvote') => void; // Optional callback
   className?: string;
 }
 
-const VoteCounter: React.FC<VoteCounterProps> = ({ initialVotes, onVoteChange, className }) => {
+const VoteCounter: React.FC<VoteCounterProps> = ({ initialVotes, dVotes, onVoteChange, className }) => {
   const [votes, setVotes] = useState(initialVotes);
+  const [dvotes, setDVotes] = useState(dVotes);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
 
@@ -54,9 +56,17 @@ const VoteCounter: React.FC<VoteCounterProps> = ({ initialVotes, onVoteChange, c
 
   return (
     <div className={cn("flex flex-col items-center", className)}>
-      <div className="flex items-center gap-2">
-        <span className="text-gray-700 font-semibold"> Total Vote : {votes}</span>
-        <ThumbsUp className="w-5 h-5 text-green-500" />
+      <div className="flex items-center gap-4">
+        <span>Total Vote : </span>
+        <div className='flex justify-center items-center gap-2'>
+
+          <span className="text-gray-700 font-semibold"> {votes}</span>
+          <ThumbsUp className="w-5 h-5 text-green-500" />
+        </div>
+        <div className='flex justify-center items-center gap-2'>
+          <span className="text-gray-700 font-semibold">  {dvotes}</span>
+          <ThumbsDown className="w-5 h-5 text-green-500" />
+        </div>
       </div>
       <div className="flex gap-2 mt-2">
         <Button

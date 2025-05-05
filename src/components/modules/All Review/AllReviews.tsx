@@ -1,202 +1,213 @@
-"use client"
-import LatestReviewCard from '@/components/cards/LatestReviewCards';
-import { IReview } from '@/types/reviews';
-import React, { useEffect, useState } from 'react';
+
+"use client";
+
+import LatestReviewCard from "@/components/cards/LatestReviewCards";
+import { getAllCategories } from "@/services/Category";
+import { IReview } from "@/types/reviews";
+import React, { useEffect, useState } from "react";
 
 const AllReviews = () => {
-  const [search, setSearch] = useState('');
-  const [itemperPage, setItemperPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [filter, setFilter] = useState('');
-  const [sort, setSort] = useState('');
-  const [pages, setPages] = useState([0])
-  const [availability, setAvailability] = useState('');
-  const [searchText, setSearchText] = useState('');
-  const [getDatas, setGetDatas] = useState<any>([]);
-  console.log(searchText)
+  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchText, setSearchText] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [status, setStatus] = useState("");
+  const [catData, setCatData] = useState([]);
+  const [availabilityFilter, setAvailabilityFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState(""); // 'asc' | 'desc'
+  const [itemsPerPage, setItemsPerPage] = useState(8);
+
+
   useEffect(() => {
-    const fetchData = async (page, limit, params) => {
+    const fetchCategory = async () => {
+
+      const { data: category } = await getAllCategories();
+      setCatData(category)
+      console.log(catData)
+    }
+    fetchCategory()
+  }, [categoryFilter])
+
+  const fetchReviews = async () => {
+
+    try {
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+        title: searchText,
+        status: status,
+        categoryId: categoryFilter,
+        isPremium: availabilityFilter,
+        sortBy: "createdAt",
+        sortOrder: sortOrder,
+      });
+
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?page=${page}&limit=${limit}&${params}`,
-        {
-          next: {
-            tags: ["REVIEW"],
-          },
-        }
+        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`,
+        // { cache: "no-store" }
       );
       const data = await res.json();
       console.log(data)
-      setGetDatas(data.data);
-    };
-    const page = pages[0];
-    console.log(page)
-    const limit = itemperPage;
-    const params = `searchTerm=${searchText} `;
-    fetchData(page, limit, params);
+      setReviews(data?.data || []);
+      const rPage = (data?.meta?.total / data?.meta?.limit)
 
-  }, [searchText, pages, itemperPage]);
+      setTotalPages(Math.ceil(rPage));
+      console.log(totalPages)
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+    }
+  };
 
-  const handleSearch = (e: any) => {
+  useEffect(() => {
+    fetchReviews();
+  }, [currentPage, itemsPerPage, searchText, categoryFilter, availabilityFilter, sortOrder, status]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    setSearch(searchText);
-    console.log(searchText)
-    // refetch();
-    // mutateAsync(search);
+    setCurrentPage(1);
+    fetchReviews();
   };
+
   const handleReset = () => {
-    setSearch('');
-    setSearchText('');
-    setSort('');
-    setFilter('');
-    setAvailability('');
+    setSearchText("");
+    setCategoryFilter("");
+    setAvailabilityFilter("");
+    setStatus("")
+    setSortOrder("");
+    setCurrentPage(1);
   };
-  const handleItemsPerPage = (e: any) => {
-    console.log(e.target.value);
-    const val = parseInt(e.target.value);
-    setItemperPage(val);
-    setCurrentPage(0);
-  };
-  const handlePreviouspage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-  const handleNextpage = () => {
-    if (currentPage < pages.length - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-  console.log(getDatas)
+
   return (
-    <div className='max-w-7xl mx-auto'>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center justify-center mb-6">
+        {/* Search */}
+        <form onSubmit={handleSearchSubmit} className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="border rounded px-4 py-2"
+          />
+          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+            Search
+          </button>
+        </form>
 
-      <div className='flex justify-center items-center gap-2'>
-        {/* Search implementtaion */}
-        <div className="flex justify-center items-center gap-4 my-6">
-          <form onSubmit={handleSearch}>
-            <div className=" p-1 overflow-hidden      focus-within:border-blue-400 ">
-              <input
-                className="px-6 py-2 text-gray-700 placeholder-gray-500 bg-white outline-none focus:placeholder-transparent border rounded-lg"
-                type="text"
-                onChange={e => setSearchText(e.target.value)}
-                value={searchText}
-                name="search"
-                placeholder="Enter asset name"
-                aria-label="Enter asset name"
-              />
-
-              <button
-                type="submit"
-                className="px-1 md:px-4 py-2 text-sm font-medium tracking-wider text-gray-100 uppercase transition-colors duration-300 transform bg-[#06D6D1] rounded-md hover:bg-gray-600 focus:bg-[#3facb2] focus:outline-none"
-              >
-                Search
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Filter=========================================== */}
-
-        <div className="flex justify-center items-center">
-          <select
-            onChange={e => {
-              setFilter(e.target.value);
-            }}
-            value={filter}
-            name="productType"
-            id="productType"
-            className="px-1 md:px-4 py-2 border text-sm rounded-lg border-[#06D6D1]"
-          >
-            <option value="" className="font-semibold">
-              Filter By Category
-            </option>
-            <option value="returnable">Returnable</option>
-            <option value="non-returnable">Non-Returnable</option>
-          </select>
-        </div>
-        {/* Filter=========================================== */}
-        <div>
-          <select
-            onChange={e => {
-              setAvailability(e.target.value);
-              // setCurrentPage(1);
-            }}
-            value={availability}
-            name="sort"
-            id="sort"
-            className="px-1 md:px-4 py-2 border text-sm rounded-lg border-[#06D6D1]"
-          >
-            <option value="">Filter By Availability</option>
-            <option value="available">Available</option>
-            <option value="Out Of Stock">Out Of Stock</option>
-          </select>
-        </div>
-        {/* sort=========================================== */}
-
-        <div>
-          <select
-            onChange={e => {
-              setSort(e.target.value);
-              // setCurrentPage(1);
-            }}
-            value={sort}
-            name="sort"
-            id="sort"
-            className="px-1 md:px-4 py-2 border text-sm rounded-lg border-[#06D6D1]"
-          >
-            <option value="">Sort By Quantity</option>
-            <option value="dsc">Descending Order</option>
-            <option value="asc">Ascending Order</option>
-          </select>
-        </div>
-        <button
-          onClick={handleReset}
-          className="px-1 md:px-4 py-2 text-sm bg-[#06D6D1] text-white rounded-lg"
+        {/* Category Filter */}
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="border rounded px-4 py-2"
         >
+          <option value="">Set Categories</option>
+          {
+            catData?.map((cat: any) =>
+              <option key={cat?.id} value={cat?.id}>{cat?.name}</option>
+            )
+          }
+          {/* <option value="">Set Categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Appliance">Appliance</option> */}
+        </select>
+
+        {/* Status Filter */}
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="border rounded px-4 py-2"
+        >
+          <option value="">Status</option>
+          <option value="PUBLISHED">Published</option>
+          <option value="DRAFT">Draft</option>
+        </select>
+        {/* Availability Filter */}
+        <select
+          value={availabilityFilter}
+          onChange={(e) => setAvailabilityFilter(e.target.value)}
+          className="border rounded px-4 py-2"
+        >
+          <option value="">isPremium</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+
+        {/* Sort */}
+        <div>
+          <select
+            onChange={e => {
+              setSortOrder(e.target.value);
+              // setCurrentPage(1);
+            }}
+            value={sortOrder}
+            name="sort"
+            id="sort"
+            className="px-1 md:px-4 py-2 border text-sm rounded-lg border-[#06D6D1]"
+          >
+            <option value="">Sorting</option>
+            <option value="desc">Newest Review</option>
+            <option value="asc">Oldest Review</option>
+          </select>
+        </div>
+
+        <button onClick={handleReset} className="bg-gray-300 px-4 py-2 rounded">
           Reset
         </button>
       </div>
 
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-        {getDatas?.map((review: IReview, index: number) => (
-          <LatestReviewCard key={index} review={review} />
-        ))}
+      {/* Reviews Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {reviews.length > 0 ? (
+          reviews.map((review, index) => (
+            <LatestReviewCard key={index} review={review} />
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">No reviews found.</p>
+        )}
       </div>
 
-      {/* pagination */}
-      <div className="pagination ">
-        <button onClick={handlePreviouspage}>Prev</button>
-        {pages.map(p => (
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-8">
+        <div>
           <button
-            key={p}
-            onClick={() => setCurrentPage(p)}
-            className={`hidden ${currentPage === p ? 'bg-[#06D6D1] text-white' : ''
-              } px-4 py-2 mx-1 transition-colors duration-300 transform  rounded-md sm:inline hover:bg-[#06D6D1] hover:text-white`}
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-4 py-2 border rounded bg-gray-100"
           >
-            {p}
+            Prev
           </button>
-        ))}
+          <span className="px-4">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 border rounded bg-gray-100"
+          >
+            Next
+          </button>
+        </div>
 
-        <button onClick={handleNextpage}>Next</button>
-
-        <select value={itemperPage} onChange={handleItemsPerPage} name="" id="">
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-        </select>
+        <div>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => {
+              setItemsPerPage(parseInt(e.target.value));
+              setCurrentPage(1);
+            }}
+            className="border rounded px-2 py-1"
+          >
+            {[4, 8, 12, 20].map((size) => (
+              <option key={size} value={size}>
+                {size} / page
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-
-
     </div>
-
-
-
-
-
-
-
-
   );
 };
 
