@@ -331,7 +331,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               </div>
               {/* Add User Info activities */}
               {
-                user?.id === reviewDetails?.review?.authorId && (
+                user?.id === reviewDetails?.review?.authorId || reviewDetails?.review?.role === 'ADMIN' ? (
 
                   <div>
                     <div className="flex space-x-4">
@@ -360,7 +360,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                       </div>
                     </div>
                   </div>
-                )
+                ) : ""
               }
 
             </div>
