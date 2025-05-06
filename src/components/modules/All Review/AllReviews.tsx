@@ -36,7 +36,7 @@ const AllReviews = () => {
         page: currentPage.toString(),
         limit: itemsPerPage.toString(),
         title: searchText,
-        status: status,
+        rating: status,
         categoryId: categoryFilter,
         isPremium: availabilityFilter,
         sortBy: "createdAt",
@@ -119,9 +119,11 @@ const AllReviews = () => {
           onChange={(e) => setStatus(e.target.value)}
           className="border rounded px-4 py-2"
         >
-          <option value="">Status</option>
-          <option value="PUBLISHED">Published</option>
-          <option value="DRAFT">Draft</option>
+          <option value="">Rating</option>
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
         </select>
         {/* Availability Filter */}
         <select
@@ -130,8 +132,8 @@ const AllReviews = () => {
           className="border rounded px-4 py-2"
         >
           <option value="">isPremium</option>
-          <option value="true">True</option>
-          <option value="false">False</option>
+          <option value="true">Premium</option>
+          <option value="false">Free</option>
         </select>
 
         {/* Sort */}
