@@ -1,11 +1,20 @@
 import Link from "next/link";
+import { format } from 'date-fns';
 import Image from "next/image";
 import logo from "../../assets/logo/2-removebg-preview.png";
 import google from "../../assets/logo/google.png";
 import apple from "../../assets/logo/apple.png";
 import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { featuredReview } from "@/services/Review";
+import { CardContent, CardTitle } from "../ui/card";
+import { StarRating } from "../modules/All Review/ReviewDetails";
 
-const Footer = () => {
+
+const Footer = async () => {
+  const page = "1"
+  const limit = "6"
+  const { data: featureds } = await featuredReview(page, limit);
+  console.log(featureds)
   return (
     <footer className=" bg-gray-900 text-gray-300 py-12  mx-auto">
       <div className="container mx-auto ">
@@ -70,59 +79,88 @@ const Footer = () => {
           </div>
 
           {/* Recent Posts */}
-          <div>
+
+          <div >
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800">
-              Recent posts
+              Highest Rated Review
             </h3>
-            <ul className="space-y-4">
-              <li>
-                <div className="flex items-center">
-                  <div className="w-16 h-12 relative mr-4 overflow-hidden rounded">
-                    <Image
-                      src="/images/post1.jpg"
-                      alt="Recent Post 1"
-                      layout="fill"
-                      objectFit="cover"
-                    />
+            <div className="grid grid-cols-1   gap-4" >
+
+              {
+                featureds?.highestRated?.map((review: any) =>
+
+                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
+
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={review.image}
+                        alt={review.title}
+                        className="w-20 h-20 rounded-md object-cover"
+                      />
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-200">
+                          {review.title}
+                        </CardTitle>
+                        <p className="text-gray-500 text-sm">
+                          {format(new Date(review.createdAt), 'PPP')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <CardContent className='flex justify-between items-center'>
+                      {/* <Badge variant="secondary" className="text-gray-600 bg-gray-100 border-gray-200">
+                        {review.category}
+                      </Badge> */}
+                      <div className='flex gap-2 items-center pt-1.5'>
+                        <StarRating rating={review?.rating} />
+                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
+                      </div>
+                    </CardContent>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">March 13, 2025</p>
-                    <Link href="/post/1" className="hover:text-white">
-                      A game-changer for frequent flyers and adventurers.
-                    </Link>
-                  </div>
-                </div>
-              </li>
-              {/* ... other recent posts ... */}
-            </ul>
+                )
+              }
+            </div>
           </div>
 
           {/* Latest Review */}
           <div>
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800 ">
-              Latest Review
+              Most Voted Review
             </h3>
-            <ul className="space-y-4">
-              <li>
-                <div className="flex items-center">
-                  <div className="w-16 h-12 relative mr-4 overflow-hidden rounded">
-                    <Image
-                      src="/images/review1.jpg"
-                      alt="Review 1"
-                      layout="fill"
-                      objectFit="cover"
-                    />
+            <div className="grid grid-cols-1   gap-4" >
+
+              {
+                featureds?.mostVoted?.map((review: any) =>
+
+                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
+
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={review.image}
+                        alt={review.title}
+                        className="w-20 h-20 rounded-md object-cover"
+                      />
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-200">
+                          {review.title}
+                        </CardTitle>
+                        <p className="text-gray-500 text-sm">
+                          {format(new Date(review.createdAt), 'PPP')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <CardContent className='flex justify-between items-center'>
+
+                      <div className='flex gap-2 items-center pt-1.5'>
+                        <StarRating rating={review?.rating} />
+                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
+                      </div>
+                    </CardContent>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-500">September 27, 2020</p>
-                    <Link href="/review/1" className="hover:text-white">
-                      Ultimate Guide: 10 Best Cameras for Filmmaking on a Budget
-                    </Link>
-                  </div>
-                </div>
-              </li>
-              {/* ... other latest reviews ... */}
-            </ul>
+                )
+              }
+            </div>
           </div>
         </div>
 

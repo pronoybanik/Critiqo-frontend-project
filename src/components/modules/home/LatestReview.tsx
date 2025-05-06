@@ -8,6 +8,7 @@ import React from "react";
 const LatestReview = async () => {
   const data = await getAllReview();
   const reviewsData = await data.data;
+  console.log(reviewsData)
 
   let content = null;
 
@@ -15,15 +16,15 @@ const LatestReview = async () => {
     content = <p>No reviews found!</p>;
   } else {
     content = (
-      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {reviewsData
-        .sort((a: IReview, b: IReview) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-        .slice(0, 6)
-        .map((review: IReview) => (
-          <LatestReviewCard key={review.id} review={review} />
-        ))}
-    </div>
-    
+      <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {reviewsData
+          .sort((a: IReview, b: IReview) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 8)
+          .map((review: IReview) => (
+            <LatestReviewCard key={review.id} review={review} />
+          ))}
+      </div>
+
     );
   }
 
@@ -34,7 +35,7 @@ const LatestReview = async () => {
       </div>
       {content}
       <Link href="/reviews" className="flex items-center justify-center my-4">
-      <PrimaryButton className="w-52 ">view all review</PrimaryButton>
+        <PrimaryButton className="w-52 ">view all review</PrimaryButton>
       </Link>
     </div>
   );
