@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const CapterraSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
-
+  console.log(searchQuery)
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       {/* Left side content */}
@@ -24,42 +24,46 @@ const CapterraSearch = () => {
 
             {/* Search bar */}
             <div className="flex w-full max-w-xl">
-              <div className="relative w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-500"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
-                </div>
-                <input
-                  type="search"
-                  className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter product, category, industry..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  required
-                />
-                <div className="absolute right-0 top-0 h-full">
-                  <SecondaryButton
-                    type="submit"
-                    className="h-full rounded-l-none px-8 py-4"
-                  >
-                    SEARCH
-                  </SecondaryButton>
+              <div className="relative w-full group animated-border rounded-lg p-[2px]">
+                <div className="relative w-full bg-white rounded-lg">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        stroke="currentColor"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1"
+                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="search"
+                    className="block w-full p-4 pl-10 text-sm text-gray-900 bg-white focus:outline-none rounded-md"
+                    placeholder="Enter product, category, industry..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    required
+                  />
+                  <div className="absolute right-0 top-0 h-full">
+                    <SecondaryButton
+                      type="submit"
+                      className="h-full rounded-l-none rounded-r-md px-8 py-4"
+                    >
+                      SEARCH
+                    </SecondaryButton>
+                  </div>
                 </div>
               </div>
             </div>
+
+
           </div>
         </div>
 

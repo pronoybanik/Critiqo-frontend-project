@@ -18,12 +18,12 @@ const Summary = () => {
             <div className="relative overflow-hidden rounded-xl bg-white shadow-lg border border-l-4 border-purple-300 hover:shadow-xl transition-all">
               <div className="p-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-300">Reviews</p>
+                  <p className="text-sm font-medium text-gray-500">Reviews</p>
                   <h3 className="text-2xl font-bold mt-1">
                     {data.reviews.toLocaleString()}
                   </h3>
                 </div>
-                <div className="rounded-full p-3 bg-purple-300">
+                <div className="rounded-full p-3 bg-purple-400">
                   <Star className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -34,12 +34,12 @@ const Summary = () => {
             <div className="relative overflow-hidden rounded-xl bg-white shadow-lg border border-l-4 border-blue-300 hover:shadow-xl transition-all">
               <div className="p-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-300">Users</p>
+                  <p className="text-sm font-medium text-gray-400">Users</p>
                   <h3 className="text-2xl font-bold mt-1">
                     {data.users.toLocaleString()}
                   </h3>
                 </div>
-                <div className="rounded-full p-3 bg-blue-300">
+                <div className="rounded-full p-3 bg-blue-400">
                   <Users className="w-6 h-6 text-white" />
                 </div>
               </div>
@@ -50,34 +50,34 @@ const Summary = () => {
             <div className="relative overflow-hidden rounded-xl bg-white shadow-lg border border-l-4 border-green-300 hover:shadow-xl transition-all">
               <div className="p-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-300">
+                  <p className="text-sm font-medium text-gray-400">
                     Activities
                   </p>
                   <h3 className="text-2xl font-bold mt-1">
                     {data.activities.toLocaleString()}
                   </h3>
                 </div>
-                <div className="rounded-full p-3 bg-green-300">
+                <div className="rounded-full p-3 bg-green-400">
                   <Activity className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <div className="h-1 w-full absolute bottom-0 left-0 bg-green-300"></div>
+              <div className="h-1 w-full absolute bottom-0 left-0 bg-green-200"></div>
             </div>
 
             {/* Comments Card */}
             <div className="relative overflow-hidden rounded-xl bg-white shadow-lg border border-l-4 border-pink-300 hover:shadow-xl transition-all">
               <div className="p-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-300">Comments</p>
+                  <p className="text-sm font-medium text-gray-400">Comments</p>
                   <h3 className="text-2xl font-bold mt-1">
                     {data.comments.toLocaleString()}
                   </h3>
                 </div>
-                <div className="rounded-full p-3 bg-pink-300">
+                <div className="rounded-full p-3 bg-pink-400">
                   <MessageCircle className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <div className="h-1 w-full absolute bottom-0 left-0 bg-pink-300"></div>
+              <div className="h-1 w-full absolute bottom-0 left-0 bg-pink-200"></div>
             </div>
           </div>
         </div>
