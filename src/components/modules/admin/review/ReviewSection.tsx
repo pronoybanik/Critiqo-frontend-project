@@ -37,22 +37,22 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
   const [editPrice, setEditPrice] = useState("");
 
   // Filter reviews based on active tab
-  const filteredReviews = reviewData.filter(
-    (review) => review.status === "DRAFT"
-  );
+  // const filteredReviews = reviewData.filter(
+  //   (review) => review.status === "DRAFT"
+  // );
 
-  console.log("filter", filteredReviews);
+  // console.log("filter", filteredReviews);
 
   // Calculate total premium earnings
-  const totalEarnings = reviews
-    .filter((r) => r.isPremium && r.status === "published")
-    .reduce((sum, review) => sum + (review.price || 0), 0);
+  // const totalEarnings = reviews
+  //   .filter((r) => r.isPremium && r.status === "published")
+  //   .reduce((sum, review) => sum + (review.price || 0), 0);
 
   // Get top premium reviews by earnings (assuming voteCount * price = earnings)
-  const topPremiumReviews = [...reviews]
-    .filter((r) => r.isPremium && r.status === "published")
-    .sort((a, b) => b.voteCount * (b.price || 0) - a.voteCount * (a.price || 0))
-    .slice(0, 3);
+  // const topPremiumReviews = [...reviews]
+  //   .filter((r) => r.isPremium && r.status === "published")
+  //   .sort((a, b) => b.voteCount * (b.price || 0) - a.voteCount * (a.price || 0))
+  //   .slice(0, 3);
 
   // Recent activity - pending reviews or recently updated ones
   const recentActivity = [...reviews]
@@ -183,40 +183,47 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
               <h3 className="font-semibold">Recent Activity</h3>
             </div>
             <div className="space-y-3">
-              {reviewData.map((review: IReview) => (
-                <div
-                  key={review.id}
-                  className="p-2 border border-gray-100 rounded-md"
-                >
-                  <div className="flex justify-between">
-                    <p className="text-sm font-medium text-gray-800 truncate w-32">
-                      {review.title}
+              {reviewData
+                .sort(
+                  (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
+                .slice(0, 4)
+                .map((review: IReview) => (
+                  <div
+                    key={review.id}
+                    className="p-2 border border-gray-100 rounded-md"
+                  >
+                    <div className="flex justify-between">
+                      <p className="text-sm font-medium text-gray-800 truncate w-32">
+                        {review.title}
+                      </p>
+                      <Badge status={review.status} />
+                    </div>
+                    <p className="text-xs text-gray-500 mb-2">
+                      By {review.name} • {formatDate(review.createdAt)}
                     </p>
-                    <Badge status={review.status} />
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() =>
+                          handleStatusChange(review._id, "published")
+                        }
+                        className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
+                      >
+                        <Check size={12} className="inline mr-1" />
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => openModerationModal(review, "reject")}
+                        className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"
+                      >
+                        <X size={12} className="inline mr-1" />
+                        Reject
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 mb-2">
-                    By {review.name} • {formatDate(review.createdAt)}
-                  </p>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() =>
-                        handleStatusChange(review._id, "published")
-                      }
-                      className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
-                    >
-                      <Check size={12} className="inline mr-1" />
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => openModerationModal(review, "reject")}
-                      className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"
-                    >
-                      <X size={12} className="inline mr-1" />
-                      Reject
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
               {recentActivity.length === 0 && (
                 <p className="text-sm text-gray-500 text-center py-2">
                   No pending reviews
@@ -228,8 +235,6 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
 
         {/* Reviews Management Tabs */}
         <div className="bg-white rounded-lg shadow">
- 
-
           {/* Reviews Table */}
           <ReviewTable reviewData={reviewData} />
         </div>

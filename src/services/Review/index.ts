@@ -6,6 +6,18 @@ import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 
+export const createReview = async (data: any) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews`, {
+    method: "POST",
+    headers: {
+      Authorization: (await cookies()).get("accessToken")?.value || "",
+    },
+    body: data,
+  });
+  revalidateTag("REVIEW");
+  return res.json();
+};
+
 
 //get all review
 export const getAllReview = async (page?: string, limit?: string, query?: { [key: string]: string | string[] | undefined }) => {
@@ -93,7 +105,6 @@ export const deleteReview = async (reviewId: string): Promise<any> => {
 };
 
 
-
 export const addComment = async (data: Partial<Comment>) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
     method: "POST",
@@ -108,7 +119,6 @@ export const addComment = async (data: Partial<Comment>) => {
 };
 
 export const addVotes = async (data: any) => {
-  
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/votes`, {
     method: "POST",
@@ -122,17 +132,7 @@ export const addVotes = async (data: any) => {
   return res.json();
 };
 
-export const createReview = async (data: any) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews`, {
-    method: "POST",
-    headers: {
-      Authorization: (await cookies()).get("accessToken")?.value || "",
-    },
-    body: data,
-  });
-  revalidateTag("REVIEW");
-  return res.json();
-};
+
 
 export const getAllReviewAdmin = async () => {
   try {
@@ -146,7 +146,6 @@ export const getAllReviewAdmin = async () => {
         tags: ["REVIEW"],
       },
     });
-
     const data = await res.json();
     return data;
   } catch (error: any) {
@@ -162,6 +161,7 @@ export const getAllUserReviews = async (id: string) => {
         tags: ["REVIEW"],
       },
     });
+
 
     const data = await res.json();
     return data;

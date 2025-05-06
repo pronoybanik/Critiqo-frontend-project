@@ -1,21 +1,3 @@
-// "use client";
-// import { useUser } from "@/context/UserContext";
-// import React from "react";
-
-// const MyReviewsPage = () => {
-//   const { user } = useUser();
-//   console.log(user);
-//   const data =  getAllUserReviews(user.userId)
-
-//   return (
-//     <div>
-//       {/* <GuestAllReviewSection id={(user as any)?.userId} /> */}
-//     </div>
-//   );
-// };
-
-// export default MyReviewsPage;
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -44,17 +26,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import { deleteCategory } from "@/services/Category";
 import { toast } from "sonner";
+import { IReview } from "@/types/reviews";
+import Link from "next/link";
+import SecondaryButton from "@/components/shared/SecondaryButton";
 
 const MyReviewsPage = () => {
   const { user } = useUser();
-  console.log(user);
 
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,7 +113,7 @@ const MyReviewsPage = () => {
   };
 
   // Handle delete review
-  const handleDeleteReview =async (reviewId: string) => {
+  const handleDeleteReview = async (reviewId: string) => {
     // Implement deletion logic here
     console.log(`Delete review with ID: ${reviewId}`);
     const deleteRes = await deleteReview(reviewId);
@@ -141,11 +124,9 @@ const MyReviewsPage = () => {
   };
 
   // Handle edit review
-  const handleEditReview =  (reviewId: string) => {
+  const handleEditReview = (reviewId: string) => {
     // Implement edit logic here
     console.log(`Edit review with ID: ${reviewId}`);
-
-
   };
 
   // Render loading skeletons
@@ -241,11 +222,13 @@ const MyReviewsPage = () => {
               ? "You haven't written any reviews yet."
               : `You don't have any ${activeTab} reviews.`}
           </p>
-          <Button>Write Your First Review</Button>
+          <Link className="flex items-center justify-center mt-4" href="/createReview">
+            <SecondaryButton  className="w-52 ">Write Your First Review</SecondaryButton>
+          </Link>
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedReviews.map((review) => (
+          {sortedReviews.map((review: IReview) => (
             <Card key={review.id} className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 {review.image && (
@@ -253,7 +236,7 @@ const MyReviewsPage = () => {
                     <Image
                       width={200}
                       height={200}
-                      src={review.image}
+                      src={review.image || []}
                       alt={review.title}
                       className="w-full h-full object-cover"
                     />

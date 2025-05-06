@@ -4,10 +4,16 @@ import { Star, Check, X, ArrowUp, ArrowDown, Edit } from "lucide-react";
 import { IReview } from "@/types/reviews";
 
 const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
+  // console.log(reviewData);
+
   const [reviews, setReviews] = useState<IReview[]>(reviewData);
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
   const [modalType, setModalType] = useState<string>("");
   const [editPrice, setEditPrice] = useState<string>("");
+
+  const pendingData = reviewData.filter((item) => item.status === "DRAFT");
+
+  console.log("Pending Reviews", pendingData);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
