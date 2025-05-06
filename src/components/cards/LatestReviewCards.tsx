@@ -25,7 +25,7 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
     images,
     purchaseSource,
     rating,
-    status
+
   } = review;
 
   // Format date to relative time (e.g. "2 days ago")
@@ -66,9 +66,11 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
 
       {/* Status Badge */}
       <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
-        ${status === "PUBLISHED" ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
+        ${!isPremium ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
         <Clock className="w-3 h-3" />
-        {status}
+        {
+          isPremium ? 'PREMIUM' : 'FREE'
+        }
       </div>
 
       {/* Card Content */}
