@@ -1,4 +1,3 @@
-import AllProduct from "@/components/modules/home/AllProduct";
 import Banner from "@/components/modules/home/Banner";
 import FaqSection from "@/components/modules/home/Faq";
 import LatestReview from "@/components/modules/home/LatestReview";
@@ -16,9 +15,9 @@ const HomePage = () => {
       <Banner></Banner>
       <Summary></Summary>
       <LatestReview></LatestReview>
-      <TopCategories></TopCategories>
-      <AllProduct></AllProduct>
       <ProductMarketing></ProductMarketing>
+      {/* <AllProduct></AllProduct> */}
+      <TopCategories></TopCategories>
       <FaqSection></FaqSection>
       <TopBrand></TopBrand>
     </div>

@@ -8,7 +8,7 @@ import React from "react";
 const LatestReview = async () => {
   const data = await getAllReview();
   const reviewsData = await data.data;
-  console.log(reviewsData)
+  console.log(reviewsData);
 
   let content = null;
 
@@ -18,13 +18,17 @@ const LatestReview = async () => {
     content = (
       <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {reviewsData
-          .sort((a: IReview, b: IReview) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .filter((item: IReview) => item.status === "PUBLISHED")
+          .sort((a: IReview, b: IReview) => {
+            const dateA = new Date(a.createdAt).getTime() || 0;
+            const dateB = new Date(b.createdAt).getTime() || 0;
+            return dateB - dateA;
+          })
           .slice(0, 8)
           .map((review: IReview) => (
             <LatestReviewCard key={review.id} review={review} />
           ))}
       </div>
-
     );
   }
 
