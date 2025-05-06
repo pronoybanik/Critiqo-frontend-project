@@ -74,14 +74,16 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
       {/* Card Content */}
       <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-lg transition-all duration-300 group-hover:translate-y-[-4px]">
         {/* Image */}
-        <div className="relative w-full h-48 overflow-hidden bg-gray-100">
+        <div className="relative w-full h-48 overflow-hidden bg-gray-100 p-6 flex justify-center items-center">
           {images && images.length > 0 ? (
             <Image
+              height={120}
+              width={150}
               src={images[0]}
               alt={title}
-              fill
+              // fill
               style={{ objectFit: "cover" }}
-              className="transition-transform duration-500 group-hover:scale-110"
+              className="transition-transform duration-500 group-hover:scale-110 object-cover "
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">

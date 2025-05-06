@@ -329,39 +329,41 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                   </Badge>
                 )}
               </div>
-              {/* Add User Info activities */}
-              {
-                user?.id === reviewDetails?.review?.authorId || reviewDetails?.review?.role === 'ADMIN' ? (
 
-                  <div>
-                    <div className="flex space-x-4">
-                      {/* Update Button with Tooltip and Animated Border */}
-                      <div className="relative group">
-                        <button className="p-2 rounded border border-transparent hover:border-blue-500 transition-all duration-300 text-blue-600 hover:text-blue-800"
 
-                        >
-                          <Pencil size={20} />
-                        </button>
-                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          Update
-                        </div>
+              <div className="flex space-x-4">
+                {/* Update Button with Tooltip and Animated Border */}
+                {
+                  user?.id === reviewDetails?.review?.authorId && (
+                    <div className="relative group">
+                      <button className="p-2 rounded border border-transparent hover:border-blue-500 transition-all duration-300 text-blue-600 hover:text-blue-800"
+
+                      >
+                        <Pencil size={20} />
+                      </button>
+                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Update
                       </div>
+                    </div>)
+                }
 
-                      {/* Delete Button with Tooltip and Animated Border */}
-                      <div className="relative group">
-                        <button className="p-2 rounded border border-transparent hover:border-red-500 transition-all duration-300 text-red-600 hover:text-red-800"
-                          onClick={handleDelete}
-                        >
-                          <Trash2 size={20} />
-                        </button>
-                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          Delete
-                        </div>
+                {/* Delete Button with Tooltip and Animated Border */}
+                {
+                  user?.id === reviewDetails?.review?.authorId || reviewDetails?.review?.authorRole === 'ADMIN' ? (
+                    <div className="relative group">
+                      <button className="p-2 rounded border border-transparent hover:border-red-500 transition-all duration-300 text-red-600 hover:text-red-800"
+                        onClick={handleDelete}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                      <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        Delete
                       </div>
                     </div>
-                  </div>
-                ) : ""
-              }
+                  ) : ""
+                }
+              </div>
+
 
             </div>
 
