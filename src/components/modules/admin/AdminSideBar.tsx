@@ -6,7 +6,6 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  MessageCircle,
   BarChart2,
   ChevronRight,
   LayoutDashboard,
@@ -63,12 +62,7 @@ const AdminSideBar = () => {
         },
       ],
     },
-    {
-      id: "comments",
-      label: "Comments",
-      icon: <MessageCircle size={20} />,
-      link: "/admin/comments",
-    },
+ 
     {
       id: "Category",
       label: "Create Category",

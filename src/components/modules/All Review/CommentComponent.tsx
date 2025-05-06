@@ -12,6 +12,7 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [replyText, setReplyText] = useState("");
   const { user } = useUser();
+  console.log(user?.id)
 
 
   const handleReplySubmit = async () => {
@@ -76,7 +77,7 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
                   : "Reply"}
             </button>
             {
-              user?.id == comment?.authorId || user?.role == "ADMIN" && (
+              user?.id === comment?.authorId || user?.role === "ADMIN" && (
 
                 <button>
                   <div className="relative group">

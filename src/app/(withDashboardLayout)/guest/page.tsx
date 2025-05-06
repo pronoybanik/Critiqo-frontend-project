@@ -2,53 +2,57 @@
 
 import { useState } from 'react';
 import { Heart, Star, Gift, User, MessageSquare, ShoppingBag } from 'lucide-react';
+import Link from 'next/link';
 
 export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [rating, setRating] = useState(0);
   
   const dashboardCards = [
-    {
-      id: 'saved',
-      title: 'Saved Products',
-      description: 'Access your favorites here',
-      icon: <Heart size={24} className="text-white" />,
-      color: 'bg-orange-400',
-    },
+    // {
+    //   id: 'saved',
+    //   title: 'Saved Products',
+    //   description: 'Access your favorites here',
+    //   icon: <Heart size={24} className="text-white" />,
+    //   color: 'bg-orange-400',
+    // },
     {
       id: 'reviews',
       title: 'My Reviews',
       description: 'Your published reviews, all in one place',
       icon: <Star size={24} className="text-white" />,
       color: 'bg-orange-400',
+      link: '/guest/myreviews'
     },
-    {
-      id: 'comments',
-      title: 'My Comments',
-      description: 'Track discussions you ve participated in',
-      icon: <MessageSquare size={24} className="text-white" />,
-      color: 'bg-blue-500',
-    },
+    // {
+    //   id: 'comments',
+    //   title: 'My Comments',
+    //   description: 'Track discussions you ve participated in',
+    //   icon: <MessageSquare size={24} className="text-white" />,
+    //   color: 'bg-blue-500',
+    // },
     {
       id: 'purchases',
       title: 'My Purchases',
       description: 'View your order history and status',
       icon: <ShoppingBag size={24} className="text-white" />,
       color: 'bg-green-500',
+       link: '/guest/mypurchases'
     },
-    {
-      id: 'rewards',
-      title: 'My Rewards',
-      description: 'Claim your rewards and discover new review offers!',
-      icon: <Gift size={24} className="text-white" />,
-      color: 'bg-purple-500',
-    },
+    // {
+    //   id: 'rewards',
+    //   title: 'My Rewards',
+    //   description: 'Claim your rewards and discover new review offers!',
+    //   icon: <Gift size={24} className="text-white" />,
+    //   color: 'bg-purple-500',
+    // },
     {
       id: 'profile',
       title: 'My Profile',
       description: 'Add your industry, job function, company size to get personalized picks',
       icon: <User size={24} className="text-white" />,
       color: 'bg-gray-500',
+       link: '/profile'
     },
   ];
 
@@ -61,12 +65,9 @@ export default function UserDashboard() {
           {activeTab === 'dashboard' && (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dashboardCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                    onClick={() => setActiveTab(card.id)}
-                  >
+                {dashboardCards?.map((card) => (
+                  <Link href={card.link} key={card.id}>
+                  <div className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
                     <div className="p-6">
                       <div className="flex items-center mb-4">
                         <div className={`p-2 rounded-full ${card.color}`}>
@@ -77,6 +78,8 @@ export default function UserDashboard() {
                       <p className="text-gray-600">{card.description}</p>
                     </div>
                   </div>
+                </Link>
+                
                 ))}
               </div>
               <div className="mt-8">

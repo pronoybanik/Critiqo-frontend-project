@@ -1,41 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Eye,
-  RotateCcw,
-  Check,
-  X,
-} from "lucide-react";
+import { Eye, RotateCcw, Trash2 } from "lucide-react";
 import { getAllUser } from "@/services/User";
+import UserDetailsModal from "./UserDetailsModal";
+import { TUser } from "@/types/user";
 
 const UserManagementTable = () => {
+  const [users, setUsers] = useState<TUser | []>([]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  
+
   useEffect(() => {
     const fetchProfile = async () => {
       const response = await getAllUser();
-
       if (response.success) {
-        const user = response?.data;
-        setUsers(user);
+        setUsers(response.data);
       }
     };
-
     fetchProfile();
   }, []);
 
-  const [users, setUsers] = useState([]);
-
-  console.log("user", users);
-
-  const [showStatusDropdown, setShowStatusDropdown] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-
- 
   const changeStatus = (userId, newStatus) => {
     setUsers(
       users.map((user) =>
@@ -45,36 +33,23 @@ const UserManagementTable = () => {
     setShowStatusDropdown("");
   };
 
-  // Function to format date
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
-  // Function to view user details
   const viewUserDetails = (user) => {
     setSelectedUser(user);
-    setShowDetailsModal(true);
+    setOpen(true);
   };
 
-  // Function to delete user
-  const confirmDeleteUser = (user) => {
-    setSelectedUser(user);
-    setShowDeleteConfirmation(true);
-  };
-
-  const deleteUser = () => {
-    console.log("is delete");
-    
-  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">User Management</h2>
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
+        <table className="min-w-full bg-white z-0">
           <thead>
             <tr className="bg-gray-100 border-b border-gray-200">
               <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
@@ -169,12 +144,6 @@ const UserManagementTable = () => {
                       <Eye className="h-4 w-4" />
                     </button>
                     <button
-                      className="p-1 text-green-600 hover:text-green-800"
-                      title="Edit User"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
                       onClick={() => confirmDeleteUser(user)}
                       className="p-1 text-red-600 hover:text-red-800"
                       title="Delete User"
@@ -189,118 +158,12 @@ const UserManagementTable = () => {
         </table>
       </div>
 
-      {/* User Details Modal */}
-      {showDetailsModal && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">User Details</h3>
-              <button
-                onClick={() => setShowDetailsModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">ID</h4>
-                <p className="text-sm">{selectedUser.id}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Name</h4>
-                <p className="text-sm">
-                  {selectedUser.guest?.name ||
-                    selectedUser.admin?.name ||
-                    "N/A"}
-                </p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Email</h4>
-                <p className="text-sm">{selectedUser.email}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Role</h4>
-                <p className="text-sm">{selectedUser.role}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">Status</h4>
-                <p className="text-sm">{selectedUser.status}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">
-                  Need Password Change
-                </h4>
-                <p className="text-sm">
-                  {selectedUser.needPasswordChange ? "Yes" : "No"}
-                </p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">
-                  Created At
-                </h4>
-                <p className="text-sm">{formatDate(selectedUser.createdAt)}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-500">
-                  Updated At
-                </h4>
-                <p className="text-sm">{formatDate(selectedUser.updatedAt)}</p>
-              </div>
-              {selectedUser.guest && (
-                <div>
-                  <h4 className="text-sm font-medium text-gray-500">
-                    Contact Number
-                  </h4>
-                  <p className="text-sm">{selectedUser.guest.contactNumber}</p>
-                </div>
-              )}
-            </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowDetailsModal(false)}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {showDeleteConfirmation && selectedUser && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
-            <div className="mb-4">
-              <h3 className="text-xl font-bold text-gray-800">
-                Confirm Delete
-              </h3>
-            </div>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete user{" "}
-              {selectedUser.guest?.name ||
-                selectedUser.admin?.name ||
-                selectedUser.email}
-              ? This action cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowDeleteConfirmation(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={deleteUser}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Details Modal rendered outside the map */}
+      <UserDetailsModal
+        isOpen={open}
+        onOpenChange={setOpen}
+        user={selectedUser}
+      />
     </div>
   );
 };

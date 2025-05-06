@@ -351,6 +351,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                 <CommentComponent
                   key={comment.id}
                   comment={comment}
+
                 // reviewId={reviewId}
                 />
               ))}
