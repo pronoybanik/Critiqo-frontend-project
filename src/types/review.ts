@@ -18,7 +18,9 @@ export interface Review {
 }
 
 export interface Comment {
-  id?: string;
+  id: string;
+  author: string;
+  authorId: string;
   content: string;
   reviewId: string;
   createdAt: string; // Store as ISO string

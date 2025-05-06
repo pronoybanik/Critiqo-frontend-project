@@ -137,6 +137,37 @@ export const createReview = async (data: any) => {
   revalidateTag("REVIEW");
   return res.json();
 };
+export const replyComment = async (data: any) => {
+  console.log("with data REply:", data);
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: (await cookies()).get("accessToken")?.value || "",
+    },
+    body: JSON.stringify(data),
+  });
+  revalidateTag("REVIEW");
+  return res.json();
+};
+export const deleteComment = async (replyId: string): Promise<any> => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_API}/comments/${replyId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: (await cookies()).get("accessToken")!.value,
+        },
+      }
+    );
+    revalidateTag("REVIEW");
+    return res.json();
+  } catch (error: any) {
+    return Error(error);
+  }
+};
 
 export const getAllReviewAdmin = async () => {
   try {

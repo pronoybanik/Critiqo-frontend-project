@@ -45,40 +45,6 @@ const mockReview: Review = {
   authorProfession: 'Tech Enthusiast',
 };
 
-// const mockComments: Comment[] = [
-//   {
-//     id: 'comment-1',
-//     text: 'Great review!  I have been thinking about getting this.  Did you find it easy to use?',
-//     userId: 'user-789',
-//     createdAt: new Date(Date.now() - 72000000).toISOString(), // 20 hours ago
-//     replies: [
-//       {
-//         id: 'reply-1',
-//         text: 'Yes, it was very easy to set up and use.  The interface is intuitive.',
-//         userId: 'user-456',
-//         createdAt: new Date(Date.now() - 64800000).toISOString(), // 18 hours ago
-//       },
-//       {
-//         id: 'reply-2',
-//         text: 'Yes, it was very easy to set up and use.  The interface is intuitive.',
-//         userId: 'user-456',
-//         createdAt: new Date(Date.now() - 64800000).toISOString(), // 18 hours ago
-//       },
-//     ],
-//   },
-//   {
-//     id: 'comment-2',
-//     text: 'I agree, the [specific feature] is a game-changer!',
-//     userId: 'user-101',
-//     createdAt: new Date(Date.now() - 36000000).toISOString(), // 10 hours ago
-//   },
-//   {
-//     id: 'comment-3',
-//     text: 'Where did you purchase it?',
-//     userId: 'user-222',
-//     createdAt: new Date(Date.now() - 18000000).toISOString(), // 5 hours ago
-//   },
-// ];
 
 const getStatusBadgeVariant = (status: Review['status']) => {
   switch (status) {
@@ -86,12 +52,8 @@ const getStatusBadgeVariant = (status: Review['status']) => {
       return 'secondary';
     case 'PUBLISHED':
       return 'default';
-    case 'APPROVED':
-      return 'success';
     case 'REJECTED':
       return 'destructive';
-    default:
-      return 'outline';
   }
 };
 
@@ -136,7 +98,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
   // const [myReviewVotes, setMyReviewVotes] = useState(10);
   const { user } = useUser();
   const router = useRouter();
-  console.log(user)
+  console.log(reviewDetails)
   useEffect(() => {
     // Simulate data fetching
     const fetchData = async () => {
@@ -235,6 +197,8 @@ const ReviewDetailsCard = (reviewDetails: any) => {
       console.error(err)
     }
   }
+  const reviewId = reviewDetails?.review?.id
+  console.log(reviewId)
 
   return (
     <div className="bg-white min-h-screen">
@@ -315,7 +279,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                   </div>
                 )}
                 {reviewDetails?.review?.isPremium && (
-                  <Badge variant="premium" className="bg-yellow-800/80 text-yellow-300 border-yellow-700 flex items-center gap-1.5">
+                  <Badge className="bg-yellow-800/80 text-yellow-300 border-yellow-700 flex items-center gap-1.5">
                     <CheckCircle className="w-4 h-4" /> Premium Review
                     {reviewDetails?.review?.premiumPrice && (
                       <span className="ml-1.5"> (+${reviewDetails?.review?.premiumPrice.toFixed(2)})</span>
@@ -349,7 +313,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
 
                 {/* Delete Button with Tooltip and Animated Border */}
                 {
-                  user?.id === reviewDetails?.review?.authorId || reviewDetails?.review?.authorRole === 'ADMIN' ? (
+                  user?.id === reviewDetails?.review?.authorId || user?.role === 'ADMIN' ? (
                     <div className="relative group">
                       <button className="p-2 rounded border border-transparent hover:border-red-500 transition-all duration-300 text-red-600 hover:text-red-800"
                         onClick={handleDelete}
@@ -384,7 +348,11 @@ const ReviewDetailsCard = (reviewDetails: any) => {
           <CardContent>
             <div className="space-y-4">
               {reviewDetails?.review?.comments?.map((comment: any) => (
-                <CommentComponent key={comment.id} comment={comment} />
+                <CommentComponent
+                  key={comment.id}
+                  comment={comment}
+                // reviewId={reviewId}
+                />
               ))}
             </div>
             {/* Add Comment Input */}
