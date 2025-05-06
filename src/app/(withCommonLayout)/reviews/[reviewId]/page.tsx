@@ -18,7 +18,7 @@ const ReviewDetailsPage = async ({
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="grid grid-cols-6 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-6">
         <div className="col-span-4">
           <ReviewDetailsCard review={review}></ReviewDetailsCard>
         </div>
