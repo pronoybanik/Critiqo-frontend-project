@@ -25,7 +25,7 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
     images,
     purchaseSource,
     rating,
-    status
+
   } = review;
 
   // Format date to relative time (e.g. "2 days ago")
