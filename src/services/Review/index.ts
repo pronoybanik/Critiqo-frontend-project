@@ -4,7 +4,6 @@
 import { Comment } from "@/types/review";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 
 
 
@@ -109,7 +108,7 @@ export const addComment = async (data: Partial<Comment>) => {
 };
 
 export const addVotes = async (data: any) => {
-  console.log("with data 76:", data);
+  
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/votes`, {
     method: "POST",

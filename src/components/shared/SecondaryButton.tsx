@@ -14,6 +14,7 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   handler,
   className = "",
   type = "button",
+  ...props
 }) => {
   return (
     <Button
@@ -24,10 +25,13 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
         "group relative w-full flex justify-center py-3 px-4 text-sm font-medium rounded-xl text-indigo-700 bg-white border border-indigo-300 hover:bg-indigo-50 hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer",
         className
       )}
+      {...props}
     >
       {children}
     </Button>
   );
 };
+
+SecondaryButton.displayName = "SecondaryButton";
 
 export default SecondaryButton;
