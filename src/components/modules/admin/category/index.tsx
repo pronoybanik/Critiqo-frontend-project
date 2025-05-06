@@ -15,6 +15,7 @@ import { ICategory } from "@/types/category";
 import { Trash } from "lucide-react";
 import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
+import PrimaryButton from "@/components/shared/PrimayButton";
 // import DeleteConfirmationModal from "@/components/ui/core/NMModal/DeleteConfirmationModal";
 
 type TCategoriesProps = {
@@ -22,15 +23,13 @@ type TCategoriesProps = {
 };
 
 const ManageCategories = ({ categories }: TCategoriesProps) => {
-  console.log("category", categories);
-  
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
 
   const handleDelete = (data: ICategory) => {
     console.log(data);
-    setSelectedId(data?._id);
+    setSelectedId(data?.id);
     setSelectedItem(data?.name);
     setModalOpen(true);
   };
@@ -52,26 +51,17 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
     }
   };
 
-
   const columns: ColumnDef<ICategory>[] = [
     {
       accessorKey: "name",
       header: () => <div>Category Name</div>,
       cell: ({ row }) => (
         <div className="flex items-center space-x-3">
-          <Image
-            src={row.original.icon}
-            alt={row.original.name}
-            width={40}
-            height={40}
-            className="w-8 h-8 rounded-full"
-          />
+          <div className="w-6 text-center">{row.index + 1}:-</div>
           <span className="truncate">{row.original.name}</span>
         </div>
       ),
     },
-   
-    
     {
       accessorKey: "action",
       header: () => <div>Action</div>,
@@ -93,7 +83,7 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
         <h1 className="text-xl font-bold">Manage category </h1>
         <CreateCategoryModal />
       </div>
-      {/* <NMTable data={categories} columns={columns} /> */}
+      <NMTable data={categories} columns={columns} />
       <DeleteConfirmationModal
         name={selectedItem}
         isOpen={isModalOpen}

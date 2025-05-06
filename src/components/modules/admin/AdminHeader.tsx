@@ -14,6 +14,7 @@ import { getMyProfile, logout } from "@/services/AuthService";
 import { useUser } from "@/context/UserContext";
 import { IProfile } from "@/types/profile";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import Link from "next/link";
 
 const AdminHeader = () => {
   const { user: userInfo, setIsLoading } = useUser();
@@ -98,12 +99,13 @@ const AdminHeader = () => {
             )}
           </div>
 
-          {userInfo?.role === "GUEST" ? (
+         <Link  href={'/createReview'}>
             <PrimaryButton className="flex items-center space-x-1 w-38 text-white px-4 py-2 rounded-lg">
               <PenTool size={16} />
               <span>Create Review</span>
             </PrimaryButton>
-          ) : null}
+         </Link>
+          
 
           {/* User Menu */}
           <div className="relative">

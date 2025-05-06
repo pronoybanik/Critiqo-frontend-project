@@ -1,49 +1,54 @@
-'use client';
+"use client";
 
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import { useState, useEffect } from 'react';
-import { createReview } from '@/services/Review'; // your API function
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { X, Upload, User } from "lucide-react"; // Ensure these icons are available
+
+import { createReview } from "@/services/Review";
+
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import {
-  Input
-} from "@/components/ui/input";
-import {
   Select,
+  SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
-  SelectContent,
-  SelectItem
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
-interface ReviewFormProps {
+type Props = {
   categories: { id: string; name: string }[];
-}
+};
 
-export default function ReviewForm({ categories }: ReviewFormProps) {
-  const form = useForm({
-    defaultValues: {
-      title: 'This bag lather is good',
-      description: 'This is a detailed review of the product...',
-      rating: 5,
-      purchaseSource: 'Amazon',
-      categoryId: '',
-      isPremium: false,
-    }
-  });
-
+export default function ReviewForm({ categories }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      rating: 0,
+      purchaseSource: "",
+      categoryId: "",
+      isPremium: false,
+    },
+  });
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -55,161 +60,225 @@ export default function ReviewForm({ categories }: ReviewFormProps) {
     }
   };
 
+  const removePhoto = () => {
+    setPhoto(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   const handleRatingClick = (value: number) => {
     form.setValue("rating", value);
   };
 
-  const onSubmit = async (data: any) => {
-    const formData = new FormData();
-    formData.append('data', JSON.stringify(data));
-    if (photo) {
-      formData.append('images', photo);
-    }
-
-
-
-    // ✅ Confirm data is appended
-    for (const pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-    const midifiedData = {
-      images: photo,
-      ...data
-    }
-    console.log(midifiedData)
-
+  const onSubmit = async (formValue: any) => {
     try {
-      const res = await createReview(midifiedData);
-      if (res.success) {
-        toast.success('Review created successfully');
+      setIsLoading(true);
+
+      const formData = new FormData();
+
+      const reviewData = {
+        data: { ...formValue },
+      };
+
+      formData.append("data", JSON.stringify(reviewData.data));
+      if (photo) formData.append("images", photo);
+
+      const response = await createReview(formData);
+
+      console.log("res", response);
+
+      if (response.success) {
+        toast.success("Review submitted successfully!");
         form.reset();
-        setPhoto(null);
-        setPhotoPreview(null);
+        removePhoto();
+        router.push("/guest/myreviews");
+      } else {
+        toast.error(response.message || "Failed to submit review");
       }
     } catch (err) {
-      console.error('Upload failed:', err);
-      toast.error('Something went wrong');
+      console.error("Review submission error:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow space-y-4">
-        <h2 className="text-2xl font-semibold mb-4">Create Your Review</h2>
+    <div className="max-w-lg mx-auto">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="p-6 bg-white rounded-lg shadow-md space-y-6"
+        >
+          <h2 className="text-2xl font-bold text-center mb-4">
+            Write a Review
+          </h2>
 
-        {/* Star Rating */}
-        <div className="flex space-x-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              onClick={() => handleRatingClick(star)}
-              className={`cursor-pointer text-3xl ${form.watch("rating") >= star ? 'text-yellow-400' : 'text-gray-300'}`}
-            >
-              ★
-            </span>
-          ))}
-        </div>
+          {/* Rating */}
+          <div className="space-y-2">
+            <p className="font-medium">Rating</p>
+            <div className="flex justify-center space-x-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => handleRatingClick(star)}
+                  className={`cursor-pointer text-4xl ${
+                    form.watch("rating") >= star
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+          </div>
 
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title</FormLabel>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea rows={3} {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+          {/* Title */}
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
+                  <Input placeholder="Enter a review title" {...field} />
                 </FormControl>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="purchaseSource"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Purchase Source</FormLabel>
-              <FormControl>
-                <select className="w-full p-2 border rounded" {...field}>
-                  <option value="">Select Source</option>
-                  <option value="Amazon">Amazon</option>
-                  <option value="eBay">eBay</option>
-                  <option value="Walmart">Walmart</option>
-                  <option value="Other">Other</option>
-                </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          {/* Description */}
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Share your experience"
+                    rows={4}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="isPremium"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-2">
-              <FormControl>
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <FormLabel>Is this a premium product?</FormLabel>
-            </FormItem>
-          )}
-        />
+          {/* Category */}
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormItem>
-          <FormLabel>Upload Photo</FormLabel>
-          <FormControl>
-            <Input type="file" accept="image/*" onChange={handlePhotoChange} />
-          </FormControl>
-          {photoPreview && (
-            <img src={photoPreview} alt="Preview" className="w-32 h-32 object-cover rounded mt-2" />
-          )}
-        </FormItem>
+          {/* Purchase Source */}
+          <FormField
+            control={form.control}
+            name="purchaseSource"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Where did you buy it?</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Amazon">Amazon</SelectItem>
+                    <SelectItem value="eBay">eBay</SelectItem>
+                    <SelectItem value="Walmart">Walmart</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" className="w-full">
-          Submit Review
-        </Button>
-      </form>
-    </Form>
+          {/* Photo Upload - Styled */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Product Photo
+            </label>
+            <div className="flex items-center justify-between">
+              {photoPreview ? (
+                <div className="relative h-20 w-20">
+                  <Image
+                    width={80}
+                    height={80}
+                    src={photoPreview}
+                    alt="Product preview"
+                    className="h-20 w-20 rounded-md object-cover border-4 border-indigo-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={removePhoto}
+                    className="absolute -top-2 -right-2 bg-red-500 rounded-full p-1 text-white shadow-md hover:bg-red-600 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="h-20 w-20 rounded-md bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
+                  <User className="h-8 w-8 text-gray-400" />
+                </div>
+              )}
+
+              <div>
+                <label
+                  htmlFor="review-image"
+                  className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {photoPreview ? "Change Photo" : "Upload Photo"}
+                </label>
+                <input
+                  id="review-image"
+                  name="review-image"
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handlePhotoChange}
+                  className="sr-only"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <PrimaryButton
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            disabled={isLoading}
+          >
+            {isLoading ? "Submitting..." : "Submit Review"}
+          </PrimaryButton>
+        </form>
+      </Form>
+    </div>
   );
 }

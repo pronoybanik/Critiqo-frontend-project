@@ -1,24 +1,17 @@
 import { getAllReviewAdmin } from "@/services/Review";
-import {
-  Star,
-  MessageCircle,
-  Crown,
-  DollarSign,
-  Eye,
-  ThumbsUp,
-  ThumbsDown,
-  Trash2,
-} from "lucide-react";
+import { IReview } from "@/types/reviews";
+import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
+import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const reviewData = data?.data;
-
+  console.log("res---", reviewData);
 
   const reviewCounts = reviewData.reduce(
     (
       acc: { published: number; pending: number; unpublished: number },
-      review
+      review: any
     ) => {
       if (review.status === "PUBLISHED") acc.published += 1;
       else if (review.status === "DRAFT") acc.pending += 1;
@@ -27,84 +20,6 @@ const AdminDashBoardPage = async () => {
     },
     { published: 0, pending: 0, unpublished: 0 }
   );
-
-  const dashboardData = await {
-    totalReviews: 1248,
-    publishedReviews: 876,
-    pendingReviews: 128,
-    unpublishedReviews: 244,
-    totalEarnings: 1240,
-    recentActivity: [
-      {
-        id: 1,
-        title: "Amazing Restaurant Experience",
-        author: "John Doe",
-        type: "review",
-        status: "pending",
-        rating: 4.5,
-        timestamp: "2 hours ago",
-      },
-      {
-        id: 2,
-        title: "This hotel was terrible",
-        author: "Jane Smith",
-        type: "comment",
-        status: "pending",
-        timestamp: "5 hours ago",
-      },
-      {
-        id: 3,
-        title: "Great service at this shop",
-        author: "Alex Johnson",
-        type: "premium",
-        status: "pending",
-        rating: 5,
-        timestamp: "1 day ago",
-      },
-      {
-        id: 4,
-        title: "Average experience, nothing special",
-        author: "Sam Wilson",
-        type: "review",
-        status: "pending",
-        rating: 3,
-        timestamp: "1 day ago",
-      },
-    ],
-    topPremiumReviews: [
-      {
-        id: 1,
-        title: "Ultimate Guide to Downtown Restaurants",
-        author: "Food Critic Pro",
-        rating: 4.8,
-        earnings: 152,
-        views: 1240,
-      },
-      {
-        id: 2,
-        title: "Luxury Hotel Comprehensive Review",
-        author: "Travel Expert",
-        rating: 4.9,
-        earnings: 128,
-        views: 987,
-      },
-      {
-        id: 3,
-        title: "Tourist Attractions Worth Your Money",
-        author: "City Explorer",
-        rating: 4.7,
-        earnings: 98,
-        views: 876,
-      },
-    ],
-    monthlyEarnings: [
-      { month: "Jan", amount: 850 },
-      { month: "Feb", amount: 940 },
-      { month: "Mar", amount: 1120 },
-      { month: "Apr", amount: 980 },
-      { month: "May", amount: 1240 },
-    ],
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -151,7 +66,7 @@ const AdminDashBoardPage = async () => {
               </div>
             </div>
 
-            {/* Premium Review Earnings */}
+            {/* Premium Review Earnings
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-gray-500 text-sm font-medium">
@@ -192,9 +107,8 @@ const AdminDashBoardPage = async () => {
                   ))}
                 </div>
               </div>
-            </div>
+            </div> */}
 
-            {/* Top Premium Reviews */}
             {/* Top Premium Reviews */}
             <div className="bg-white rounded-lg shadow p-6 col-span-1 md:col-span-2">
               <div className="flex items-center justify-between mb-4">
@@ -207,8 +121,8 @@ const AdminDashBoardPage = async () => {
               </div>
               <div className="space-y-4">
                 {reviewData
-                  .filter((review) => review.isPremium)
-                  .map((review, index) => (
+                  .filter((review: IReview) => review.isPremium)
+                  .map((review: IReview, index: number) => (
                     <div
                       key={index}
                       className="flex items-center justify-between border-b border-gray-100 pb-3"
@@ -238,7 +152,7 @@ const AdminDashBoardPage = async () => {
                           <div className="flex items-center">
                             <Eye size={14} className="text-blue-500" />
                             <span className="ml-1 text-xs text-gray-600">
-                              {review.views}
+                              {review.votes}
                             </span>
                           </div>
                         </div>
@@ -289,6 +203,17 @@ const AdminDashBoardPage = async () => {
                               {item.rating}
                             </span>
                           </div>
+
+                          <span className="mx-2 text-gray-300">|</span>
+                          <div className="flex items-center">
+                            <Vote
+                              size={14}
+                              className="text-yellow-500 fill-current"
+                            />
+                            <span className="ml-1 text-xs text-gray-600">
+                              {item.votes}
+                            </span>
+                          </div>
                         </>
                       )}
                       <span className="mx-2 text-gray-300">|</span>
@@ -310,26 +235,7 @@ const AdminDashBoardPage = async () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      className="p-1 rounded hover:bg-green-100 text-green-600"
-                      title="Approve"
-                    >
-                      <ThumbsUp size={18} />
-                    </button>
-                    <button
-                      className="p-1 rounded hover:bg-red-100 text-red-600"
-                      title="Reject"
-                    >
-                      <ThumbsDown size={18} />
-                    </button>
-                    <button
-                      className="p-1 rounded hover:bg-gray-100 text-gray-600"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
+                  <HandleLikeUnLineDelete id={item.id} status={item.status} />
                 </div>
               ))}
             </div>

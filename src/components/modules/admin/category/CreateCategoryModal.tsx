@@ -1,4 +1,5 @@
 "use client";
+import SecondaryButton from "@/components/shared/SecondaryButton";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -18,29 +19,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createCategory } from "@/services/Category";
-import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-// import { toast } from "sonner";
 
 const CreateCategoryModal = () => {
-  const [imageFiles, setImageFiles] = useState<File[] | []>([]);
-  const [imagePreview, setImagePreview] = useState<string[] | []>([]);
-
   const form = useForm();
   const {
     formState: { isSubmitting },
   } = form;
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (data: any) => {
     try {
-      const formData = new FormData();
-      formData.append("data", JSON.stringify(data));
-      formData.append("icon", imageFiles[0] as File);
-
-      const res = await createCategory(formData);
-      console.log(res);
-
+      const res = await createCategory(data);
       if (res?.success) {
         toast.success(res?.message);
       } else {
@@ -54,7 +44,7 @@ const CreateCategoryModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Create Category</Button>
+        <SecondaryButton className="w-52">Create Category</SecondaryButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

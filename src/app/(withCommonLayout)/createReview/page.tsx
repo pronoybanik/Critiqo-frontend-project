@@ -5,7 +5,7 @@ import React from 'react';
 const page = async () => {
 
   const { data: category } = await getAllCategories();
-  console.log(category)
+  console.log("category", category)
   return (
     <main className="bg-gray-100 min-h-screen py-10">
       <ReviewForm categories={category} />
