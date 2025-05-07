@@ -12,7 +12,6 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [replyText, setReplyText] = useState("");
   const { user } = useUser();
-  console.log(comment)
 
 
   const handleReplySubmit = async () => {
@@ -43,7 +42,6 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
   const handleDelete = async () => {
     try {
       const res = await deleteComment(comment?.id);
-      console.log(res)
       if (res.success) {
         toast.success("Review delete successfully");
         // router.push('/reviews')

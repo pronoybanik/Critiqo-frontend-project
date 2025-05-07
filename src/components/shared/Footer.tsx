@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import Image from "next/image";
 import logo from "../../assets/logo/2-removebg-preview.png";
 import google from "../../assets/logo/google.png";
@@ -9,24 +9,22 @@ import { featuredReview } from "@/services/Review";
 import { CardContent, CardTitle } from "../ui/card";
 import { StarRating } from "../modules/All Review/ReviewDetails";
 
-
 const Footer = async () => {
-  const page = "1"
-  const limit = "6"
+  const page = "1";
+  const limit = "6";
   const { data: featureds } = await featuredReview(page, limit);
-  console.log(featureds)
-  return (
-    <footer className=" bg-gray-900 text-gray-300 py-12  mx-auto">
-      <div className="container mx-auto ">
-        <div className="grid grid-cols-1 md:grid-cols-3 px-10  gap-8 max-w-7xl">
-          <div>
-            {/* Helpful Links */}
 
+  return (
+    <footer className="bg-gray-900 text-gray-300 py-12 mx-auto">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 px-10 gap-8 max-w-7xl">
+          {/* Helpful Links + App Download */}
+          <div>
             <div>
               <h3 className="text-xl font-semibold mb-4 text-white border-b border-gray-800">
                 Helpful Links
               </h3>
-              <div className="flex flex-col md:flex-row gap-12 ">
+              <div className="flex flex-col md:flex-row gap-12">
                 <ul className="space-y-2">
                   <li>
                     <Link href="/">Home</Link>
@@ -41,7 +39,7 @@ const Footer = async () => {
                     <Link href="/terms">Terms & Conditions</Link>
                   </li>
                 </ul>
-                <ul>
+                <ul className="space-y-2">
                   <li>
                     <Link href="/about">About Us</Link>
                   </li>
@@ -57,7 +55,7 @@ const Footer = async () => {
                 </ul>
               </div>
             </div>
-            {/* Download Our App */}
+
             <div className="mt-5">
               <h3 className="text-xl font-semibold mb-4 text-white border-b border-gray-800">
                 Download Our App
@@ -78,88 +76,85 @@ const Footer = async () => {
             </div>
           </div>
 
-          {/* Recent Posts */}
-
-          <div >
+          {/* Highest Rated Reviews */}
+          <div>
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800">
               Highest Rated Review
             </h3>
-            <div className="grid grid-cols-1   gap-4" >
-
-              {
-                featureds?.highestRated?.map((review: any) =>
-
-                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
-
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={review.image}
-                        alt={review.title}
-                        className="w-16 h-16 rounded-md object-cover"
-                      />
-                      <div>
-                        <CardTitle className="text-lg font-semibold text-gray-200">
-                          {review.title}
-                        </CardTitle>
-                        <p className="text-gray-500 text-sm">
-                          {format(new Date(review.createdAt), 'PPP')}
-                        </p>
-                      </div>
+            <div className="grid grid-cols-1 gap-4">
+              {featureds?.highestRated?.map((review: any) => (
+                <div
+                  key={review.id}
+                  className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"
+                >
+                  <div className="flex items-center gap-4">
+                    <Image
+                      width={100}
+                      height={100}
+                      src={review.image}
+                      alt={review.title}
+                      className="w-16 h-16 rounded-md object-cover"
+                    />
+                    <div>
+                      <CardTitle className="text-lg font-semibold text-gray-200">
+                        {review.title}
+                      </CardTitle>
+                      <p className="text-gray-500 text-sm">
+                        {format(new Date(review.createdAt), "PPP")}
+                      </p>
                     </div>
-
-                    <CardContent className='flex justify-between items-center'>
-                      {/* <Badge variant="secondary" className="text-gray-600 bg-gray-100 border-gray-200">
-                        {review.category}
-                      </Badge> */}
-                      <div className='flex gap-2 items-center pt-1.5'>
-                        <StarRating rating={review?.rating} />
-                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
-                      </div>
-                    </CardContent>
                   </div>
-                )
-              }
+                  <CardContent className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center pt-1.5">
+                      <StarRating rating={review?.rating} />
+                      <span className="text-gray-500 text-sm">
+                        ({review?.rating})
+                      </span>
+                    </div>
+                  </CardContent>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Latest Review */}
+          {/* Most Voted Reviews */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800 ">
+            <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800">
               Most Voted Review
             </h3>
-            <div className="grid grid-cols-1   gap-4" >
-
-              {
-                featureds?.mostVoted?.map((review: any) =>
-
-                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
-
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={review.image}
-                        alt={review.title}
-                        className="w-16 h-16 rounded-md object-cover"
-                      />
-                      <div>
-                        <CardTitle className="text-lg font-semibold text-gray-200">
-                          {review.title}
-                        </CardTitle>
-                        <p className="text-gray-500 text-sm">
-                          {format(new Date(review.createdAt), 'PPP')}
-                        </p>
-                      </div>
+            <div className="grid grid-cols-1 gap-4">
+              {featureds?.mostVoted?.map((review: any) => (
+                <div
+                  key={review.id}
+                  className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"
+                >
+                  <div className="flex items-center gap-4">
+                    <Image
+                      width={100}
+                      height={100}
+                      src={review.image}
+                      alt={review.title}
+                      className="w-16 h-16 rounded-md object-cover"
+                    />
+                    <div>
+                      <CardTitle className="text-lg font-semibold text-gray-200">
+                        {review.title}
+                      </CardTitle>
+                      <p className="text-gray-500 text-sm">
+                        {format(new Date(review.createdAt), "PPP")}
+                      </p>
                     </div>
-
-                    <CardContent className='flex justify-between items-center'>
-
-                      <div className='flex gap-2 items-center pt-1.5'>
-                        <StarRating rating={review?.rating} />
-                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
-                      </div>
-                    </CardContent>
                   </div>
-                )
-              }
+                  <CardContent className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center pt-1.5">
+                      <StarRating rating={review?.rating} />
+                      <span className="text-gray-500 text-sm">
+                        ({review?.rating})
+                      </span>
+                    </div>
+                  </CardContent>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -202,9 +197,10 @@ const Footer = async () => {
             </Link>
           </div>
         </div>
+
         <div className="flex justify-center items-center">
           <p className="text-sm text-gray-500 mt-1">
-            Copyright ©{new Date().getFullYear()} Team Opinion Oisis{" "}
+            Copyright ©{new Date().getFullYear()} Team Opinion Oisis
           </p>
         </div>
       </div>

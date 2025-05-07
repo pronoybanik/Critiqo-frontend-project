@@ -43,15 +43,40 @@ const UserDetailsModal: React.FC<UserDetailsModalProps> = ({
         </DialogHeader>
 
         <div className="space-y-2 text-sm text-gray-700">
-          <p><strong>Name:</strong> {user.guest.name}</p>
-          <p><strong>Name:</strong> {user.guest.contactNumber}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          {user.contactNumber && <p><strong>Contact:</strong> {user.contactNumber}</p>}
-          <p><strong>Role:</strong> {user.role}</p>
-          <p><strong>Status:</strong> {user.status}</p>
-          <p><strong>Needs Password Change:</strong> {user.needPasswordChange ? "Yes" : "No"}</p>
-          <p><strong>Created At:</strong> {new Date(user.createdAt).toLocaleString()}</p>
-          <p><strong>Updated At:</strong> {new Date(user.updatedAt).toLocaleString()}</p>
+          <p>
+            <strong>Name: </strong>
+            {!user.guest ? "null" : user?.guest?.name}
+          </p>
+          <p>
+            <strong>Contact: </strong>
+            {!user.guest ? "null" : user?.guest?.contactNumber}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+          {user.contactNumber && (
+            <p>
+              <strong>Contact:</strong> {user.contactNumber}
+            </p>
+          )}
+          <p>
+            <strong>Role:</strong> {user.role}
+          </p>
+          <p>
+            <strong>Status:</strong> {user.status}
+          </p>
+          <p>
+            <strong>Needs Password Change:</strong>{" "}
+            {user.needPasswordChange ? "Yes" : "No"}
+          </p>
+          <p>
+            <strong>Created At:</strong>{" "}
+            {new Date(user.createdAt).toLocaleString()}
+          </p>
+          <p>
+            <strong>Updated At:</strong>{" "}
+            {new Date(user.updatedAt).toLocaleString()}
+          </p>
         </div>
 
         <DialogFooter>

@@ -67,30 +67,12 @@ export const getSingleReviewById = async (reviewId: string) => {
       }
     );
     const data = await res.json();
-    console.log(data)
     return data;
   } catch (error: any) {
     return Error(error.message);
   }
 };
 
-export const deleteReview = async (reviewId: string): Promise<any> => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API}/reviews/${reviewId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: (await cookies()).get("accessToken")!.value,
-        },
-      }
-    );
-    revalidateTag("REVIEW");
-    return res.json();
-  } catch (error: any) {
-    return Error(error);
-  }
-};
 
 
 export const addComment = async (data: Partial<Comment>) => {
@@ -135,7 +117,6 @@ export const createReview = async (data: any) => {
   return res.json();
 };
 export const replyComment = async (data: any) => {
-  console.log("with data REply:", data);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
     method: "POST",
@@ -167,38 +148,4 @@ export const deleteComment = async (replyId: string): Promise<any> => {
 };
 
 
-export const getAllReviewAdmin = async () => {
-  try {
-    const accessToken = (await cookies()).get("accessToken")?.value;
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/admin/reviews`, {
-      headers: {
-        Authorization: `${accessToken}`,
-      },
-      next: {
-        tags: ["REVIEW"],
-      },
-    });
-    const data = await res.json();
-    return data;
-  } catch (error: any) {
-    return Error(error.message);
-  }
-};
-
-export const getAllUserReviews = async (id: string) => {
-  try {
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews/user/${id}`, {
-      next: {
-        tags: ["REVIEW"],
-      },
-    });
-
-
-    const data = await res.json();
-    return data;
-  } catch (error: any) {
-    return Error(error.message);
-  }
-};

@@ -1,10 +1,11 @@
-
 "use client";
 
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import { getAllCategories } from "@/services/Category";
 import { IReview } from "@/types/reviews";
 import React, { useEffect, useState } from "react";
+import { Search, Filter, Gift, Star, RefreshCw } from "lucide-react";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
 const AllReviews = () => {
   const [reviews, setReviews] = useState<IReview[]>([]);
@@ -18,19 +19,15 @@ const AllReviews = () => {
   const [sortOrder, setSortOrder] = useState(""); // 'asc' | 'desc'
   const [itemsPerPage, setItemsPerPage] = useState(8);
 
-
   useEffect(() => {
     const fetchCategory = async () => {
-
       const { data: category } = await getAllCategories();
-      setCatData(category)
-      console.log(catData)
-    }
-    fetchCategory()
-  }, [categoryFilter])
+      setCatData(category);
+    };
+    fetchCategory();
+  }, [categoryFilter]);
 
   const fetchReviews = async () => {
-
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -44,16 +41,12 @@ const AllReviews = () => {
       });
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`,
-        // { cache: "no-store" }
+        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
       );
       const data = await res.json();
-      console.log(data)
       setReviews(data?.data || []);
-      const rPage = (data?.meta?.total / data?.meta?.limit)
-
+      const rPage = data?.meta?.total / data?.meta?.limit;
       setTotalPages(Math.ceil(rPage));
-      console.log(totalPages)
     } catch (err) {
       console.error("Error fetching reviews:", err);
     }
@@ -61,7 +54,15 @@ const AllReviews = () => {
 
   useEffect(() => {
     fetchReviews();
-  }, [currentPage, itemsPerPage, searchText, categoryFilter, availabilityFilter, sortOrder, status]);
+  }, [
+    currentPage,
+    itemsPerPage,
+    searchText,
+    categoryFilter,
+    availabilityFilter,
+    sortOrder,
+    status,
+  ]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,133 +74,183 @@ const AllReviews = () => {
     setSearchText("");
     setCategoryFilter("");
     setAvailabilityFilter("");
-    setStatus("")
+    setStatus("");
     setSortOrder("");
     setCurrentPage(1);
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 items-center justify-center mb-6">
-        {/* Search */}
-        <form onSubmit={handleSearchSubmit} className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="border rounded px-4 py-2"
-          />
-          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-            Search
-          </button>
-        </form>
-
-        {/* Category Filter */}
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="border rounded px-4 py-2"
-        >
-          <option value="">Set Categories</option>
-          {
-            catData?.map((cat: any) =>
-              <option key={cat?.id} value={cat?.id}>{cat?.name}</option>
-            )
-          }
-          {/* <option value="">Set Categories</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Appliance">Appliance</option> */}
-        </select>
-
-        {/* Status Filter */}
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="border rounded px-4 py-2"
-        >
-          <option value="">Rating</option>
-          <option value="5">5</option>
-          <option value="4">4</option>
-          <option value="3">3</option>
-          <option value="2">2</option>
-        </select>
-        {/* Availability Filter */}
-        <select
-          value={availabilityFilter}
-          onChange={(e) => setAvailabilityFilter(e.target.value)}
-          className="border rounded px-4 py-2"
-        >
-          <option value="">isPremium</option>
-          <option value="true">Premium</option>
-          <option value="false">Free</option>
-        </select>
-
-        {/* Sort */}
-        <div>
-          <select
-            onChange={e => {
-              setSortOrder(e.target.value);
-              // setCurrentPage(1);
-            }}
-            value={sortOrder}
-            name="sort"
-            id="sort"
-            className="px-1 md:px-4 py-2 border text-sm rounded-lg border-[#06D6D1]"
-          >
-            <option value="">Sorting</option>
-            <option value="desc">Newest Review</option>
-            <option value="asc">Oldest Review</option>
-          </select>
-        </div>
-
-        <button onClick={handleReset} className="bg-gray-300 px-4 py-2 rounded">
-          Reset
-        </button>
+    <div className="max-w-7xl mx-auto px-4 py-12 bg-gradient-to-b from-purple-50 to-white">
+      {/* Festive Header */}
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-purple-800 mb-2 flex items-center justify-center gap-2">
+          <Gift className="h-6 w-6 text-red-500" />
+          <span>Discover Amazing Reviews</span>
+          <Gift className="h-6 w-6 text-red-500" />
+        </h1>
+        <p className="text-purple-600">Find your perfect products with our curated reviews</p>
       </div>
 
-      {/* Reviews Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {reviews.length > 0 ? (
-          reviews.map((review, index) => (
-            <LatestReviewCard key={index} review={review} />
-          ))
-        ) : (
-          <p className="col-span-full text-center text-gray-500">No reviews found.</p>
-        )}
+      {/* Filters Section */}
+      <div className="bg-white p-6 rounded-xl shadow-md border border-purple-100 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-purple-800 flex items-center">
+            <Filter className="h-5 w-5 mr-2" /> Filter Options
+          </h2>
+          <button 
+            onClick={handleReset} 
+            className="flex items-center text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors border border-gray-200"
+          >
+            <RefreshCw className="h-4 w-4 mr-1" /> Reset
+          </button>
+        </div>
+
+        <div className="flex flex-wrap gap-4 items-center">
+          {/* Search */}
+          <form onSubmit={handleSearchSubmit} className="flex gap-2">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search reviews..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                className="border border-purple-200 rounded-lg px-4 py-2 pl-9 w-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              />
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-purple-400" />
+            </div>
+            <PrimaryButton
+              type="submit"
+              className=" px-4 py-2 w-28 rounded-lg font-medium transition-colors "
+            >
+              Search
+            </PrimaryButton>
+          </form>
+
+          {/* Category Filter */}
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">All Categories</option>
+            {catData?.map((cat: any) => (
+              <option key={cat?.id} value={cat?.id}>
+                {cat?.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Rating Filter */}
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">Any Rating</option>
+            <option value="5">5 Stars</option>
+            <option value="4">4 Stars</option>
+            <option value="3">3 Stars</option>
+            <option value="2">2 Stars</option>
+          </select>
+          
+          {/* Premium Filter */}
+          <select
+            value={availabilityFilter}
+            onChange={(e) => setAvailabilityFilter(e.target.value)}
+            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">All Reviews</option>
+            <option value="true">Premium</option>
+            <option value="false">Free</option>
+          </select>
+
+          {/* Sort Order */}
+          <select
+            onChange={(e) => setSortOrder(e.target.value)}
+            value={sortOrder}
+            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          >
+            <option value="">Default Sort</option>
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Reviews Grid with festive decorations */}
+      <div className="relative">
+        <div className="absolute -top-4 left-0 w-full flex justify-between">
+          <Star className="h-8 w-8 text-yellow-400 animate-pulse" />
+          <Star className="h-6 w-6 text-red-400 animate-pulse delay-75" />
+          <Star className="h-8 w-8 text-green-400 animate-pulse delay-100" />
+          <Star className="h-6 w-6 text-purple-400 animate-pulse delay-150" />
+          <Star className="h-8 w-8 text-blue-400 animate-pulse delay-200" />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {reviews.length > 0 ? (
+            reviews
+              .filter((item: IReview) => item.status === "PUBLISHED")
+              .sort((a: IReview, b: IReview) => {
+                const dateA = new Date(a.createdAt).getTime() || 0;
+                const dateB = new Date(b.createdAt).getTime() || 0;
+                return dateB - dateA;
+              })
+              .map((review, index) => (
+                <LatestReviewCard key={index} review={review} />
+              ))
+          ) : (
+            <div className="col-span-full py-12 text-center">
+              <p className="text-purple-700 font-medium text-lg">No reviews found.</p>
+              <p className="text-purple-500 mt-2">Try adjusting your filters</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center mt-8">
-        <div>
+      <div className="flex flex-col md:flex-row justify-between items-center mt-12 bg-white p-4 rounded-lg shadow-sm border border-purple-100">
+        <div className="flex items-center space-x-2 mb-4 md:mb-0">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded bg-gray-100"
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
+              currentPage === 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+            }`}
           >
             Prev
           </button>
-          <span className="px-4">
-            Page {currentPage} of {totalPages}
-          </span>
+          
+          <div className="px-4 py-2 bg-purple-50 rounded-lg">
+            <span className="font-medium text-purple-800">
+              Page {currentPage} of {totalPages || 1}
+            </span>
+          </div>
+          
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded bg-gray-100"
+            disabled={currentPage === totalPages || totalPages === 0}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
+              currentPage === totalPages || totalPages === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+            }`}
           >
             Next
           </button>
         </div>
 
-        <div>
+        <div className="flex items-center">
+          <span className="text-sm text-purple-700 mr-2">Show:</span>
           <select
             value={itemsPerPage}
             onChange={(e) => {
               setItemsPerPage(parseInt(e.target.value));
               setCurrentPage(1);
             }}
-            className="border rounded px-2 py-1"
+            className="border border-purple-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
           >
             {[4, 8, 12, 20].map((size) => (
               <option key={size} value={size}>
@@ -208,6 +259,11 @@ const AllReviews = () => {
             ))}
           </select>
         </div>
+      </div>
+      
+      {/* Festive Footer */}
+      <div className="mt-8 text-center text-sm text-purple-600">
+        <p>✨ Discover amazing products and make informed decisions with our reviews ✨</p>
       </div>
     </div>
   );

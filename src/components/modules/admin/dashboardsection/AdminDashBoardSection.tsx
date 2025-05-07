@@ -1,12 +1,11 @@
-import { getAllReviewAdmin } from "@/services/Review";
 import { IReview } from "@/types/reviews";
 import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
+import { getAllReviewAdmin } from "@/services/AdminReview";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const reviewData = data?.data;
-  console.log("res---", reviewData);
 
   const reviewCounts = reviewData.reduce(
     (

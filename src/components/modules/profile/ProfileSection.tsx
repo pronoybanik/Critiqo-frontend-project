@@ -3,18 +3,17 @@ import Link from "next/link";
 import { Home } from "lucide-react";
 import { getMyProfile } from "@/services/AuthService";
 import Image from "next/image";
+import SecondaryButton from "@/components/shared/SecondaryButton";
 
 const ProfileSection = async () => {
   const userDataResponse = await getMyProfile();
   const userData = userDataResponse?.data;
 
-  
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Breadcrumb */}
-        <div className="flex items-center space-x-2 mb-8 text-blue-600">
+        <div className="flex items-center space-x-2 mb-8 text-purple-700 font-bold">
           <Link href="/" className="hover:underline">
             <Home className="w-5 h-5" />
           </Link>
@@ -48,7 +47,7 @@ const ProfileSection = async () => {
               </h2>
             </div>
             <Link href={`/profile/edit`}>
-              <button className="text-blue-600 hover:underline">Edit</button>
+              <SecondaryButton>Edit</SecondaryButton>
             </Link>
           </div>
 
