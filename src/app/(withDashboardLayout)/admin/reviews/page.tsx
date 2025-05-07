@@ -1,5 +1,5 @@
 import ReviewSection from "@/components/modules/admin/review/ReviewSection";
-import { getAllReviewAdmin } from "@/services/Review";
+import { getAllReviewAdmin } from "@/services/AdminReview";
 import React from "react";
 
 const ReviewPage = async () => {

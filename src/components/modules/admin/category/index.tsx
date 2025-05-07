@@ -13,10 +13,7 @@ import DeleteConfirmationModal from "@/components/ui/core/NMModal/DeleteConfirma
 import { NMTable } from "@/components/ui/core/NMTable";
 import { ICategory } from "@/types/category";
 import { Trash } from "lucide-react";
-import Image from "next/image";
 import { ColumnDef } from "@tanstack/react-table";
-import PrimaryButton from "@/components/shared/PrimayButton";
-// import DeleteConfirmationModal from "@/components/ui/core/NMModal/DeleteConfirmationModal";
 
 type TCategoriesProps = {
   categories: ICategory[];
