@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { MessageCircle, User, Calendar, Star, ShoppingCart, CheckCircle, Clock } from "lucide-react";
+import { MessageCircle, User, Calendar, Star, ShoppingCart, Clock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
@@ -56,14 +56,6 @@ const LatestReviewCard = ({ review }: { review: IReview }) => {
 
   return (
     <div className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl rounded-xl">
-      {/* Premium Badge */}
-      {isPremium && (
-        <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-amber-500 to-yellow-400 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
-          <CheckCircle className="w-3 h-3" />
-          Premium
-        </div>
-      )}
-
       {/* Status Badge */}
       <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
         ${!isPremium ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
