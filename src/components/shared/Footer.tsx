@@ -95,7 +95,7 @@ const Footer = async () => {
                       <img
                         src={review.image}
                         alt={review.title}
-                        className="w-20 h-20 rounded-md object-cover"
+                        className="w-16 h-16 rounded-md object-cover"
                       />
                       <div>
                         <CardTitle className="text-lg font-semibold text-gray-200">
@@ -138,7 +138,7 @@ const Footer = async () => {
                       <img
                         src={review.image}
                         alt={review.title}
-                        className="w-20 h-20 rounded-md object-cover"
+                        className="w-16 h-16 rounded-md object-cover"
                       />
                       <div>
                         <CardTitle className="text-lg font-semibold text-gray-200">

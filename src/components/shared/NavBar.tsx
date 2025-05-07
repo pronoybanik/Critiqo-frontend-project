@@ -75,7 +75,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div className=" h-8 w-24 md:w-32 ">
+            <div className=" h-8 w-24 md:w-28 ">
               <Image
                 src={logo}
                 alt="etutor"
