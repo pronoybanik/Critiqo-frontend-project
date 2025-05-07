@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   PenTool,
+  Home,
 } from "lucide-react";
 import { getMyProfile, logout } from "@/services/AuthService";
 import { useUser } from "@/context/UserContext";
@@ -17,7 +18,7 @@ import PrimaryButton from "@/components/shared/PrimayButton";
 import Link from "next/link";
 
 const AdminHeader = () => {
-  const { user: userInfo, setIsLoading } = useUser();
+  const { setIsLoading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -47,9 +48,21 @@ const AdminHeader = () => {
           <button className="md:hidden mr-4" onClick={toggleSidebar}>
             {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          <h2 className="text-xl font-semibold text-gray-800">
-            Dashboard Overview
-          </h2>
+
+          <div className="flex items-center gap-2 font-bold ">
+            <h2 className="text-xl font-semibold bg-gradient-to-br from-indigo-600 to-purple-700 bg-clip-text text-transparent">
+              Dashboard Overview
+            </h2>
+            <>
+              <span className="text-purple-700 font-bold">&gt;</span>
+              <Link
+                href="/"
+                className="hover:underline mt-2 text-purple-700 font-bold"
+              >
+                <Home className="w-5 h-5 font-bold" />
+              </Link>
+            </>
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
@@ -99,13 +112,12 @@ const AdminHeader = () => {
             )}
           </div>
 
-         <Link  href={'/createReview'}>
+          <Link href={"/createReview"}>
             <PrimaryButton className="flex items-center space-x-1 w-38 text-white px-4 py-2 rounded-lg">
               <PenTool size={16} />
               <span>Create Review</span>
             </PrimaryButton>
-         </Link>
-          
+          </Link>
 
           {/* User Menu */}
           <div className="relative">
@@ -133,11 +145,14 @@ const AdminHeader = () => {
                   </p>
                 </div>
                 <div>
-                  <button className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100">
+                  <Link
+                    href={"/profile"}
+                    className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100"
+                  >
                     <User size={16} className="mr-2 text-gray-600" />
 
                     <span>Profile</span>
-                  </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center w-full px-4 py-2 text-left hover:bg-gray-100"

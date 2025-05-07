@@ -5,7 +5,6 @@ import { useState } from "react";
 
 const CapterraSearch = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  console.log(searchQuery)
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       {/* Left side content */}

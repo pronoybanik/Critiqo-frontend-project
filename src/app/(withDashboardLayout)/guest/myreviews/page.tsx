@@ -41,7 +41,7 @@ const MyReviewsPage = () => {
 
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
@@ -52,7 +52,6 @@ const MyReviewsPage = () => {
       try {
         setLoading(true);
         const data = await getAllUserReviews(user.userId);
-        console.log("ttt", data.data);
 
         setReviews(data.data);
       } catch (err) {

@@ -1,9 +1,8 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import img1 from '../../../assets/hero/BOOMBOX.png';
-import Image from 'next/image';
+"use client";
+import React, { useEffect, useState } from "react";
+import img1 from "../../../assets/hero/BOOMBOX.png";
+import Image from "next/image";
 
-import PrimaryButton from '@/components/shared/PrimayButton';
 
 const ProductMarketing = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -14,9 +13,9 @@ const ProductMarketing = () => {
       setScrollY(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -55,16 +54,9 @@ const ProductMarketing = () => {
           </h1>
 
           <p className="text-gray-400 mb-8 max-w-md">
-            Immerse yourself in crystal-clear sound with our premium audio devices.
-            Designed for audiophiles who demand the very best.
+            Immerse yourself in crystal-clear sound with our premium audio
+            devices. Designed for audiophiles who demand the very best.
           </p>
-
-          <div className="flex flex-wrap gap-4 lg:w-96 w-52">
-            <PrimaryButton>
-              Shop Now
-            </PrimaryButton>
-
-          </div>
         </div>
 
         {/* Right content with floating animation */}
@@ -76,8 +68,10 @@ const ProductMarketing = () => {
           <div
             className="absolute transform transition-all duration-500 hover:scale-105"
             style={{
-              transform: `translateY(${Math.sin(Date.now() / 1000) * 10}px) rotate(${scrollY * 0.02}deg)`,
-              filter: 'drop-shadow(0 0 30px rgba(255, 0, 0, 0.3))'
+              transform: `translateY(${
+                Math.sin(Date.now() / 1000) * 10
+              }px) rotate(${scrollY * 0.02}deg)`,
+              filter: "drop-shadow(0 0 30px rgba(255, 0, 0, 0.3))",
             }}
           >
             <Image

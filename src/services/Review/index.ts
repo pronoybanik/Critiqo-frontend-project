@@ -67,7 +67,6 @@ export const getSingleReviewById = async (reviewId: string) => {
       }
     );
     const data = await res.json();
-    console.log(data)
     return data;
   } catch (error: any) {
     return Error(error.message);
@@ -118,7 +117,6 @@ export const createReview = async (data: any) => {
   return res.json();
 };
 export const replyComment = async (data: any) => {
-  console.log("with data REply:", data);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
     method: "POST",

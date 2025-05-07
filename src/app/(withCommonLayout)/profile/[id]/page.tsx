@@ -4,11 +4,12 @@ import React, { useEffect, useState } from "react";
 import { getMyProfile, updateProfile } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import PrimaryButton from "@/components/shared/PrimayButton";
 
 const UpdateProfile = () => {
   const [formFields, setFormFields] = useState({
     name: "",
-    
+
     contactNumber: "",
   });
 
@@ -24,7 +25,7 @@ const UpdateProfile = () => {
 
       setFormFields({
         name: user?.name || "",
-       
+
         contactNumber: user?.contactNumber || "",
       });
     };
@@ -50,21 +51,18 @@ const UpdateProfile = () => {
     const formData = new FormData();
     const payload = {
       name: formFields.name,
-  
-      contactNumber: formFields.contactNumber
-    }
+
+      contactNumber: formFields.contactNumber,
+    };
 
     formData.append("data", JSON.stringify(payload));
-    
+
     if (profilePhoto) {
       formData.append("file", profilePhoto);
     }
 
-    console.log("payload", payload, profilePhoto);
-    
 
     const result = await updateProfile(formData);
-    console.log("result one", result);
 
     if (result.success) {
       toast.success(result.message || "profile update sucessfully");
@@ -99,8 +97,6 @@ const UpdateProfile = () => {
           />
         </div>
 
-       
-
         <div>
           <label className="block text-gray-700 font-medium mb-1">
             Contact Number
@@ -127,13 +123,15 @@ const UpdateProfile = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
-        >
-          {loading ? "Updating..." : "Update Profile"}
-        </button>
+        <div className="lg:px-52 flex justify-center items-center">
+          <PrimaryButton
+            type="submit"
+            disabled={loading}
+            className="px-6 py-2 rounded-md transition"
+          >
+            {loading ? "Updating..." : "Update Profile"}
+          </PrimaryButton>
+        </div>
 
         {message && (
           <p className="text-center mt-4 text-green-600 font-medium">

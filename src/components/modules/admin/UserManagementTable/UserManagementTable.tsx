@@ -43,11 +43,9 @@ const UserManagementTable = () => {
   };
 
   const handleUserDelete = async (id: string) => {
-    console.log(id);
     
     if (id) {
       const result = await deleteUser(id);
-      console.log(result);
       
       if (result.success) {
         toast.success(result.message);
