@@ -1,28 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Heart,
-  Star,
-  Gift,
-  User,
-  MessageSquare,
-  ShoppingBag,
-} from "lucide-react";
+import { Star, User, MessageSquare, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
 export default function UserDashboard() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [rating, setRating] = useState(0);
-
   const dashboardCards = [
-    // {
-    //   id: 'saved',
-    //   title: 'Saved Products',
-    //   description: 'Access your favorites here',
-    //   icon: <Heart size={24} className="text-white" />,
-    //   color: 'bg-orange-400',
-    // },
     {
       id: "reviews",
       title: "My Reviews",
@@ -31,13 +13,7 @@ export default function UserDashboard() {
       color: "bg-orange-400",
       link: "/guest/myreviews",
     },
-    // {
-    //   id: 'comments',
-    //   title: 'My Comments',
-    //   description: 'Track discussions you ve participated in',
-    //   icon: <MessageSquare size={24} className="text-white" />,
-    //   color: 'bg-blue-500',
-    // },
+
     {
       id: "purchases",
       title: "My Purchases",
@@ -46,13 +22,7 @@ export default function UserDashboard() {
       color: "bg-green-500",
       link: "/guest/mypurchases",
     },
-    // {
-    //   id: 'rewards',
-    //   title: 'My Rewards',
-    //   description: 'Claim your rewards and discover new review offers!',
-    //   icon: <Gift size={24} className="text-white" />,
-    //   color: 'bg-purple-500',
-    // },
+
     {
       id: "profile",
       title: "My Profile",
@@ -69,7 +39,7 @@ export default function UserDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Dashboard content */}
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gray-50  container mx-auto">
-          {activeTab === "dashboard" && (
+          {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {dashboardCards?.map((card) => (
@@ -91,7 +61,7 @@ export default function UserDashboard() {
                 ))}
               </div>
             </>
-          )}
+          }
 
           <div className="mt-8">
             <div className="bg-white rounded-lg shadow p-6">

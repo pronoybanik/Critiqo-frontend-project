@@ -6,7 +6,6 @@ import { getAllReviewAdmin } from "@/services/AdminReview";
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const reviewData = data?.data;
-  console.log("res---", reviewData);
 
   const reviewCounts = reviewData.reduce(
     (

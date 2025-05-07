@@ -6,7 +6,6 @@ import { reviewUpdateByAdmin } from "@/services/AdminReview";
 import { toast } from "sonner";
 
 const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
-  console.log("reviewData1", reviewData);
 
   const [reviews, setReviews] = useState<IReview[]>(reviewData);
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
@@ -15,7 +14,6 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
 
   const pendingData = reviewData.filter((item) => item.status === "DRAFT");
 
-  console.log("Pending Reviews", pendingData);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -66,8 +64,6 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
       };
 
       const res = await reviewUpdateByAdmin(reviewId, data);
-
-      console.log("res--t", res);
 
       if (res?.success) {
         toast.success("Is REviews premium");

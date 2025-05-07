@@ -85,8 +85,6 @@ export default function ReviewForm({ categories }: Props) {
 
       const response = await createReview(formData);
 
-      console.log("res", response);
-
       if (response.success) {
         toast.success("Review submitted successfully!");
         form.reset();
