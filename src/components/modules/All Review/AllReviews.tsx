@@ -120,7 +120,7 @@ const AllReviews = () => {
             </div>
             <PrimaryButton
               type="submit"
-              className=" px-4 py-2 w-28 rounded-lg font-medium transition-colors "
+              className=" px-4 py-5 w-28 rounded-lg font-medium transition-colors "
             >
               Search
             </PrimaryButton>

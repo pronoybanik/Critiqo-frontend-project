@@ -258,7 +258,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               <div className="col-span-2">
                 {/* Author Info */}
                 <div className="flex items-center gap-4 mt-4">
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     src={review.authorImage}
                     alt={review.authorName}
                     className="w-12 h-12 rounded-full object-cover"
