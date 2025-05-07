@@ -83,27 +83,29 @@ const Footer = async () => {
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800">
               Highest Rated Review
             </h3>
-            <div className="grid grid-cols-1   gap-4">
-              {featureds?.highestRated?.map((review: any) => (
-                <div
-                  key={review.id}
-                  className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"
-                >
-                  <div className="flex items-center gap-4">
-                    <Image
-                      width={100}
-                      height={100}
-                      src={review.image}
-                      alt={review.title}
-                      className="w-20 h-20 rounded-md object-cover"
-                    />
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-gray-200">
-                        {review.title}
-                      </CardTitle>
-                      <p className="text-gray-500 text-sm">
-                        {format(new Date(review.createdAt), "PPP")}
-                      </p>
+
+            <div className="grid grid-cols-1   gap-4" >
+
+              {
+                featureds?.highestRated?.map((review: any) =>
+
+                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
+
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={review.image}
+                        alt={review.title}
+                        className="w-16 h-16 rounded-md object-cover"
+                      />
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-200">
+                          {review.title}
+                        </CardTitle>
+                        <p className="text-gray-500 text-sm">
+                          {format(new Date(review.createdAt), 'PPP')}
+                        </p>
+                      </div>
+
                     </div>
                   </div>
 
@@ -128,27 +130,28 @@ const Footer = async () => {
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800 ">
               Most Voted Review
             </h3>
-            <div className="grid grid-cols-1   gap-4">
-              {featureds?.mostVoted?.map((review: any) => (
-                <div
-                  key={review.id}
-                  className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"
-                >
-                  <div className="flex items-center gap-4">
-                    <Image
-                      width={100}
-                      height={100}
-                      src={review.image}
-                      alt={review.title}
-                      className="w-20 h-20 rounded-md object-cover"
-                    />
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-gray-200">
-                        {review.title}
-                      </CardTitle>
-                      <p className="text-gray-500 text-sm">
-                        {format(new Date(review.createdAt), "PPP")}
-                      </p>
+
+            <div className="grid grid-cols-1   gap-4" >
+
+              {
+                featureds?.mostVoted?.map((review: any) =>
+
+                  <div key={review.id} className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2">
+
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={review.image}
+                        alt={review.title}
+                        className="w-16 h-16 rounded-md object-cover"
+                      />
+                      <div>
+                        <CardTitle className="text-lg font-semibold text-gray-200">
+                          {review.title}
+                        </CardTitle>
+                        <p className="text-gray-500 text-sm">
+                          {format(new Date(review.createdAt), 'PPP')}
+                        </p>
+
                     </div>
                   </div>
 
