@@ -26,6 +26,7 @@ const CreateCategoryModal = () => {
   const form = useForm();
   const {
     formState: { isSubmitting },
+    reset,
   } = form;
 
   const onSubmit: SubmitHandler<FieldValues> = async (data: any) => {
@@ -33,6 +34,7 @@ const CreateCategoryModal = () => {
       const res = await createCategory(data);
       if (res?.success) {
         toast.success(res?.message);
+        reset();
       } else {
         toast.error(res?.errorSources[0].message);
       }

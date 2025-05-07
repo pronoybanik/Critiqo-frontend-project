@@ -11,12 +11,13 @@ import { Textarea } from "@/components/ui/textarea"
 import Image from 'next/image';
 import CommentComponent from './CommentComponent';
 import { Comment, Review } from '@/types/review';
-import { addComment, addVotes, deleteReview } from '@/services/Review';
+import { addComment, addVotes } from '@/services/Review';
 import { useUser } from '@/context/UserContext';
 import VoteCounter from './VottingComponent';
 import { toast } from 'sonner';
 import ReviewDescription from './ReviewDescription';
 import { useRouter } from 'next/navigation';
+import { deleteReview } from '@/services/AdminReview';
 
 // Mock data types (replace with your actual types from your GraphQL schema or Prisma)
 
