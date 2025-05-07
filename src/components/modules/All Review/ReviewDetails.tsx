@@ -53,7 +53,7 @@ const mockReview: Review = {
   isPremium: true,
   premiumPrice: 29.99,
   status: "PUBLISHED",
-  moderationNote: null,
+  moderationNote: "note",
   createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
   categoryId: "electronics",
   userId: "user-456",
@@ -125,7 +125,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
     // Simulate data fetching
     const fetchData = async () => {
       try {
-        // Replace this with your actual data fetching logic (e.g., GraphQL query)
+
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
         setReview(mockReview);
         // setComments(mockComments);
@@ -358,7 +358,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
 
                 {/* Delete Button with Tooltip and Animated Border */}
                 {user?.id === reviewDetails?.review?.authorId ||
-                user?.role === "ADMIN" ? (
+                  user?.role === "ADMIN" ? (
                   <div className="relative group">
                     <button
                       className="p-2 rounded border border-transparent hover:border-red-500 transition-all duration-300 text-red-600 hover:text-red-800"
@@ -396,7 +396,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                   key={comment.id}
                   comment={comment}
 
-                  // reviewId={reviewId}
+                // reviewId={reviewId}
                 />
               ))}
             </div>
