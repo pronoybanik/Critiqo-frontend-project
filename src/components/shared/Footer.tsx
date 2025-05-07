@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import Image from "next/image";
 import logo from "../../assets/logo/2-removebg-preview.png";
 import google from "../../assets/logo/google.png";
@@ -9,12 +9,11 @@ import { featuredReview } from "@/services/Review";
 import { CardContent, CardTitle } from "../ui/card";
 import { StarRating } from "../modules/All Review/ReviewDetails";
 
-
 const Footer = async () => {
-  const page = "1"
-  const limit = "6"
+  const page = "1";
+  const limit = "6";
   const { data: featureds } = await featuredReview(page, limit);
-  console.log(featureds)
+
   return (
     <footer className=" bg-gray-900 text-gray-300 py-12  mx-auto">
       <div className="container mx-auto ">
@@ -80,10 +79,11 @@ const Footer = async () => {
 
           {/* Recent Posts */}
 
-          <div >
+          <div>
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800">
               Highest Rated Review
             </h3>
+
             <div className="grid grid-cols-1   gap-4" >
 
               {
@@ -105,20 +105,23 @@ const Footer = async () => {
                           {format(new Date(review.createdAt), 'PPP')}
                         </p>
                       </div>
-                    </div>
 
-                    <CardContent className='flex justify-between items-center'>
-                      {/* <Badge variant="secondary" className="text-gray-600 bg-gray-100 border-gray-200">
+                    </div>
+                  </div>
+
+                  <CardContent className="flex justify-between items-center">
+                    {/* <Badge variant="secondary" className="text-gray-600 bg-gray-100 border-gray-200">
                         {review.category}
                       </Badge> */}
-                      <div className='flex gap-2 items-center pt-1.5'>
-                        <StarRating rating={review?.rating} />
-                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
-                      </div>
-                    </CardContent>
-                  </div>
-                )
-              }
+                    <div className="flex gap-2 items-center pt-1.5">
+                      <StarRating rating={review?.rating} />
+                      <span className="text-gray-500 text-sm">
+                        ({review?.rating} )
+                      </span>
+                    </div>
+                  </CardContent>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -127,6 +130,7 @@ const Footer = async () => {
             <h3 className="text-lg font-semibold mb-4 text-white border-b border-gray-800 ">
               Most Voted Review
             </h3>
+
             <div className="grid grid-cols-1   gap-4" >
 
               {
@@ -147,19 +151,20 @@ const Footer = async () => {
                         <p className="text-gray-500 text-sm">
                           {format(new Date(review.createdAt), 'PPP')}
                         </p>
-                      </div>
+
                     </div>
-
-                    <CardContent className='flex justify-between items-center'>
-
-                      <div className='flex gap-2 items-center pt-1.5'>
-                        <StarRating rating={review?.rating} />
-                        <span className="text-gray-500 text-sm">({review?.rating} )</span>
-                      </div>
-                    </CardContent>
                   </div>
-                )
-              }
+
+                  <CardContent className="flex justify-between items-center">
+                    <div className="flex gap-2 items-center pt-1.5">
+                      <StarRating rating={review?.rating} />
+                      <span className="text-gray-500 text-sm">
+                        ({review?.rating} )
+                      </span>
+                    </div>
+                  </CardContent>
+                </div>
+              ))}
             </div>
           </div>
         </div>

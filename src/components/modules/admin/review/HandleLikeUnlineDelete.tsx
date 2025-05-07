@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteReview } from "@/services/Review";
+import { deleteReview } from "@/services/AdminReview";
 import { Trash2 } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";

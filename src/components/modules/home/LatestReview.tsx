@@ -8,7 +8,6 @@ import React from "react";
 const LatestReview = async () => {
   const data = await getAllReview();
   const reviewsData = await data.data;
-  console.log(reviewsData);
 
   let content = null;
 

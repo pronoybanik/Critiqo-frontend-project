@@ -4,29 +4,14 @@ import {
   Star,
   Check,
   X,
-  ArrowUp,
-  ArrowDown,
-  DollarSign,
-  FileText,
-  Clock,
-  Award,
-  Edit,
+  Clock
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+
 import { IReview } from "@/types/reviews";
 import TotalCount from "./TotalCount";
 import ReviewTable from "./ReviweTable";
 
 const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
-  console.log("review", reviewData);
 
   const [reviews, setReviews] = useState(reviewData);
   const [activeTab, setActiveTab] = useState("pending");

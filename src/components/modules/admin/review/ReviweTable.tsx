@@ -2,9 +2,10 @@
 import { useState } from "react";
 import { Star, Check, X, ArrowUp, ArrowDown, Edit } from "lucide-react";
 import { IReview } from "@/types/reviews";
+import { reviewUpdateByAdmin } from "@/services/AdminReview";
+import { toast } from "sonner";
 
 const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
-  // console.log(reviewData);
 
   const [reviews, setReviews] = useState<IReview[]>(reviewData);
   const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
@@ -13,41 +14,75 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
 
   const pendingData = reviewData.filter((item) => item.status === "DRAFT");
 
-  console.log("Pending Reviews", pendingData);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
 
-  const handleStatusChange = (reviewId: string, newStatus: string) => {
-    setReviews(
-      reviews.map((review) =>
-        review.id === reviewId
-          ? {
-              ...review,
-              status: newStatus,
-              updatedAt: new Date().toISOString(),
-            }
-          : review
-      )
-    );
+  const handleStatusChange = async (reviewId: string, newStatus: string) => {
+    try {
+      const res = await reviewUpdateByAdmin(reviewId, {
+        status: newStatus,
+        moderationNote: `Status changed to ${newStatus} by admin`,
+      });
+
+      if (res?.success) {
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.id === reviewId
+              ? {
+                  ...review,
+                  status: newStatus,
+                  updatedAt: new Date().toISOString(),
+                }
+              : review
+          )
+        );
+        toast.success(`Review status changed successfully to "${newStatus}"`);
+      } else {
+        toast.error("Failed to update review status");
+      }
+    } catch (error: any) {
+      console.error("Error updating status:", error.message);
+      toast.error("Something went wrong while changing review status");
+    }
   };
 
-  const togglePremiumStatus = (reviewId: string) => {
-    setReviews(
-      reviews.map((review) =>
-        review.id === reviewId
-          ? {
-              ...review,
-              isPremium: !review.isPremium,
-              premiumPrice: !review.isPremium
-                ? review.premiumPrice || 4.99
-                : null,
-            }
-          : review
-      )
-    );
+  const togglePremiumStatus = async (reviewId: string) => {
+    const review = reviews.find((r) => r.id === reviewId);
+    if (!review) return;
+
+    const newIsPremium = !review.isPremium;
+
+    try {
+      const data = {
+        isPremium: newIsPremium,
+        moderationNote: newIsPremium
+          ? "Excellent in-depth review that provides premium value"
+          : "Reverted to free review",
+      };
+
+      const res = await reviewUpdateByAdmin(reviewId, data);
+
+      if (res?.success) {
+        toast.success("Is REviews premium");
+        // Update local state after successful API call
+        // setReviews((prevReviews) =>
+        //   prevReviews.map((r) =>
+        //     r.id === reviewId
+        //       ? {
+        //           ...r,
+        //           isPremium: newIsPremium,
+        //           premiumPrice: newIsPremium ? r.premiumPrice || 4.99 : null,
+        //         }
+        //       : r
+        //   )
+        // );
+      }
+    } catch (error: any) {
+      console.error("Toggle premium error:", error.message);
+    }
   };
 
   const openModal = (review: IReview, type: string) => {
@@ -73,8 +108,8 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
   const Badge = ({ status }: { status: string }) => {
     const colors: Record<string, string> = {
       DRAFT: "bg-yellow-100 text-yellow-800",
-      published: "bg-green-100 text-green-800",
-      unpublished: "bg-red-100 text-red-800",
+      PUBLISHED: "bg-green-100 text-green-800",
+      UNPUBLISHED: "bg-red-100 text-red-800",
       pending: "bg-orange-100 text-orange-800",
     };
 
@@ -119,7 +154,10 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                   Title
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">
-                  Author
+                  Author Name
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                  Author Email
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">
                   Status
@@ -139,7 +177,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {filtered.map((review) => (
+              {filtered.map((review: IReview) => (
                 <tr key={review.id} className="hover:bg-gray-50">
                   <td className="px-4 py-2">
                     <div className="font-medium text-gray-900">
@@ -149,6 +187,9 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                   </td>
                   <td className="px-4 py-2 text-sm text-gray-700">
                     {review.userName}
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-700">
+                    {review.userEmail}
                   </td>
                   <td className="px-4 py-2">
                     <Badge status={review.status} />
@@ -198,7 +239,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                   <td className="px-4 py-2 text-right text-sm space-x-2">
                     <button
                       title="Approve"
-                      onClick={() => handleStatusChange(review.id, "published")}
+                      onClick={() => handleStatusChange(review.id, "PUBLISHED")}
                       className="text-green-600 hover:text-green-900"
                     >
                       <Check size={25} className="inline" />
@@ -206,7 +247,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                     <button
                       title="reject"
                       onClick={() =>
-                        handleStatusChange(review.id, "unpublished")
+                        handleStatusChange(review.id, "UNPUBLISHED")
                       }
                       className="text-red-600 hover:text-red-900"
                     >

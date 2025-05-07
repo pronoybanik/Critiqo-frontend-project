@@ -1,5 +1,6 @@
 "use client";
-import Head from "next/head";
+import GlassmorphicBanner from "@/components/shared/GlassmorphicBanner";
+import PrimaryButton from "@/components/shared/PrimayButton";
 import { useState } from "react";
 
 export default function ContactSection() {
@@ -41,7 +42,8 @@ export default function ContactSection() {
         subject: "",
         message: "",
       });
-    } catch (error) {
+    } catch (error: any) {
+      Error(error);
       setSubmitError(true);
     } finally {
       setIsSubmitting(false);
@@ -80,38 +82,12 @@ export default function ContactSection() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Head>
-        <title>Contact Us | Your Company Name</title>
-        <meta
-          name="description"
-          content="Get in touch with our team. We're here to help with any questions or inquiries."
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-blue-600 to-black text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Contact Us</h1>
-            <div className="w-16 h-1 bg-yellow-400 mx-auto mb-6"></div>
-            <p className="text-xl max-w-3xl mx-auto">
-              We do love to hear from you. Reach out to our team with any
-              questions, inquiries, or collaboration ideas.
-            </p>
-          </div>
-        </div>
-        {/* <div className="absolute bottom-0 left-0 right-0">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-            <path
-              fill="#f9fafb"
-              fillOpacity="1"
-              d="M0,96L48,106.7C96,117,192,139,288,138.7C384,139,480,117,576,128C672,139,768,181,864,186.7C960,192,1056,160,1152,149.3C1248,139,1344,149,1392,154.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            ></path>
-          </svg>
-        </div> */}
-      </section>
+      <GlassmorphicBanner
+        title="Contact Us"
+        subtitle="We do love to hear from you. Reach out to our team with any
+              questions, inquiries, or collaboration ideas."
+      ></GlassmorphicBanner>
 
       {/* Contact Section */}
       <section className="py-12 lg:py-20 px-4 -mt-10">
@@ -119,16 +95,16 @@ export default function ContactSection() {
           <div className="bg-white rounded-lg shadow-xl overflow-hidden">
             <div className="flex flex-col lg:flex-row">
               {/* Contact Information */}
-              <div className="lg:w-5/12 bg-gradient-to-br from-blue-600 to-indigo-800 text-white p-8 lg:p-12">
+              <div className="lg:w-5/12 bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-8 lg:p-12">
                 <h2 className="text-2xl font-bold mb-6">Contact Information</h2>
-                <p className="mb-8 text-blue-100">
+                <p className="mb-8 text-indigo-100">
                   Fill out the form or contact us directly using the information
                   below.
                 </p>
 
                 <div className="space-y-6">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-blue-500 rounded-full p-3">
+                    <div className="flex-shrink-0 bg-indigo-500 rounded-full p-3">
                       <svg
                         className="w-6 h-6 text-white"
                         fill="none"
@@ -148,7 +124,7 @@ export default function ContactSection() {
                       <h3 className="text-lg font-medium">Email</h3>
                       <a
                         href={`mailto:${contactInfo.email}`}
-                        className="text-blue-100 hover:text-white transition-colors"
+                        className="text-indigo-100 hover:text-white transition-colors"
                       >
                         {contactInfo.email}
                       </a>
@@ -156,7 +132,7 @@ export default function ContactSection() {
                   </div>
 
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-blue-500 rounded-full p-3">
+                    <div className="flex-shrink-0 bg-indigo-500 rounded-full p-3">
                       <svg
                         className="w-6 h-6 text-white"
                         fill="none"
@@ -176,7 +152,7 @@ export default function ContactSection() {
                       <h3 className="text-lg font-medium">Phone</h3>
                       <a
                         href={`tel:${contactInfo.phone.replace(/\D/g, "")}`}
-                        className="text-blue-100 hover:text-white transition-colors"
+                        className="text-indigo-100 hover:text-white transition-colors"
                       >
                         {contactInfo.phone}
                       </a>
@@ -184,7 +160,7 @@ export default function ContactSection() {
                   </div>
 
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-blue-500 rounded-full p-3">
+                    <div className="flex-shrink-0 bg-indigo-500 rounded-full p-3">
                       <svg
                         className="w-6 h-6 text-white"
                         fill="none"
@@ -208,12 +184,12 @@ export default function ContactSection() {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-lg font-medium">Address</h3>
-                      <p className="text-blue-100">{contactInfo.address}</p>
+                      <p className="text-indigo-100">{contactInfo.address}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-blue-500 rounded-full p-3">
+                    <div className="flex-shrink-0 bg-indigo-500 rounded-full p-3">
                       <svg
                         className="w-6 h-6 text-white"
                         fill="none"
@@ -231,7 +207,7 @@ export default function ContactSection() {
                     </div>
                     <div className="ml-4">
                       <h3 className="text-lg font-medium">Working Hours</h3>
-                      <p className="text-blue-100">
+                      <p className="text-indigo-100">
                         {contactInfo.workingHours}
                       </p>
                     </div>
@@ -247,7 +223,7 @@ export default function ContactSection() {
                         href={platform.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-500 hover:bg-blue-400 h-10 w-10 rounded-full flex items-center justify-center transition-colors"
+                        className="bg-indigo-500 hover:bg-indigo-400 h-10 w-10 rounded-full flex items-center justify-center transition-colors"
                       >
                         {platform.icon === "facebook" && (
                           <svg
@@ -315,7 +291,7 @@ export default function ContactSection() {
                       </div>
                       <div className="ml-3">
                         <p className="text-sm text-green-700">
-                          Your message has been sent! We'll get back to you as
+                          Your message has been sent! We All get back to you as
                           soon as possible.
                         </p>
                       </div>
@@ -364,7 +340,7 @@ export default function ContactSection() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="Your name"
                         required
                       />
@@ -382,7 +358,7 @@ export default function ContactSection() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="your.email@example.com"
                         required
                       />
@@ -402,7 +378,7 @@ export default function ContactSection() {
                       name="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="How can we help you?"
                       required
                     />
@@ -420,19 +396,17 @@ export default function ContactSection() {
                       name="message"
                       value={formData.message}
                       onChange={handleChange}
-                      rows="5"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      rows={5}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="Your message here..."
                       required
                     ></textarea>
                   </div>
 
-                  <button
+                  <PrimaryButton
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full md:w-auto px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors ${
-                      isSubmitting ? "opacity-75 cursor-not-allowed" : ""
-                    }`}
+                    className="w-52"
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center">
@@ -461,7 +435,7 @@ export default function ContactSection() {
                     ) : (
                       "Send Message"
                     )}
-                  </button>
+                  </PrimaryButton>
                 </form>
               </div>
             </div>
@@ -481,16 +455,15 @@ export default function ContactSection() {
               {/* This is a placeholder for the map - you would integrate Google Maps, Mapbox, etc. here */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="text-gray-500">Map integration goes here</p>
-                {/* For an actual implementation, you might use something like:
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=YOUR_EMBED_URL" 
-                  width="100%" 
-                  height="100%" 
-                  frameBorder="0" 
-                  allowFullScreen 
+                For an actual implementation, you might use something like:
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=YOUR_EMBED_URL"
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  allowFullScreen
                   loading="lazy"
                 ></iframe>
-                */}
               </div>
             </div>
           </div>

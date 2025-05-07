@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useUser } from "@/context/UserContext";
-import { deleteReview, getAllUserReviews } from "@/services/Review";
 import { format } from "date-fns";
 import {
   Star,
@@ -35,13 +34,14 @@ import { toast } from "sonner";
 import { IReview } from "@/types/reviews";
 import Link from "next/link";
 import SecondaryButton from "@/components/shared/SecondaryButton";
+import { deleteReview, getAllUserReviews } from "@/services/AdminReview";
 
 const MyReviewsPage = () => {
   const { user } = useUser();
 
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
@@ -52,7 +52,6 @@ const MyReviewsPage = () => {
       try {
         setLoading(true);
         const data = await getAllUserReviews(user.userId);
-        console.log("ttt", data.data);
 
         setReviews(data.data);
       } catch (err) {
@@ -222,13 +221,18 @@ const MyReviewsPage = () => {
               ? "You haven't written any reviews yet."
               : `You don't have any ${activeTab} reviews.`}
           </p>
-          <Link className="flex items-center justify-center mt-4" href="/createReview">
-            <SecondaryButton  className="w-52 ">Write Your First Review</SecondaryButton>
+          <Link
+            className="flex items-center justify-center mt-4"
+            href="/createReview"
+          >
+            <SecondaryButton className="w-52 ">
+              Write Your First Review
+            </SecondaryButton>
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedReviews.map((review: IReview) => (
+          {sortedReviews.map((review) => (
             <Card key={review.id} className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 {review.image && (

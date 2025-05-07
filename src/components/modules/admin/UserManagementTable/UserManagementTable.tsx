@@ -2,17 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Eye, RotateCcw, Trash2 } from "lucide-react";
-import { getAllUser } from "@/services/User";
+import { deleteUser, getAllUser } from "@/services/User";
 import UserDetailsModal from "./UserDetailsModal";
 import { TUser } from "@/types/user";
+import { toast } from "sonner";
 
 const UserManagementTable = () => {
   const [users, setUsers] = useState<TUser | []>([]);
   const [showStatusDropdown, setShowStatusDropdown] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [open, setOpen] = useState(false);
-
-  
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -43,6 +42,18 @@ const UserManagementTable = () => {
     setOpen(true);
   };
 
+  const handleUserDelete = async (id: string) => {
+    
+    if (id) {
+      const result = await deleteUser(id);
+      
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message || "There are some error");
+      }
+    }
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -73,7 +84,7 @@ const UserManagementTable = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
+            {users.map((user: any) => (
               <tr
                 key={user.id}
                 className="border-b border-gray-200 hover:bg-gray-50"
@@ -144,7 +155,7 @@ const UserManagementTable = () => {
                       <Eye className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => confirmDeleteUser(user)}
+                      onClick={() => handleUserDelete(user.id)}
                       className="p-1 text-red-600 hover:text-red-800"
                       title="Delete User"
                     >

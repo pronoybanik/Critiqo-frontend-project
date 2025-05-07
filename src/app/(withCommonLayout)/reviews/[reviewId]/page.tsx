@@ -13,7 +13,6 @@ const ReviewDetailsPage = async ({
   const { reviewId } = await params;
   const { data: review } = await getSingleReviewById(reviewId);
   const { data: featured } = await featuredReview(page, limit);
-  console.log("dynamic id", featured);
 
 
   return (

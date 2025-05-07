@@ -1,4 +1,5 @@
-'use client';
+
+
 
 import { useState } from 'react';
 import { Calendar, MessageSquare, ChevronLeft, Heart, Send } from 'lucide-react';
@@ -545,3 +546,4 @@ const BlogPage: React.FC = () => {
 };
 
 export default BlogPage;
+
