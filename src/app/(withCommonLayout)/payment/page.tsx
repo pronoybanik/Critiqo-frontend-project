@@ -22,12 +22,29 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { createPayment } from '@/services/Payment';
 
 // Initialize Stripe - replace with your publishable key
 // const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+type Plan = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  originalPrice?: number;
+  interval: 'month' | 'year';
+  features: string[];
+  notIncluded: string[];
+  priceId: string;
+  popular: boolean;
+};
 
+type Plans = {
+  monthly: Plan[];
+  yearly: Plan[];
+};
 // Subscription plans
-const plans = {
+const plans: Plans = {
   monthly: [
     {
       id: 'basic-monthly',
@@ -162,54 +179,55 @@ const plans = {
 export default function SubscriptionPage() {
   const router = useRouter();
   const { user } = useUser();
-  const [billingInterval, setBillingInterval] = useState('monthly');
-  const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({});
+  console.log(user)
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
+  const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
 
-  const handleSubscription = async (priceId: string, planId: string) => {
+  const handleSubscription = async (price: number) => {
     if (!user) {
       toast.error('Please log in to subscribe');
       router.push('/login');
       return;
     }
 
+    const data = {
+      name: user.email,
+      amount: Number(price),
+      address: "Dhaka, Bangladesh",
+      city: "Dhaka",
+      contact: "01325478952"
+    };
+    console.log(data)
+
     try {
-      setIsLoading({ ...isLoading, [planId]: true });
+      setIsLoading((prev) => ({ ...prev, [price]: true }));
 
-      // Call your backend API to create a Stripe Checkout session
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          priceId,
-          userId: user.userId,
-          returnUrl: `${window.location.origin}/account/subscription`,
-        }),
-      });
+      const response = await createPayment(data);
 
-      const session = await response.json();
+      // Log response to see what's returned
+      console.log('Payment response:', response);
 
-      if (!response.ok) {
-        throw new Error(session.message || 'Failed to create checkout session');
+      // Handle based on ShurjoPay's expected response format
+      if (response?.success) {
+
+        toast.success("Payment Succesfully Done")
       }
-
-      // Redirect to Stripe Checkout
-      // const stripe = await stripePromise;
-      // const { error } = await stripe.redirectToCheckout({
-      //   sessionId: session.id,
-      // });
-
-      // if (error) {
-      //   throw new Error(error.message);
+      // if (!response || response?.data?.checkout_url) {
+      //   throw new Error(response?.message || 'Failed to create ShurjoPay session');
+      // } else {
       // }
-    } catch (error) {
-      console.error('Subscription error:', error);
-      toast.error('Failed to process subscription. Please try again.');
+
+      //  Redirect user to ShurjoPay checkout page
+      window.location.href = response?.data?.checkout_url;
+      console.error(response?.data?.checkout_url);
+
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to process subscription. Please try again.');
     } finally {
-      setIsLoading({ ...isLoading, [planId]: false });
+      setIsLoading((prev) => ({ ...prev, [price]: false }));
     }
   };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-16">
@@ -226,7 +244,7 @@ export default function SubscriptionPage() {
         <Tabs
           defaultValue="monthly"
           value={billingInterval}
-          onValueChange={setBillingInterval}
+          onValueChange={(val: 'monthly' | 'yearly') => setBillingInterval(val)}
           className="w-full max-w-md"
         >
           <TabsList className="grid grid-cols-2 w-full">
@@ -294,7 +312,7 @@ export default function SubscriptionPage() {
             <CardFooter className="pt-4">
               <Button
                 className={`w-full ${plan.popular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
-                onClick={() => handleSubscription(plan.priceId, plan.id)}
+                onClick={() => handleSubscription(plan.price)}
                 disabled={isLoading[plan.id]}
               >
                 {isLoading[plan.id] ? (

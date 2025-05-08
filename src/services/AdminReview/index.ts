@@ -78,8 +78,7 @@ export const deleteReview = async (reviewId: string): Promise<any> => {
 
         const result = await res.json();
 
-        revalidateTag("USERREVIEW");
-        revalidateTag("ADMINREVIEW");
+        revalidateTag("REVIEW");
 
         return result;
     } catch (error: any) {
