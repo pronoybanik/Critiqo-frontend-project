@@ -6,11 +6,15 @@ const ReviewPage = async () => {
   const data = await getAllReviewAdmin();
   const reviews = await data.data;
 
-  return (
-    <>
-      <ReviewSection reviewData={reviews} />
-    </>
-  );
+  let content = null;
+
+  if (reviews?.length > 0) {
+    content = <ReviewSection reviewData={reviews} />;
+  } else {
+    content = <p>There are no Data</p>;
+  }
+
+  return <>{content}</>;
 };
 
 export default ReviewPage;

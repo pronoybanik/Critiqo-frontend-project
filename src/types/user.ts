@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type TUser = {
   id: string;
   name: string;
@@ -11,7 +10,7 @@ export type TUser = {
   needPasswordChange: boolean;
   createdAt: string; // Or `Date` if parsed
   updatedAt: string;
-  admin: null | any; 
+  admin: null ; 
   guest?: {
     contactNumber: string;
     createdAt: string;
@@ -23,3 +22,14 @@ export type TUser = {
     updatedAt: string;
   };
 };
+
+
+export type TUserToken = {
+  id: string;
+  userId: string;
+  email: string;
+  role: 'ADMIN' | 'GUEST' | 'USER'; // Add other roles as needed
+  iat: number; // issued at (timestamp)
+  exp: number; // expiration (timestamp)
+};
+

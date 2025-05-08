@@ -24,6 +24,7 @@ import { IProfile } from "@/types/profile";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
+  
   const [userData, setUserData] = useState<IProfile | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -8,7 +8,6 @@ import { toast } from "sonner";
 const HandleLikeUnLineDelete = ({ id }: { id: string }) => {
   const handleDelete = async () => {
     const res = await deleteReview(id);
-    console.log(res);
     if (res.success) {
       toast.success(res.message);
     } else {

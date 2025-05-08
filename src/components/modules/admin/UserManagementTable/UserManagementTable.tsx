@@ -77,7 +77,7 @@ const UserManagementTable = ({ users: initialUsers }: { users: TUser[] }) => {
                 className="border-b border-gray-200 hover:bg-gray-50"
               >
                 <td className="py-3 px-4 text-sm">
-                  {user.guest?.name || user.admin?.name || "N/A"}
+                  {user.guest?.name || "N/A"}
                 </td>
                 <td className="py-3 px-4 text-sm">{user.email}</td>
                 <td className="py-3 px-4 text-sm">
