@@ -1,16 +1,18 @@
-import { IReview } from "@/types/reviews";
 import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
 import { getAllReviewAdmin } from "@/services/AdminReview";
+import { TAdminReview } from "@/types/adminreview";
+import { TReview } from "@/types/review";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const reviewData = data?.data;
+  console.log(reviewData);
 
-  const reviewCounts = reviewData.reduce(
+  const reviewCounts = reviewData?.reduce(
     (
       acc: { published: number; pending: number; unpublished: number },
-      review: any
+      review: TAdminReview
     ) => {
       if (review.status === "PUBLISHED") acc.published += 1;
       else if (review.status === "DRAFT") acc.pending += 1;
@@ -40,26 +42,26 @@ const AdminDashBoardPage = async () => {
               </div>
               <div className="flex items-baseline">
                 <p className="text-2xl font-bold text-gray-900">
-                  {reviewData.length}
+                  {reviewData?.length}
                 </p>
               </div>
               <div className="flex mt-4 pt-4 border-t border-gray-100 justify-between">
                 <div className="flex flex-col items-center">
                   <span className="text-xs text-gray-500">Published</span>
                   <span className="text-sm font-medium text-green-600">
-                    {reviewCounts.published}
+                    {reviewCounts?.published}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-xs text-gray-500">Pending</span>
                   <span className="text-sm font-medium text-yellow-600">
-                    {reviewCounts.pending}
+                    {reviewCounts?.pending}
                   </span>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-xs text-gray-500">Unpublished</span>
                   <span className="text-sm font-medium text-red-600">
-                    {reviewCounts.unpublished}
+                    {reviewCounts?.unpublished}
                   </span>
                 </div>
               </div>
@@ -120,8 +122,8 @@ const AdminDashBoardPage = async () => {
               </div>
               <div className="space-y-4">
                 {reviewData
-                  .filter((review: IReview) => review.isPremium)
-                  .map((review: IReview, index: number) => (
+                  ?.filter((review: TAdminReview) => review.isPremium)
+                  .map((review: TAdminReview, index: number) => (
                     <div
                       key={index}
                       className="flex items-center justify-between border-b border-gray-100 pb-3"
@@ -172,7 +174,7 @@ const AdminDashBoardPage = async () => {
               <h3 className="font-medium text-gray-700">Recent Activity</h3>
             </div>
             <div className="divide-y divide-gray-200">
-              {reviewData.map((item, index) => (
+              {reviewData?.map((item: TReview, index: number) => (
                 <div
                   key={index}
                   className="px-6 py-4 flex items-center justify-between"
@@ -234,7 +236,7 @@ const AdminDashBoardPage = async () => {
                       </p>
                     </div>
                   </div>
-                  <HandleLikeUnLineDelete id={item.id} status={item.status} />
+                  <HandleLikeUnLineDelete id={item.id} />
                 </div>
               ))}
             </div>

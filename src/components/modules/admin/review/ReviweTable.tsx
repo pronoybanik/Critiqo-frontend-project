@@ -1,26 +1,24 @@
 "use client";
 import { useState } from "react";
-import { Star, Check, X, ArrowUp, ArrowDown, Edit } from "lucide-react";
-import { IReview } from "@/types/reviews";
+import { Star, Check, X, ArrowUp, ArrowDown } from "lucide-react";
 import { reviewUpdateByAdmin } from "@/services/AdminReview";
 import { toast } from "sonner";
+import { TAdminReview } from "@/types/adminreview";
 
-const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
-
-  const [reviews, setReviews] = useState<IReview[]>(reviewData);
-  const [selectedReview, setSelectedReview] = useState<IReview | null>(null);
-  const [modalType, setModalType] = useState<string>("");
-  const [editPrice, setEditPrice] = useState<string>("");
-
-  const pendingData = reviewData.filter((item) => item.status === "DRAFT");
-
+const ReviewTable = ({ reviewData }: { reviewData: any }) => {
+  const [reviews, setReviews] = useState<any>(reviewData);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
 
-  const handleStatusChange = async (reviewId: string, newStatus: string) => {
+  type ReviewStatus = "PUBLISHED" | "UNPUBLISHED" | "DRAFT" | "pending";
+
+  const handleStatusChange = async (
+    reviewId: string,
+    newStatus: ReviewStatus
+  ) => {
     try {
       const res = await reviewUpdateByAdmin(reviewId, {
         status: newStatus,
@@ -28,8 +26,8 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
       });
 
       if (res?.success) {
-        setReviews((prevReviews) =>
-          prevReviews.map((review) =>
+        setReviews((prevReviews: any) =>
+          prevReviews.map((review: TAdminReview) =>
             review.id === reviewId
               ? {
                   ...review,
@@ -68,41 +66,21 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
       if (res?.success) {
         toast.success("Is REviews premium");
         // Update local state after successful API call
-        // setReviews((prevReviews) =>
-        //   prevReviews.map((r) =>
-        //     r.id === reviewId
-        //       ? {
-        //           ...r,
-        //           isPremium: newIsPremium,
-        //           premiumPrice: newIsPremium ? r.premiumPrice || 4.99 : null,
-        //         }
-        //       : r
-        //   )
-        // );
+        setReviews((prevReviews) =>
+          prevReviews.map((r) =>
+            r.id === reviewId
+              ? {
+                  ...r,
+                  isPremium: newIsPremium,
+                  premiumPrice: newIsPremium ? r.premiumPrice || 4.99 : null,
+                }
+              : r
+          )
+        );
       }
     } catch (error: any) {
       console.error("Toggle premium error:", error.message);
     }
-  };
-
-  const openModal = (review: IReview, type: string) => {
-    setSelectedReview(review);
-    setModalType(type);
-    setEditPrice(review.premiumPrice?.toString() || "0");
-  };
-
-  const updatePrice = () => {
-    if (!selectedReview) return;
-    const price = parseFloat(editPrice);
-    if (isNaN(price) || price <= 0) return;
-
-    setReviews(
-      reviews.map((review) =>
-        review.id === selectedReview.id
-          ? { ...review, premiumPrice: price }
-          : review
-      )
-    );
   };
 
   const Badge = ({ status }: { status: string }) => {
@@ -139,7 +117,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
   );
 
   const renderTable = (status: string) => {
-    const filtered = reviews.filter((r) => r.status === status);
+    const filtered = reviews.filter((r: any) => r.status === status);
 
     return (
       <div className="mb-10">
@@ -177,7 +155,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-100">
-              {filtered.map((review: IReview) => (
+              {filtered.map((review: TAdminReview) => (
                 <tr key={review.id} className="hover:bg-gray-50">
                   <td className="px-4 py-2">
                     <div className="font-medium text-gray-900">
@@ -224,7 +202,6 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                         }`}
                       />
                     </button>
-                   
                   </td>
                   <td className="px-4 py-2 text-right text-sm space-x-2">
                     <button
@@ -266,8 +243,8 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6">All Reviews by Status</h1>
-      {[...new Set(reviews.map((r) => r.status))].map((status) =>
-        renderTable(status)
+      {[...new Set(reviews.map((r: any) => r.status))].map((status) =>
+        renderTable(status as "PUBLISHED" | "UNPUBLISHED" | "DRAFT" | "pending")
       )}
     </div>
   );

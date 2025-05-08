@@ -1,32 +1,24 @@
 export type TUser = {
-    id: string;
-    email: string;
-    role: "ADMIN" | "GUEST";
-    status: "ACTIVE" | "INACTIVE";
-    needPasswordChange: boolean;
+  id: string;
+  name: string;
+  email: string;
+  contactNumber: string;
+  profilePhoto: string | null;
+  role: "GUEST" | "USER" | "ADMIN"; // Extend as needed
+  status: "ACTIVE" | "INACTIVE" | "BANNED"; // Extend as needed
+  isDeleteAt: boolean;
+  needPasswordChange: boolean;
+  createdAt: string; // Or `Date` if parsed
+  updatedAt: string;
+  admin: null | any; 
+  guest?: {
+    contactNumber: string;
     createdAt: string;
+    email: string;
+    id: string;
+    isDeleteAt: boolean;
+    name: string;
+    profilePhoto: string | null;
     updatedAt: string;
-    guest: GuestInfo | null;
-    admin: AdminInfo | null;
   };
-  
-  type GuestInfo = {
-    id: string;
-    name: string;
-    email: string;
-    profilePhoto: string | null;
-    contactNumber: string;
-    address: string | null;
-    bio: string | null;
-  };
-  
-  type AdminInfo = {
-    id: string;
-    name: string;
-    email: string;
-    profilePhoto: string | null;
-    contactNumber: string;
-    address: string | null;
-    bio: string | null;
-  };
-  
+};

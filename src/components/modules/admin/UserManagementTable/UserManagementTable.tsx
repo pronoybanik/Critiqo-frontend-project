@@ -13,6 +13,8 @@ const UserManagementTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [open, setOpen] = useState(false);
 
+  
+
   useEffect(() => {
     const fetchProfile = async () => {
       const response = await getAllUser();
@@ -23,9 +25,12 @@ const UserManagementTable = () => {
     fetchProfile();
   }, []);
 
-  const changeStatus = (userId, newStatus) => {
+  console.log(users);
+  
+
+  const changeStatus = (userId: string, newStatus: string) => {
     setUsers(
-      users.map((user) =>
+      users.map((user: TUser[]) =>
         user.id === userId ? { ...user, status: newStatus } : user
       )
     );
@@ -43,10 +48,9 @@ const UserManagementTable = () => {
   };
 
   const handleUserDelete = async (id: string) => {
-    
     if (id) {
       const result = await deleteUser(id);
-      
+
       if (result.success) {
         toast.success(result.message);
       } else {
@@ -84,7 +88,7 @@ const UserManagementTable = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user: any) => (
+            {users.map((user: TUser) => (
               <tr
                 key={user.id}
                 className="border-b border-gray-200 hover:bg-gray-50"
@@ -126,14 +130,14 @@ const UserManagementTable = () => {
                       <div className="absolute z-10 mt-1 bg-white shadow-lg rounded-md py-1 w-32 border border-gray-200">
                         <button
                           onClick={() => changeStatus(user.id, "ACTIVE")}
-                          className="block px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
+                          className=" px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
                         >
                           <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
                           Active
                         </button>
                         <button
                           onClick={() => changeStatus(user.id, "INACTIVE")}
-                          className="block px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
+                          className=" px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
                         >
                           <span className="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
                           Inactive
