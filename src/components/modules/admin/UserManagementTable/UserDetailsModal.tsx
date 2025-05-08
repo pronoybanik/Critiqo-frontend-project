@@ -8,21 +8,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { TUser } from "@/types/user";
 
 interface UserDetailsModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    contactNumber?: string;
-    role: string;
-    status: string;
-    needPasswordChange: boolean;
-    createdAt: string;
-    updatedAt: string;
-  } | null;
+  user: TUser
 }
 
 const UserDetailsModal: React.FC<UserDetailsModalProps> = ({

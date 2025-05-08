@@ -1,148 +1,73 @@
 "use client";
 import { useState } from "react";
-import {
-  Star,
-  Check,
-  X,
-  Clock
-} from "lucide-react";
+import { Check, X, Clock } from "lucide-react";
 
-import { IReview } from "@/types/reviews";
 import TotalCount from "./TotalCount";
 import ReviewTable from "./ReviweTable";
+import { TAdminReview } from "@/types/adminreview";
+import { reviewUpdateByAdmin } from "@/services/AdminReview";
+import { toast } from "sonner";
 
-const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
+const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
+  const [reviews, setReviews] = useState<TAdminReview[]>(reviewData);
 
-  const [reviews, setReviews] = useState(reviewData);
-  const [activeTab, setActiveTab] = useState("pending");
-  const [selectedReview, setSelectedReview] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalType, setModalType] = useState("");
-  const [moderationReason, setModerationReason] = useState("");
-  const [editPrice, setEditPrice] = useState("");
-
-  // Filter reviews based on active tab
-  // const filteredReviews = reviewData.filter(
-  //   (review) => review.status === "DRAFT"
-  // );
-
-  // console.log("filter", filteredReviews);
-
-  // Calculate total premium earnings
-  // const totalEarnings = reviews
-  //   .filter((r) => r.isPremium && r.status === "published")
-  //   .reduce((sum, review) => sum + (review.price || 0), 0);
-
-  // Get top premium reviews by earnings (assuming voteCount * price = earnings)
-  // const topPremiumReviews = [...reviews]
-  //   .filter((r) => r.isPremium && r.status === "published")
-  //   .sort((a, b) => b.voteCount * (b.price || 0) - a.voteCount * (a.price || 0))
-  //   .slice(0, 3);
-
-  // Recent activity - pending reviews or recently updated ones
-  const recentActivity = [...reviews]
-    .filter((r) => r.status === "pending")
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-    .slice(0, 4);
+  console.log("tt", reviews);
+  
 
   // Format date string
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return `${date.toLocaleDateString()}`;
+    return date.toLocaleDateString();
   };
 
   // Handle review status change
-  const handleStatusChange = (reviewId, newStatus) => {
-    setReviews(
-      reviews.map((review) =>
-        review._id === reviewId
-          ? {
-              ...review,
-              status: newStatus,
-              updatedAt: new Date().toISOString(),
-            }
-          : review
-      )
-    );
-    setModalOpen(false);
-  };
+  const handleStatusChange = async (reviewId: string, newStatus: string) => {
+    try {
+      const res = await reviewUpdateByAdmin(reviewId, {
+        status: newStatus,
+        moderationNote: `Status changed to ${newStatus} by admin`,
+      });
 
-  // Open moderation reason modal
-  const openModerationModal = (review, type) => {
-    setSelectedReview(review);
-    setModalType(type);
-    setModalOpen(true);
-    if (type === "price") {
-      setEditPrice(review.price?.toString() || "0");
+      if (res?.success) {
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.id === reviewId
+              ? {
+                  ...review,
+                  status: newStatus,
+                  updatedAt: new Date().toISOString(),
+                }
+              : review
+          )
+        );
+        toast.success(`Review status changed successfully to "${newStatus}"`);
+      } else {
+        toast.error("Failed to update review status");
+      }
+    } catch (error: any) {
+      console.error("Error updating status:", error.message);
+      toast.error("Something went wrong while changing review status");
     }
   };
 
-  // Handle premium status toggle
-  const togglePremiumStatus = (reviewId) => {
-    setReviews(
-      reviews.map((review) => {
-        if (review._id === reviewId) {
-          const isPremium = !review.isPremium;
-          return {
-            ...review,
-            isPremium,
-            price: isPremium ? review.price || 4.99 : undefined,
-            updatedAt: new Date().toISOString(),
-          };
-        }
-        return review;
-      })
-    );
-  };
-
-  // Handle price update
-  const updatePrice = () => {
-    if (!selectedReview) return;
-
-    const newPrice = parseFloat(editPrice);
-    if (isNaN(newPrice) || newPrice <= 0) return;
-
-    setReviews(
-      reviews.map((review) =>
-        review._id === selectedReview._id
-          ? { ...review, price: newPrice, updatedAt: new Date().toISOString() }
-          : review
-      )
-    );
-
-    setModalOpen(false);
-  };
-
-  // Star rating component
-  const StarRating = ({ rating }) => {
-    return (
-      <div className="flex">
-        {[...Array(5)].map((_, i) => (
-          <Star
-            key={i}
-            size={16}
-            className={
-              i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
-            }
-          />
-        ))}
-      </div>
-    );
-  };
+  
 
   // Badge component
-  const Badge = ({ status }) => {
-    const colors = {
-      pending: "bg-yellow-100 text-yellow-800",
-      published: "bg-green-100 text-green-800",
-      unpublished: "bg-red-100 text-red-800",
+  const Badge = ({ status }: { status: string }) => {
+    const colors: Record<string, string> = {
+      DRAFT: "bg-yellow-100 text-yellow-800",
+      PUBLISHED: "bg-green-100 text-green-800",
+      UNPUBLISHED: "bg-red-100 text-red-800",
+      pending: "bg-orange-100 text-orange-800",
     };
 
     return (
       <span
-        className={`px-2 py-1 text-xs font-medium rounded-full ${colors[status]}`}
+        className={`px-2 py-1 text-xs font-medium rounded-full ${
+          colors[status] || "bg-gray-100 text-gray-700"
+        }`}
       >
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+        {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
       </span>
     );
   };
@@ -155,9 +80,8 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
         </h1>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
-          {/* Total Reviews Card */}
-          <TotalCount reviewData={reviewData} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <TotalCount reviewData={reviews} />
 
           {/* Recent Activity */}
           <div className="bg-white rounded-lg shadow p-4">
@@ -168,14 +92,14 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
               <h3 className="font-semibold">Recent Activity</h3>
             </div>
             <div className="space-y-3">
-              {reviewData
+              {reviews
                 .sort(
                   (a, b) =>
                     new Date(b.createdAt).getTime() -
                     new Date(a.createdAt).getTime()
                 )
                 .slice(0, 4)
-                .map((review: IReview) => (
+                .map((review ) => (
                   <div
                     key={review.id}
                     className="p-2 border border-gray-100 rounded-md"
@@ -191,16 +115,14 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
                     </p>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() =>
-                          handleStatusChange(review._id, "published")
-                        }
+                        onClick={() => handleStatusChange(review.id, "PUBLISHED")}
                         className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
                       >
                         <Check size={12} className="inline mr-1" />
                         Approve
                       </button>
                       <button
-                        onClick={() => openModerationModal(review, "reject")}
+                        onClick={() => handleStatusChange(review.id, "UNPUBLISHED")}
                         className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"
                       >
                         <X size={12} className="inline mr-1" />
@@ -209,19 +131,14 @@ const ReviewSection = ({ reviewData }: { reviewData: IReview }) => {
                     </div>
                   </div>
                 ))}
-              {recentActivity.length === 0 && (
-                <p className="text-sm text-gray-500 text-center py-2">
-                  No pending reviews
-                </p>
-              )}
+            
             </div>
           </div>
         </div>
 
-        {/* Reviews Management Tabs */}
+        {/* Review Table */}
         <div className="bg-white rounded-lg shadow">
-          {/* Reviews Table */}
-          <ReviewTable reviewData={reviewData} />
+          <ReviewTable reviewData={reviews} />
         </div>
       </div>
     </div>

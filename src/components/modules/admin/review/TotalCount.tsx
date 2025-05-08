@@ -1,8 +1,7 @@
-import { IReview } from '@/types/reviews';
 import { FileText } from 'lucide-react';
 import React from 'react';
 
-const TotalCount = ({ reviewData }: { reviewData: IReview }) => {
+const TotalCount = ({ reviewData }: { reviewData: any }) => {
 
     const reviewCounts = reviewData.reduce(
         (acc, review) => {

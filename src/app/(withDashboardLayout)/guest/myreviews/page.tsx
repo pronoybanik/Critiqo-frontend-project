@@ -31,11 +31,14 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import { toast } from "sonner";
-import { IReview } from "@/types/reviews";
 import Link from "next/link";
 import SecondaryButton from "@/components/shared/SecondaryButton";
 import { deleteReview, getAllUserReviews } from "@/services/AdminReview";
+
+import { TAdminReview } from "@/types/adminreview";
+
 import { useRouter } from "next/navigation";
+
 
 const MyReviewsPage = () => {
   const { user } = useUser();
@@ -67,7 +70,7 @@ const MyReviewsPage = () => {
   }, [user?.userId]);
 
   // Filter reviews based on active tab
-  const filteredReviews = reviews?.filter((review) => {
+  const filteredReviews = reviews?.filter((review: TAdminReview) => {
     if (activeTab === "all") return true;
     if (activeTab === "published") return review.status === "PUBLISHED";
     if (activeTab === "draft") return review.status === "DRAFT";
