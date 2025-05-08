@@ -224,17 +224,7 @@ const ReviewTable = ({ reviewData }: { reviewData: IReview[] }) => {
                         }`}
                       />
                     </button>
-                    {review.isPremium && (
-                      <span className="ml-2 text-sm text-gray-800">
-                        ${review.premiumPrice?.toFixed(2)}
-                        <button
-                          onClick={() => openModal(review, "price")}
-                          className="ml-1 text-blue-500 hover:underline"
-                        >
-                          <Edit size={14} />
-                        </button>
-                      </span>
-                    )}
+                   
                   </td>
                   <td className="px-4 py-2 text-right text-sm space-x-2">
                     <button

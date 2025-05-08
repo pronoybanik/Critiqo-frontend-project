@@ -103,7 +103,7 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
         ))}
 
       {showReplyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-700 bg-opacity-10 flex justify-center items-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl">
             <h2 className="text-xl font-semibold mb-4">Write a Reply</h2>
             <textarea

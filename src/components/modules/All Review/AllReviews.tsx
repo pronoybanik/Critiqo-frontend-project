@@ -78,6 +78,7 @@ const AllReviews = () => {
     setSortOrder("");
     setCurrentPage(1);
   };
+  console.log(reviews)
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 bg-gradient-to-b from-purple-50 to-white">
@@ -97,8 +98,8 @@ const AllReviews = () => {
           <h2 className="text-lg font-semibold text-purple-800 flex items-center">
             <Filter className="h-5 w-5 mr-2" /> Filter Options
           </h2>
-          <button 
-            onClick={handleReset} 
+          <button
+            onClick={handleReset}
             className="flex items-center text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors border border-gray-200"
           >
             <RefreshCw className="h-4 w-4 mr-1" /> Reset
@@ -120,7 +121,7 @@ const AllReviews = () => {
             </div>
             <PrimaryButton
               type="submit"
-              className=" px-4 py-2 w-28 rounded-lg font-medium transition-colors "
+              className=" px-4 py-5 w-28 rounded-lg font-medium transition-colors "
             >
               Search
             </PrimaryButton>
@@ -152,7 +153,7 @@ const AllReviews = () => {
             <option value="3">3 Stars</option>
             <option value="2">2 Stars</option>
           </select>
-          
+
           {/* Premium Filter */}
           <select
             value={availabilityFilter}
@@ -186,7 +187,7 @@ const AllReviews = () => {
           <Star className="h-6 w-6 text-purple-400 animate-pulse delay-150" />
           <Star className="h-8 w-8 text-blue-400 animate-pulse delay-200" />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {reviews.length > 0 ? (
             reviews
@@ -214,29 +215,27 @@ const AllReviews = () => {
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
-              currentPage === 1
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${currentPage === 1
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+              }`}
           >
             Prev
           </button>
-          
+
           <div className="px-4 py-2 bg-purple-50 rounded-lg">
             <span className="font-medium text-purple-800">
               Page {currentPage} of {totalPages || 1}
             </span>
           </div>
-          
+
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages || totalPages === 0}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
-              currentPage === totalPages || totalPages === 0
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${currentPage === totalPages || totalPages === 0
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+              }`}
           >
             Next
           </button>
@@ -260,7 +259,7 @@ const AllReviews = () => {
           </select>
         </div>
       </div>
-      
+
       {/* Festive Footer */}
       <div className="mt-8 text-center text-sm text-purple-600">
         <p>✨ Discover amazing products and make informed decisions with our reviews ✨</p>

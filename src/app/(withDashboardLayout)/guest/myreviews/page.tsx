@@ -35,10 +35,11 @@ import { IReview } from "@/types/reviews";
 import Link from "next/link";
 import SecondaryButton from "@/components/shared/SecondaryButton";
 import { deleteReview, getAllUserReviews } from "@/services/AdminReview";
+import { useRouter } from "next/navigation";
 
 const MyReviewsPage = () => {
   const { user } = useUser();
-
+  const route = useRouter()
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -113,13 +114,13 @@ const MyReviewsPage = () => {
 
   // Handle delete review
   const handleDeleteReview = async (reviewId: string) => {
-    // Implement deletion logic here
-    console.log(`Delete review with ID: ${reviewId}`);
     const deleteRes = await deleteReview(reviewId);
-
     if (deleteRes.success) {
       toast.success(deleteRes.message);
+      route.push('/guest');
+      route.refresh();
     }
+    route.push('/guest/myreviews');
   };
 
   // Handle edit review
@@ -226,7 +227,7 @@ const MyReviewsPage = () => {
             href="/createReview"
           >
             <SecondaryButton className="w-52 ">
-              Write Your First Review
+              Create Your First Review
             </SecondaryButton>
           </Link>
         </div>
@@ -247,9 +248,8 @@ const MyReviewsPage = () => {
                   </div>
                 )}
                 <div
-                  className={`flex flex-col flex-1 ${
-                    review.image ? "md:w-3/4" : "w-full"
-                  }`}
+                  className={`flex flex-col flex-1 ${review.image ? "md:w-3/4" : "w-full"
+                    }`}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
