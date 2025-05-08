@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use server"
 
-import { Comment } from "@/types/review";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 

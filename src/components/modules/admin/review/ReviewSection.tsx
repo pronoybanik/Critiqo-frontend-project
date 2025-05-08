@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { Check, X, Clock } from "lucide-react";
@@ -27,10 +28,9 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
         status: newStatus,
         moderationNote: `Status changed to ${newStatus} by admin`,
       });
-
       if (res?.success) {
-        setReviews((prevReviews) =>
-          prevReviews.map((review) =>
+        setReviews((prevReviews: any) =>
+          prevReviews.map((review: any) =>
             review.id === reviewId
               ? {
                   ...review,
@@ -44,7 +44,7 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
       } else {
         toast.error("Failed to update review status");
       }
-    } catch (error: any) {
+    } catch (error : any) {
       console.error("Error updating status:", error.message);
       toast.error("Something went wrong while changing review status");
     }

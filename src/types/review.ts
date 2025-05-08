@@ -7,6 +7,7 @@ export type TReview = {
   rating: number;
   purchaseSource: string;
   images: string[];
+  image: string
   status: "DRAFT" | "PUBLISHED" | "REJECTED"; 
   category: string;
   author: string;
@@ -18,3 +19,20 @@ export type TReview = {
   comments: number;
   votes: number
 };
+
+
+export interface TGuestReview {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  image: string | null;
+  isPremium: boolean;
+  rating: number;
+  upvotes: number;
+  comments: number;
+  status: "PUBLISHED" | "DRAFT" | "REJECTED"; // extend as needed
+  moderationNote: string;
+  createdAt: string; // or Date, depending on how you use it
+}
+

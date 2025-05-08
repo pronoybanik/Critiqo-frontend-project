@@ -2,12 +2,12 @@
 import { useTypewriter } from "react-simple-typewriter";
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import SecondaryButton from "@/components/shared/SecondaryButton";
-import { IReview } from "@/types/reviews";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { TReview } from "@/types/review";
 
 const CapterraSearch = () => {
-  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [reviews, setReviews] = useState<TReview[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [text] = useTypewriter({
@@ -19,33 +19,61 @@ const CapterraSearch = () => {
     loop: true,
     delaySpeed: 2000,
   });
-  const fetchReviews = async () => {
-    try {
-      const params = new URLSearchParams({
-        page: '0',
-        limit: '0',
-        title: searchQuery,
 
-      });
+  // const fetchReviews = async () => {
+  //   try {
+  //     const params = new URLSearchParams({
+  //       page: '0',
+  //       limit: '0',
+  //       title: searchQuery,
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
-      );
-      const data = await res.json();
-      setReviews(data?.data || []);
+  //     });
 
-    } catch (err) {
-      console.error("Error fetching reviews:", err);
-    }
-  };
+  //     const res = await fetch(
+  //       `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
+  //     );
+  //     const data = await res.json();
+  //     setReviews(data?.data || []);
+
+  //   } catch (err) {
+  //     console.error("Error fetching reviews:", err);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (searchQuery.trim()) {
+  //     fetchReviews();
+  //   } else {
+  //     // Optionally clear results when there's no search input
+  //     setReviews([]);
+  //   }
+  // }, [searchQuery]);
+
   useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const params = new URLSearchParams({
+          page: "0",
+          limit: "0",
+          title: searchQuery,
+        });
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
+        );
+        const data = await res.json();
+        setReviews(data?.data || []);
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      }
+    };
+
     if (searchQuery.trim()) {
       fetchReviews();
     } else {
-      // Optionally clear results when there's no search input
       setReviews([]);
     }
   }, [searchQuery]);
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       {/* Left side content */}
@@ -102,8 +130,6 @@ const CapterraSearch = () => {
                 </div>
               </div>
             </div>
-
-
           </div>
         </div>
 
@@ -123,21 +149,17 @@ const CapterraSearch = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {
-          reviews
-            .filter((item: IReview) => item.status === "PUBLISHED")
-            .sort((a: IReview, b: IReview) => {
-              const dateA = new Date(a.createdAt).getTime() || 0;
-              const dateB = new Date(b.createdAt).getTime() || 0;
-              return dateB - dateA;
-            })
-            .map((review, index) => (
-              <LatestReviewCard key={index} review={review} />
-            ))
-        }
-
+        {reviews
+          .filter((item: TReview) => item.status === "PUBLISHED")
+          .sort((a: TReview, b: TReview) => {
+            const dateA = new Date(a.createdAt).getTime() || 0;
+            const dateB = new Date(b.createdAt).getTime() || 0;
+            return dateB - dateA;
+          })
+          .map((review, index) => (
+            <LatestReviewCard key={index} review={review} />
+          ))}
       </div>
-
     </div>
   );
 };

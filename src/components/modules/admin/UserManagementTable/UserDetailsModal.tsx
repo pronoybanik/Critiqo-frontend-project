@@ -13,7 +13,7 @@ import { TUser } from "@/types/user";
 interface UserDetailsModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  user: TUser
+  user: TUser | null;
 }
 
 const UserDetailsModal: React.FC<UserDetailsModalProps> = ({

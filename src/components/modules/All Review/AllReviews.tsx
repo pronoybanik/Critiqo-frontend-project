@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import { getAllCategories } from "@/services/Category";
-import { IReview } from "@/types/reviews";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Search, Filter, Gift, Star, RefreshCw } from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import { TReview } from "@/types/review";
 
 const AllReviews = () => {
-  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [reviews, setReviews] = useState<TReview[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
@@ -27,7 +28,7 @@ const AllReviews = () => {
     fetchCategory();
   }, [categoryFilter]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -39,10 +40,8 @@ const AllReviews = () => {
         sortBy: "createdAt",
         sortOrder: sortOrder,
       });
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
-      );
+  
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params}`);
       const data = await res.json();
       setReviews(data?.data || []);
       const rPage = data?.meta?.total / data?.meta?.limit;
@@ -50,10 +49,6 @@ const AllReviews = () => {
     } catch (err) {
       console.error("Error fetching reviews:", err);
     }
-  };
-
-  useEffect(() => {
-    fetchReviews();
   }, [
     currentPage,
     itemsPerPage,
@@ -63,6 +58,10 @@ const AllReviews = () => {
     sortOrder,
     status,
   ]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,8 +190,8 @@ const AllReviews = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {reviews.length > 0 ? (
             reviews
-              .filter((item: IReview) => item.status === "PUBLISHED")
-              .sort((a: IReview, b: IReview) => {
+              .filter((item: TReview) => item.status === "PUBLISHED")
+              .sort((a: TReview, b: TReview) => {
                 const dateA = new Date(a.createdAt).getTime() || 0;
                 const dateB = new Date(b.createdAt).getTime() || 0;
                 return dateB - dateA;

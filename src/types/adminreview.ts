@@ -1,6 +1,7 @@
 export type TAdminReview = {
     id: string;
     title: string;
+    name:string;
     description: string;
     rating: number;
     purchaseSource: string;

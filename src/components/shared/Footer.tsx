@@ -8,6 +8,7 @@ import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { featuredReview } from "@/services/Review";
 import { CardContent, CardTitle } from "../ui/card";
 import { StarRating } from "../modules/All Review/ReviewDetails";
+import { TReview } from "@/types/review";
 
 const Footer = async () => {
   const page = "1";
@@ -82,7 +83,7 @@ const Footer = async () => {
               Highest Rated Review
             </h3>
             <div className="grid grid-cols-1 gap-4">
-              {featureds?.highestRated?.map((review: any) => (
+              {featureds?.highestRated?.map((review: TReview) => (
                 <div
                   key={review.id}
                   className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"
@@ -123,7 +124,7 @@ const Footer = async () => {
               Most Voted Review
             </h3>
             <div className="grid grid-cols-1 gap-4">
-              {featureds?.mostVoted?.map((review: any) => (
+              {featureds?.mostVoted?.map((review: TReview) => (
                 <div
                   key={review.id}
                   className="bg-gray-800 border-gray-200 shadow-md hover:shadow-lg rounded-xl p-2"

@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import { format } from "date-fns";
-import { Comment } from "@/types/review";
 import { deleteComment, replyComment } from "@/services/Review";
 import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { TComment } from "@/types/comment";
 
-const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
+const CommentComponent: React.FC<{ comment: TComment }> = ({ comment }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -39,17 +39,23 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
       console.error(error);
     }
   };
+  
   const handleDelete = async () => {
     try {
       const res = await deleteComment(comment?.id);
       if (res.success) {
-        toast.success("Review delete successfully");
+        toast.success("Review deleted successfully");
         // router.push('/reviews')
       }
-    } catch (err: any) {
-      console.error(err)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error("An unknown error occurred", err);
+      }
     }
-  }
+  };
+  
 
   return (
     <div className="mb-4 p-4 rounded-lg bg-gray-800/50 border border-gray-700">
@@ -96,7 +102,7 @@ const CommentComponent: React.FC<{ comment: Comment }> = ({ comment }) => {
       </div>
 
       {showReplies &&
-        comment.replies?.map((reply: any) => (
+        comment.replies?.map((reply) => (
           <div key={reply.id} className="mt-4 pl-8">
             <CommentComponent comment={reply} />
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server"
 
 import { revalidateTag } from "next/cache";
@@ -7,7 +8,7 @@ export const getAllUser = async () => {
     try {
         const accessToken = (await cookies()).get("accessToken")?.value;
         const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user`, {
-            next: { tags: ["users"] },
+            next: { tags: ["USER"] },
             headers: {
                 Authorization: `${accessToken}`,
             }
@@ -30,7 +31,7 @@ export const deleteUser = async (id: string) => {
             },
         });
 
-        revalidateTag("users");
+        revalidateTag("USER");
 
         const result = await res.json();
         return result;
