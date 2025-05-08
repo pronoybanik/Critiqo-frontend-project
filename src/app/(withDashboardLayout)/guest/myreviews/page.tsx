@@ -120,7 +120,7 @@ const MyReviewsPage = () => {
       route.push('/guest');
       route.refresh();
     }
-    route.push('/guest/myreviews');
+    route.push('/guest');
   };
 
   // Handle edit review

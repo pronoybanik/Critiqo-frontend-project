@@ -30,7 +30,7 @@ const PaymentSuccessPage = () => {
         </p>
       )}
       <button
-        onClick={() => router.push('/dashboard')}
+        onClick={() => router.push('/guest')}
         className="mt-6 px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
       >
         Go to Dashboard
