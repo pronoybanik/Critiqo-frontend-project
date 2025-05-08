@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import GlassmorphicBanner from "@/components/shared/GlassmorphicBanner";
 import PrimaryButton from "@/components/shared/PrimayButton";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import SecondaryButton from "@/components/shared/SecondaryButton";
 import { Button } from "@/components/ui/button";

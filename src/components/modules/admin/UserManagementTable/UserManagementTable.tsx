@@ -1,70 +1,53 @@
+// components/modules/admin/UserManagementTable/UserManagementTable.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Eye, RotateCcw, Trash2 } from "lucide-react";
-import { deleteUser, getAllUser } from "@/services/User";
+import { deleteUser } from "@/services/User";
 import UserDetailsModal from "./UserDetailsModal";
 import { TUser } from "@/types/user";
 import { toast } from "sonner";
 
-const UserManagementTable = () => {
-  const [users, setUsers] = useState<TUser | []>([]);
-  const [showStatusDropdown, setShowStatusDropdown] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
+const UserManagementTable = ({ users: initialUsers }: { users: TUser[] }) => {
+  const [users, setUsers] = useState<TUser[]>(initialUsers);
+  const [showStatusDropdown, setShowStatusDropdown] = useState<string>("");
+  const [selectedUser, setSelectedUser] = useState<TUser | null>(null);
   const [open, setOpen] = useState(false);
 
-  
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const response = await getAllUser();
-      if (response.success) {
-        setUsers(response.data);
-      }
-    };
-    fetchProfile();
-  }, []);
-
-  console.log(users);
-  
-
-  const changeStatus = (userId: string, newStatus: string) => {
-    setUsers(
-      users.map((user: TUser[]) =>
-        user.id === userId ? { ...user, status: newStatus } : user
-      )
-    );
-    setShowStatusDropdown("");
-  };
+  // const changeStatus = (userId: string, newStatus: string) => {
+  //   setUsers(prevUsers =>
+  //     prevUsers.map(user =>
+  //       user.id === userId ? { ...user, status: newStatus } : user
+  //     )
+  //   );
+  //   setShowStatusDropdown("");
+  // };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString() + " " + date.toLocaleTimeString();
   };
 
-  const viewUserDetails = (user) => {
+  const viewUserDetails = (user: TUser) => {
     setSelectedUser(user);
     setOpen(true);
   };
 
   const handleUserDelete = async (id: string) => {
-    if (id) {
-      const result = await deleteUser(id);
-
-      if (result.success) {
-        toast.success(result.message);
-      } else {
-        toast.error(result.message || "There are some error");
-      }
+    const result = await deleteUser(id);
+    if (result.success) {
+      setUsers(users.filter((user) => user.id !== id));
+      toast.success(result.message);
+    } else {
+      toast.error(result.message || "There was an error.");
     }
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">User Management</h2>
-
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white z-0">
+        <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-gray-100 border-b border-gray-200">
               <th className="text-left py-3 px-4 font-semibold text-sm text-gray-700">
@@ -88,7 +71,7 @@ const UserManagementTable = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user: TUser) => (
+            {users.map((user) => (
               <tr
                 key={user.id}
                 className="border-b border-gray-200 hover:bg-gray-50"
@@ -125,25 +108,24 @@ const UserManagementTable = () => {
                       {user.status}
                       <RotateCcw className="ml-1 h-3 w-3" />
                     </button>
-
-                    {showStatusDropdown === user.id && (
+                    {/* {showStatusDropdown === user.id && (
                       <div className="absolute z-10 mt-1 bg-white shadow-lg rounded-md py-1 w-32 border border-gray-200">
                         <button
                           onClick={() => changeStatus(user.id, "ACTIVE")}
-                          className=" px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
+                          className="px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
                         >
                           <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span>
                           Active
                         </button>
                         <button
                           onClick={() => changeStatus(user.id, "INACTIVE")}
-                          className=" px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
+                          className="px-4 py-2 text-sm text-left w-full hover:bg-gray-100 flex items-center"
                         >
                           <span className="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
                           Inactive
                         </button>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </td>
                 <td className="py-3 px-4 text-sm">
@@ -159,8 +141,13 @@ const UserManagementTable = () => {
                       <Eye className="h-4 w-4" />
                     </button>
                     <button
+                      disabled={user.role === "ADMIN"}
                       onClick={() => handleUserDelete(user.id)}
-                      className="p-1 text-red-600 hover:text-red-800"
+                      className={`p-1 ${
+                        user.role === "ADMIN"
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "text-red-600 hover:text-red-800"
+                      }`}
                       title="Delete User"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -173,7 +160,6 @@ const UserManagementTable = () => {
         </table>
       </div>
 
-      {/* Details Modal rendered outside the map */}
       <UserDetailsModal
         isOpen={open}
         onOpenChange={setOpen}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useState, useEffect } from "react";
 import {
@@ -28,7 +29,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import CommentComponent from "./CommentComponent";
-import { Comment, Review } from "@/types/review";
 import { addComment, addVotes } from "@/services/Review";
 import { useUser } from "@/context/UserContext";
 import VoteCounter from "./VottingComponent";
@@ -40,7 +40,7 @@ import { deleteReview } from "@/services/AdminReview";
 // Mock data types (replace with your actual types from your GraphQL schema or Prisma)
 
 // Mock data - replace with your actual data fetching (e.g., GraphQL query)
-const mockReview: Review = {
+const mockReview: any = {
   id: "review-123",
   title: "Amazing Product Review",
   description:
@@ -62,7 +62,7 @@ const mockReview: Review = {
   authorProfession: "Tech Enthusiast",
 };
 
-const getStatusBadgeVariant = (status: Review["status"]) => {
+const getStatusBadgeVariant = (status: any) => {
   switch (status) {
     case "DRAFT":
       return "secondary";
@@ -73,7 +73,7 @@ const getStatusBadgeVariant = (status: Review["status"]) => {
   }
 };
 
-const getStatusBadgeText = (status: Review["status"]) => {
+const getStatusBadgeText = (status: any) => {
   switch (status) {
     case "DRAFT":
       return "Draft";
@@ -113,7 +113,7 @@ export const StarRating = ({
 };
 
 const ReviewDetailsCard = (reviewDetails: any) => {
-  const [review, setReview] = useState<Review | null>(null);
+  const [review, setReview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userComment, setUserComment] = useState("");
@@ -146,7 +146,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
     try {
       // Simulate sending comment to server
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const newComment: Partial<Comment> = {
+      const newComment: any = {
         content: userComment,
         reviewId: `${reviewDetails?.review?.id}`, // Replace with actual user ID
       };

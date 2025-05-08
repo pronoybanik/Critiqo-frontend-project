@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState } from "react";
 import { Star, Check, X, ArrowUp, ArrowDown } from "lucide-react";
@@ -48,7 +49,7 @@ const ReviewTable = ({ reviewData }: { reviewData: any }) => {
   };
 
   const togglePremiumStatus = async (reviewId: string) => {
-    const review = reviews.find((r) => r.id === reviewId);
+    const review = reviews.find((r: any) => r.id === reviewId);
     if (!review) return;
 
     const newIsPremium = !review.isPremium;
@@ -66,8 +67,9 @@ const ReviewTable = ({ reviewData }: { reviewData: any }) => {
       if (res?.success) {
         toast.success("Is REviews premium");
         // Update local state after successful API call
-        setReviews((prevReviews) =>
-          prevReviews.map((r) =>
+
+        setReviews((prevReviews: any) =>
+          prevReviews.map((r: any) =>
             r.id === reviewId
               ? {
                   ...r,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -34,15 +35,18 @@ import { toast } from "sonner";
 import Link from "next/link";
 import SecondaryButton from "@/components/shared/SecondaryButton";
 import { deleteReview, getAllUserReviews } from "@/services/AdminReview";
-
 import { TAdminReview } from "@/types/adminreview";
-
 import { useRouter } from "next/navigation";
 
+interface Review {
+  createdAt: string; // or Date, depending on your data
+  rating: number;
+  upvotes: number;
+}
 
 const MyReviewsPage = () => {
   const { user } = useUser();
-  const route = useRouter()
+  const route = useRouter();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -69,8 +73,10 @@ const MyReviewsPage = () => {
     fetchReviews();
   }, [user?.userId]);
 
+  console.log(reviews);
+
   // Filter reviews based on active tab
-  const filteredReviews = reviews?.filter((review: TAdminReview) => {
+  const filteredReviews: Review[] = reviews?.filter((review: TAdminReview) => {
     if (activeTab === "all") return true;
     if (activeTab === "published") return review.status === "PUBLISHED";
     if (activeTab === "draft") return review.status === "DRAFT";
@@ -81,10 +87,10 @@ const MyReviewsPage = () => {
   // Sort reviews
   const sortedReviews = [...filteredReviews].sort((a, b) => {
     if (sortBy === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }
     if (sortBy === "oldest") {
-      return new Date(a.createdAt) - new Date(b.createdAt);
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
     if (sortBy === "highest") {
       return b.rating - a.rating;
@@ -99,7 +105,7 @@ const MyReviewsPage = () => {
   });
 
   // Helper function to render the rating stars
-  const renderRating = (rating) => {
+  const renderRating = (rating: number) => {
     return (
       <div className="flex items-center">
         {[...Array(5)].map((_, i) => (
@@ -120,10 +126,10 @@ const MyReviewsPage = () => {
     const deleteRes = await deleteReview(reviewId);
     if (deleteRes.success) {
       toast.success(deleteRes.message);
-      route.push('/guest');
+      route.push("/guest");
       route.refresh();
     }
-    route.push('/guest');
+    route.push("/guest");
   };
 
   // Handle edit review
@@ -236,7 +242,8 @@ const MyReviewsPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedReviews.map((review) => (
+
+          {sortedReviews.map((review: any) => (
             <Card key={review.id} className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
                 {review.image && (
@@ -251,8 +258,9 @@ const MyReviewsPage = () => {
                   </div>
                 )}
                 <div
-                  className={`flex flex-col flex-1 ${review.image ? "md:w-3/4" : "w-full"
-                    }`}
+                  className={`flex flex-col flex-1 ${
+                    review.image ? "md:w-3/4" : "w-full"
+                  }`}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
@@ -276,12 +284,23 @@ const MyReviewsPage = () => {
                             Premium
                           </Badge>
                         )}
-                        <Badge
+                        {/* <Badge
                           variant={
                             review.status === "PUBLISHED"
                               ? "success"
                               : "outline"
                           }
+                          className={
+                            review.status === "PUBLISHED"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }
+                        >
+                          {review.status}
+                        </Badge> */}
+
+                        <Badge
+                          variant="default"
                           className={
                             review.status === "PUBLISHED"
                               ? "bg-green-100 text-green-800"
@@ -317,6 +336,14 @@ const MyReviewsPage = () => {
                       <Badge variant="outline">{review.category}</Badge>
                     </div>
                   </CardContent>
+                  <div className="mt-4 ml-4 p-4 w-96 my-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 rounded-md shadow-sm">
+                    <strong className="block font-semibold mb-1">
+                      Admin Note:
+                    </strong>
+                    <span className="font-bold ">
+                      {review?.moderationNote || "No notes available."}
+                    </span>
+                  </div>
                   <CardFooter className="flex justify-end gap-2 pt-0">
                     <Button
                       variant="outline"

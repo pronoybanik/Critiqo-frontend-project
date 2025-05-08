@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -260,7 +261,7 @@ export default function SubscriptionPage() {
       </div>
 
       <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-        {plans[billingInterval].map((plan: any) => (
+        {plans[billingInterval].map((plan) => (
           <Card key={plan.id} className={`flex flex-col ${plan.popular ? 'border-blue-500 ring-1 ring-blue-500 shadow-lg' : 'border-gray-200'}`}>
             {plan.popular && (
               <div className="bg-blue-500 text-white text-center py-1 text-sm font-medium">

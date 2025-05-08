@@ -4,12 +4,12 @@ import { MessageCircle, User, Calendar, Star, ShoppingCart, Clock } from "lucide
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
-import { IReview } from "@/types/reviews";
 import SecondaryButton from "../shared/SecondaryButton";
+import { TReview } from "@/types/review";
 
 
 
-const LatestReviewCard = ({ review }: { review: IReview }) => {
+const LatestReviewCard = ({ review }: { review: TReview }) => {
   const router = useRouter();
   if (!review) return null;
   const {

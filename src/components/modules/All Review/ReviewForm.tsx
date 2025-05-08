@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -70,7 +70,7 @@ export default function ReviewForm({ categories }: Props) {
     form.setValue("rating", value);
   };
 
-  const onSubmit = async (formValue: any) => {
+  const onSubmit: SubmitHandler<FieldValues> = async (formValue) => {
     try {
       setIsLoading(true);
 
