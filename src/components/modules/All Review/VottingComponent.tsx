@@ -1,15 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, ArrowUp, ArrowDown, ThumbsDown } from 'lucide-react'; // Changed ThumbUp, ThumbDown
+import { ThumbsUp, ArrowUp, ArrowDown, ThumbsDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VoteCounterProps {
   initialVotes: number;
   dVotes: number;
-  onVoteChange?: (newVotes: number, type: 'upvote' | 'downvote') => void; // Optional callback
+  onVoteChange?: (newVotes: number, type: 'upvote' | 'downvote') => void;
   className?: string;
 }
-
+// pronoy error
 const VoteCounter: React.FC<VoteCounterProps> = ({ initialVotes, dVotes, onVoteChange, className }) => {
   const [votes, setVotes] = useState(initialVotes);
   const [dvotes, setDVotes] = useState(dVotes);

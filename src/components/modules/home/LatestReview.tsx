@@ -1,7 +1,7 @@
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import PrimaryButton from "@/components/shared/PrimayButton";
 import { getAllReview } from "@/services/Review";
-import { IReview } from "@/types/reviews";
+import { TReview } from "@/types/review";
 import Link from "next/link";
 import React from "react";
 
@@ -17,14 +17,14 @@ const LatestReview = async () => {
     content = (
       <div className="p-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {reviewsData
-          .filter((item: IReview) => item.status === "PUBLISHED")
-          .sort((a: IReview, b: IReview) => {
+          .filter((item: TReview) => item.status === "PUBLISHED")
+          .sort((a: TReview, b: TReview) => {
             const dateA = new Date(a.createdAt).getTime() || 0;
             const dateB = new Date(b.createdAt).getTime() || 0;
             return dateB - dateA;
           })
           .slice(0, 8)
-          .map((review: IReview) => (
+          .map((review: TReview) => (
             <LatestReviewCard key={review.id} review={review} />
           ))}
       </div>

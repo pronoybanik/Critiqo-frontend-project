@@ -150,7 +150,6 @@ const ReviewDetailsCard = (reviewDetails: any) => {
         content: userComment,
         reviewId: `${reviewDetails?.review?.id}`, // Replace with actual user ID
       };
-      console.log(newComment);
       addComment(newComment);
       setUserComment("");
     } catch (error: any) {
@@ -190,7 +189,6 @@ const ReviewDetailsCard = (reviewDetails: any) => {
     newVotes: number,
     type: "upvote" | "downvote"
   ) => {
-    // console.log(`New vote count: ${newVotes}, Vote type: ${type}`);
 
     const vote = {
       reviewId: `${reviewDetails?.review?.id}`,
@@ -205,13 +203,11 @@ const ReviewDetailsCard = (reviewDetails: any) => {
     } catch (err: any) {
       console.error(err);
     }
-    console.log(vote);
   };
 
   const handleDelete = async () => {
     try {
       const res = await deleteReview(reviewDetails?.review?.id);
-      console.log(res);
       if (res.success) {
         toast.success("Review delete successfully");
         router.push("/reviews");
@@ -220,8 +216,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
       console.error(err);
     }
   };
-  const reviewId = reviewDetails?.review?.id;
-  console.log(reviewId);
+  // const reviewId = reviewDetails?.review?.id;
 
   return (
     <div className="bg-white min-h-screen">

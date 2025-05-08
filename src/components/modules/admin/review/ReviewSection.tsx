@@ -12,7 +12,6 @@ import { toast } from "sonner";
 const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
   const [reviews, setReviews] = useState<TAdminReview[]>(reviewData);
 
-  console.log("tt", reviews);
   
 
   // Format date string

@@ -7,7 +7,6 @@ import { TReview } from "@/types/review";
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const reviewData = data?.data;
-  console.log(reviewData);
 
   const reviewCounts = reviewData?.reduce(
     (

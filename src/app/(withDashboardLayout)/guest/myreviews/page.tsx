@@ -73,7 +73,6 @@ const MyReviewsPage = () => {
     fetchReviews();
   }, [user?.userId]);
 
-  console.log(reviews);
 
   // Filter reviews based on active tab
   const filteredReviews: Review[] = reviews?.filter((review: TAdminReview) => {

@@ -16,6 +16,8 @@ import { useUser } from "@/context/UserContext";
 import { IProfile } from "@/types/profile";
 import PrimaryButton from "@/components/shared/PrimayButton";
 import Link from "next/link";
+import { protectedRoutes } from "@/app/contants";
+import { usePathname, useRouter } from "next/navigation";
 
 const AdminHeader = () => {
   const { setIsLoading } = useUser();
@@ -23,14 +25,16 @@ const AdminHeader = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [user, setUser] = useState<IProfile | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   const handleLogout = () => {
     logout();
     setIsLoading(true);
-    // if (protectedRoutes.some((route) => pathname.match(route))) {
-    //   router.push("/");
-    // }
+    if (protectedRoutes.some((route) => pathname.match(route))) {
+      router.push("/");
+    }
   };
 
   useEffect(() => {
