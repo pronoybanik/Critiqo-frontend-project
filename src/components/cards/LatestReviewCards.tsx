@@ -1,16 +1,35 @@
 "use client";
-import React from "react";
-import { MessageCircle, User, Calendar, Star, ShoppingCart, Clock } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  MessageCircle,
+  User,
+  Calendar,
+  Star,
+  ShoppingCart,
+  Clock,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import SecondaryButton from "../shared/SecondaryButton";
 import { TReview } from "@/types/review";
-
-
+import { getMyProfile } from "@/services/AuthService";
+import Link from "next/link";
+import { TUser } from "@/types/user";
 
 const LatestReviewCard = ({ review }: { review: TReview }) => {
+
+  const [user, setUser] = useState<TUser | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getMyProfile();
+      setUser(userData?.data);
+    };
+    fetchUser();
+  }, []);
+
   if (!review) return null;
   const {
     id,
@@ -25,15 +44,18 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
     images,
     purchaseSource,
     rating,
-
   } = review;
 
   // Format date to relative time (e.g. "2 days ago")
-  const formattedDate = formatDistanceToNow(new Date(createdAt), { addSuffix: true });
+  const formattedDate = formatDistanceToNow(new Date(createdAt), {
+    addSuffix: true,
+  });
 
   // Truncate description for preview
-  const truncatedDescription = description.length > 120 ?
-    `${description.substring(0, 120)}...` : description;
+  const truncatedDescription =
+    description.length > 120
+      ? `${description.substring(0, 120)}...`
+      : description;
 
   // Function to render star ratings
   const renderStars = (rating: number) => {
@@ -45,7 +67,10 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
         ); // Full star
       } else if (i - 0.5 === rating) {
         stars.push(
-          <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400/50" />
+          <Star
+            key={i}
+            className="w-4 h-4 text-yellow-400 fill-yellow-400/50"
+          />
         ); // Half star
       } else {
         stars.push(<Star key={i} className="w-4 h-4 text-yellow-400" />); // Empty star
@@ -57,12 +82,12 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
   return (
     <div className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl rounded-xl">
       {/* Status Badge */}
-      <div className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
-        ${!isPremium ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}>
+      <div
+        className={`absolute top-4 left-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg
+        ${!isPremium ? "bg-green-500 text-white" : "bg-amber-500 text-white"}`}
+      >
         <Clock className="w-3 h-3" />
-        {
-          isPremium ? 'PREMIUM' : 'FREE'
-        }
+        {isPremium ? "PREMIUM" : "FREE"}
       </div>
 
       {/* Card Content */}
@@ -131,12 +156,30 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
               <span>{comments} </span>
             </div>
 
-            <SecondaryButton
-              handler={() => router.push(`/reviews/${id}`)}
-              className="px-4 py-2 w-52  text-xs font-medium rounded-lg "
-            >
-              Read Review
-            </SecondaryButton>
+            {!isPremium ? (
+              // Free review: allow everyone
+              <SecondaryButton
+                handler={() => router.push(`/reviews/${id}`)}
+                className="px-4 py-2 w-52 text-xs font-medium rounded-lg"
+              >
+                Read Review
+              </SecondaryButton>
+            ) : user?.subscription === true ? (
+              // Premium review: user has subscription
+              <SecondaryButton
+                handler={() => router.push(`/reviews/${id}`)}
+                className="px-4 py-2 w-52 text-xs font-medium rounded-lg"
+              >
+                Read Review
+              </SecondaryButton>
+            ) : (
+              // Premium review: no subscription
+              <Link href="/payment">
+                <SecondaryButton className="px-4 py-2 w-52 text-xs font-medium rounded-lg ">
+                  Buy Subscription
+                </SecondaryButton>
+              </Link>
+            )}
           </div>
 
           {/* Premium Price Tag */}
@@ -144,7 +187,9 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
             <div className="mt-3 bg-gray-50 -mx-5 -mb-5 px-5 py-3 border-t border-gray-100">
               <div className="flex justify-between items-center">
                 <span className="text-xs text-gray-500">Premium Content</span>
-                <span className="text-sm font-bold text-green-600">${premiumPrice.toFixed(2)}</span>
+                <span className="text-sm font-bold text-green-600">
+                  ${premiumPrice.toFixed(2)}
+                </span>
               </div>
             </div>
           )}

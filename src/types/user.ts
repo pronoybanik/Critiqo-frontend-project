@@ -4,11 +4,12 @@ export type TUser = {
   email: string;
   contactNumber: string;
   profilePhoto: string | null;
-  role: "GUEST" | "USER" | "ADMIN"; // Extend as needed
-  status: "ACTIVE" | "INACTIVE" | "BANNED"; // Extend as needed
+  role: "GUEST" | "USER" | "ADMIN"; 
+  status: "ACTIVE" | "INACTIVE" | "BANNED";
   isDeleteAt: boolean;
   needPasswordChange: boolean;
-  createdAt: string; // Or `Date` if parsed
+  subscription: boolean;
+  createdAt: string; 
   updatedAt: string;
   admin: null ; 
   guest?: {
