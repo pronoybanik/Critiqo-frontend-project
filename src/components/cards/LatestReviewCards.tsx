@@ -16,8 +16,11 @@ import { TReview } from "@/types/review";
 import { getMyProfile } from "@/services/AuthService";
 import Link from "next/link";
 import { TUser } from "@/types/user";
+import { useUser } from "@/context/UserContext";
+import { toast } from "sonner";
 
 const LatestReviewCard = ({ review }: { review: TReview }) => {
+  const { user: userInfo } = useUser();
   const [user, setUser] = useState<TUser | null>(null);
   const router = useRouter();
 
@@ -140,8 +143,10 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
           </p> */}
 
           <p
-            className={` text-sm mb-4 line-clamp-3 ${
-              isPremium && user?.subscription === false ? "blur-xs" : ""
+            className={`text-sm mb-4 line-clamp-3 ${
+              isPremium && (!user || user?.subscription === false)
+                ? "blur-xs"
+                : ""
             }`}
           >
             {truncatedDescription}
@@ -179,10 +184,20 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
               >
                 Read Review
               </SecondaryButton>
+            ) : !userInfo ? (
+              // Premium review: no user logged in - show toast on button click
+              <SecondaryButton
+                handler={() =>
+                  toast.error("Please login to access premium reviews")
+                }
+                className="px-4 py-2 w-52 text-xs font-medium rounded-lg"
+              >
+                Unlock full review
+              </SecondaryButton>
             ) : (
-              // Premium review: no subscription
+              // Premium review: logged in but no subscription
               <Link href="/payment">
-                <SecondaryButton className="px-4 py-2 w-52 text-xs font-medium rounded-lg ">
+                <SecondaryButton className="px-4 py-2 w-52 text-xs font-medium rounded-lg">
                   Unlock full review
                 </SecondaryButton>
               </Link>
