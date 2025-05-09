@@ -141,7 +141,7 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
 
           <p
             className={` text-sm mb-4 line-clamp-3 ${
-              isPremium && user?.subscription === true ? "blur-sm" : ""
+              isPremium && user?.subscription === false ? "blur-xs" : ""
             }`}
           >
             {truncatedDescription}
