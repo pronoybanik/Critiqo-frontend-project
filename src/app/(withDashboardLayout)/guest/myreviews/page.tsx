@@ -48,10 +48,12 @@ const MyReviewsPage = () => {
   const { user } = useUser();
   const route = useRouter();
   const [reviews, setReviews] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  // const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -132,10 +134,7 @@ const MyReviewsPage = () => {
   };
 
   // Handle edit review
-  const handleEditReview = (reviewId: string) => {
-    // Implement edit logic here
-    console.log(`Edit review with ID: ${reviewId}`);
-  };
+
 
   // Render loading skeletons
   const renderSkeletons = () => {
@@ -257,9 +256,8 @@ const MyReviewsPage = () => {
                   </div>
                 )}
                 <div
-                  className={`flex flex-col flex-1 ${
-                    review.image ? "md:w-3/4" : "w-full"
-                  }`}
+                  className={`flex flex-col flex-1 ${review.image ? "md:w-3/4" : "w-full"
+                    }`}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
@@ -347,10 +345,11 @@ const MyReviewsPage = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEditReview(review.id)}
+                      onClick={() => route.push(`/guest/myreviews/${review?.id}`)}
                     >
                       <Edit size={16} className="mr-2" /> Edit
                     </Button>
+
                     <Button
                       variant="destructive"
                       size="sm"

@@ -15,9 +15,9 @@ const HomePage = () => {
       <Banner></Banner>
       <Summary></Summary>
       <LatestReview></LatestReview>
+      <TopCategories></TopCategories>
       <ProductMarketing></ProductMarketing>
       {/* <AllProduct></AllProduct> */}
-      <TopCategories></TopCategories>
       <FaqSection></FaqSection>
       <TopBrand></TopBrand>
     </div>
