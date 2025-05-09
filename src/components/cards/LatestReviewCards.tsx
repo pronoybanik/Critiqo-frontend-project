@@ -18,7 +18,6 @@ import Link from "next/link";
 import { TUser } from "@/types/user";
 
 const LatestReviewCard = ({ review }: { review: TReview }) => {
-
   const [user, setUser] = useState<TUser | null>(null);
   const router = useRouter();
 
@@ -64,7 +63,7 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
       if (i <= rating) {
         stars.push(
           <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-        ); // Full star
+        );
       } else if (i - 0.5 === rating) {
         stars.push(
           <Star
@@ -136,7 +135,15 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
           </div>
 
           {/* Description */}
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          {/* <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+            {truncatedDescription}
+          </p> */}
+
+          <p
+            className={` text-sm mb-4 line-clamp-3 ${
+              isPremium && user?.subscription === false ? "blur-xs" : ""
+            }`}
+          >
             {truncatedDescription}
           </p>
 
@@ -176,7 +183,7 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
               // Premium review: no subscription
               <Link href="/payment">
                 <SecondaryButton className="px-4 py-2 w-52 text-xs font-medium rounded-lg ">
-                  Buy Subscription
+                  Unlock full review
                 </SecondaryButton>
               </Link>
             )}
