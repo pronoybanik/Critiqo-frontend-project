@@ -8,7 +8,6 @@ import {
   Star,
   MessageCircle,
   ThumbsUp,
-  Edit,
   Trash2,
   Filter,
   ChevronDown,
@@ -134,6 +133,11 @@ const MyReviewsPage = () => {
   };
 
   // Handle edit review
+
+  // const handleEditReview = (reviewId: string) => {
+  //   // Implement edit logic here
+  //   console.log(`Edit review with ID: ${reviewId}`);
+  // };
 
 
   // Render loading skeletons
@@ -342,13 +346,14 @@ const MyReviewsPage = () => {
                     </span>
                   </div>
                   <CardFooter className="flex justify-end gap-2 pt-0">
-                    <Button
+                    {/* <Button
                       variant="outline"
                       size="sm"
                       onClick={() => route.push(`/guest/myreviews/${review?.id}`)}
                     >
                       <Edit size={16} className="mr-2" /> Edit
-                    </Button>
+
+                    </Button> */}
 
                     <Button
                       variant="destructive"

@@ -20,7 +20,7 @@ import { protectedRoutes } from "@/app/contants";
 import { usePathname, useRouter } from "next/navigation";
 
 const AdminHeader = () => {
-  const { setIsLoading } = useUser();
+  const { user: userInfo, setIsLoading } = useUser();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -116,12 +116,14 @@ const AdminHeader = () => {
             )}
           </div>
 
-          <Link href={"/createReview"}>
-            <PrimaryButton className="flex items-center space-x-1 w-38 text-white px-4 py-2 rounded-lg">
-              <PenTool size={16} />
-              <span>Create Review</span>
-            </PrimaryButton>
-          </Link>
+          {userInfo?.role === "GUEST" ? (
+            <Link href={"/createReview"}>
+              <PrimaryButton className="flex items-center space-x-1 w-38 text-white px-4 py-2 rounded-lg">
+                <PenTool size={16} />
+                <span>Create Review</span>
+              </PrimaryButton>
+            </Link>
+          ) : null}
 
           {/* User Menu */}
           <div className="relative">
