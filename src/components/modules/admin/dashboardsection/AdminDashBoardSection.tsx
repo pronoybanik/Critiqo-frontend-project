@@ -1,11 +1,14 @@
 import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
-import { getAllReviewAdmin } from "@/services/AdminReview";
+import { getAllReviewAdmin, getTotalEarning } from "@/services/AdminReview";
 import { TAdminReview } from "@/types/adminreview";
 import { TReview } from "@/types/review";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
+  const { data: totalEarning } = await getTotalEarning()
+  console.log(totalEarning)
+
   const reviewData = data?.data;
 
   const reviewCounts = reviewData?.reduce(
@@ -66,7 +69,7 @@ const AdminDashBoardPage = async () => {
               </div>
             </div>
 
-            {/* Premium Review Earnings
+            {/* Premium Review Earnings */}
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-gray-500 text-sm font-medium">
@@ -78,13 +81,11 @@ const AdminDashBoardPage = async () => {
               </div>
               <div className="flex items-baseline">
                 <p className="text-2xl font-bold text-gray-900">
-                  ${dashboardData.totalEarnings}
+                  ${totalEarning}
                 </p>
-                <span className="ml-2 text-green-600 text-sm font-medium">
-                  +12% ↑
-                </span>
+
               </div>
-              <div className="mt-4 h-16">
+              {/* <div className="mt-4 h-16">
                 <div className="flex justify-between h-full items-end">
                   {dashboardData.monthlyEarnings.map((item, index) => (
                     <div key={index} className="flex flex-col items-center">
@@ -106,8 +107,8 @@ const AdminDashBoardPage = async () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            </div> */}
+              </div> */}
+            </div>
 
             {/* Top Premium Reviews */}
             <div className="bg-white rounded-lg shadow p-6 col-span-1 md:col-span-2">
