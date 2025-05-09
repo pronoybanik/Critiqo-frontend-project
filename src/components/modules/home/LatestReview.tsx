@@ -32,7 +32,7 @@ const LatestReview = async () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-10">
+    <div className="max-w-7xl mx-auto py-4">
       <div className="text-center py-4">
         <h1 className="text-3xl py-5 font-bold">Latest Review</h1>
       </div>
