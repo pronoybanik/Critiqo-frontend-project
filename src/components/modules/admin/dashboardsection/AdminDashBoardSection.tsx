@@ -1,4 +1,11 @@
-import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
+import {
+  Star,
+  Crown,
+  DollarSign,
+  Eye,
+  Vote,
+  DollarSignIcon,
+} from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
 import { getAllReviewAdmin } from "@/services/AdminReview";
 import { TAdminReview } from "@/types/adminreview";
@@ -65,49 +72,21 @@ const AdminDashBoardPage = async () => {
                 </div>
               </div>
             </div>
-
-            {/* Premium Review Earnings
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-gray-500 text-sm font-medium">
                   Premium Review Earnings
                 </h3>
                 <div className="bg-green-100 rounded-full p-2">
-                  <DollarSign size={20} className="text-green-600" />
+                  <DollarSignIcon size={20} className="text-green-600" />
                 </div>
               </div>
               <div className="flex items-baseline">
-                <p className="text-2xl font-bold text-gray-900">
-                  ${dashboardData.totalEarnings}
+                <p className="text-xl font-bold text-gray-900 u">
+                  Earring {/* ${dashboardData.totalEarnings} */}100
                 </p>
-                <span className="ml-2 text-green-600 text-sm font-medium">
-                  +12% ↑
-                </span>
               </div>
-              <div className="mt-4 h-16">
-                <div className="flex justify-between h-full items-end">
-                  {dashboardData.monthlyEarnings.map((item, index) => (
-                    <div key={index} className="flex flex-col items-center">
-                      <div
-                        className="bg-green-500 w-8 rounded-t"
-                        style={{
-                          height: `${
-                            (item.amount /
-                              Math.max(
-                                ...dashboardData.monthlyEarnings.map(
-                                  (i) => i.amount
-                                )
-                              )) *
-                            100
-                          }%`,
-                        }}
-                      ></div>
-                      <span className="text-xs mt-1">{item.month}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div> */}
+            </div>
 
             {/* Top Premium Reviews */}
             <div className="bg-white rounded-lg shadow p-6 col-span-1 md:col-span-2">
