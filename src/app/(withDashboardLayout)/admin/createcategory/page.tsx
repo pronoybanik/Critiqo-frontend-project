@@ -4,10 +4,11 @@ import { getAllCategories } from "@/services/Category";
 const ProductCategoryPage = async () => {
   const { data } = await getAllCategories();
 
+
   let content = null;
 
   if (data?.length > 0) {
-    <ManageCategories categories={data} />;
+    content = <ManageCategories categories={data} />;
   } else {
     content = <p>There are no Data</p>;
   }
@@ -16,3 +17,4 @@ const ProductCategoryPage = async () => {
 };
 
 export default ProductCategoryPage;
+
