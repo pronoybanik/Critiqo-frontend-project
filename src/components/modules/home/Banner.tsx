@@ -84,7 +84,7 @@ const CapterraSearch = () => {
               Find the right Product Review <br /> and services
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              Capterra helps you find the best solutions for your business.
+              Critiqo helps you find the best solutions for your business.
               Evaluate <br />
               options based on price and features, your business size and <br />{" "}
               industry, and ratings from verified users.
