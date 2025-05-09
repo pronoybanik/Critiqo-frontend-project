@@ -77,7 +77,6 @@ const AllReviews = () => {
     setSortOrder("");
     setCurrentPage(1);
   };
-  console.log(reviews)
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 bg-gradient-to-b from-purple-50 to-white">

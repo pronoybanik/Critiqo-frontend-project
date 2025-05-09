@@ -11,7 +11,6 @@ const UpdateReview = async ({
   const { reviewId } = await params;
   const { data: category } = await getAllCategories();
   const { data: review } = await getSingleReviewById(reviewId)
-  console.log(reviewId, review, category)
   return (
     <div>
       <ReviewUpdateForm

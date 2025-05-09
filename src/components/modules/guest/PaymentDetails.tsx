@@ -26,7 +26,6 @@ const PaymentDetails = () => {
       
         try {
           const data = await getPayment();
-          console.log("Payment Info:", data);
           if (data.success && Array.isArray(data.data)) {
             setPaymentInfo(data.data);
           }
