@@ -37,7 +37,6 @@ import ReviewDescription from "./ReviewDescription";
 import { useRouter } from "next/navigation";
 import { deleteReview } from "@/services/AdminReview";
 
-// Mock data types (replace with your actual types from your GraphQL schema or Prisma)
 
 // Mock data - replace with your actual data fetching (e.g., GraphQL query)
 const mockReview: any = {
