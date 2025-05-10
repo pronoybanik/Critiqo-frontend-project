@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React from 'react';
+import React from "react";
 import { useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -75,7 +75,7 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
   const onSubmit: SubmitHandler<FieldValues> = async (formValue) => {
     try {
       setIsLoading(true);
-      const id = review?.id
+      const id = review?.id;
       const formData = new FormData();
 
       const reviewData = {
@@ -122,10 +122,11 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
                 <span
                   key={star}
                   onClick={() => handleRatingClick(star)}
-                  className={`cursor-pointer text-4xl ${form.watch("rating") >= star
-                    ? "text-yellow-400"
-                    : "text-gray-300"
-                    }`}
+                  className={`cursor-pointer text-4xl ${
+                    form.watch("rating") >= star
+                      ? "text-yellow-400"
+                      : "text-gray-300"
+                  }`}
                 >
                   ★
                 </span>
@@ -269,16 +270,12 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
           </div>
 
           {/* Submit Button */}
-          <PrimaryButton
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
-          >
-            {isLoading ? "Submitting..." : "Submit Review"}
+          <PrimaryButton type="submit" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Update Review"}
           </PrimaryButton>
         </form>
       </Form>
     </div>
   );
-}
+};
 export default ReviewUpdateForm;

@@ -24,6 +24,8 @@ const AllReviews = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  
+
   const handleSearchQuery = (query: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
 

@@ -12,7 +12,10 @@ import {
   Calendar,
   ThumbsUp,
   ThumbsDown,
-  User,
+ 
+  SendIcon,
+  PaperclipIcon,
+  MessageCircleWarning,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -23,15 +26,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import CommentComponent from "./CommentComponent";
 import { addComment, addVotes } from "@/services/Review";
@@ -81,7 +76,6 @@ const getStatusBadgeVariant = (status: any) => {
 };
 
 const ReviewDetailsCard = (reviewDetails: any) => {
-  
   const [review, setReview] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -125,12 +119,11 @@ const ReviewDetailsCard = (reviewDetails: any) => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
-  
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
 
   const handleAddComment = async () => {
     if (!userComment.trim()) return;
@@ -217,7 +210,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
       <div className="flex items-center justify-center h-screen">
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-md">
           <h3 className="text-xl font-medium text-gray-700 mb-2">Not Found</h3>
-          <p className="text-gray-600">The requested review could not be found.</p>
+          <p className="text-gray-600">
+            The requested review could not be found.
+          </p>
         </div>
       </div>
     );
@@ -232,7 +227,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
             <div className="flex justify-between items-start">
               <div>
-                <h1 className="text-3xl font-bold mb-2">{reviewDetails?.review?.title}</h1>
+                <h1 className="text-3xl font-bold mb-2">
+                  {reviewDetails?.review?.title}
+                </h1>
                 <div className="flex gap-3 items-center">
                   <StarRating rating={reviewDetails?.review?.rating} />
                   <span className="text-white/90 font-medium">
@@ -240,12 +237,16 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                   </span>
                 </div>
               </div>
-              <div className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeVariant(reviewDetails?.review?.status)}`}>
+              <div
+                className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeVariant(
+                  reviewDetails?.review?.status
+                )}`}
+              >
                 {reviewDetails?.review?.status}
               </div>
             </div>
           </div>
-          
+
           <CardContent className="p-0">
             {/* Author and date section */}
             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -260,51 +261,64 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                   />
                 </div>
                 <div>
-                  <p className="text-gray-900 font-medium">{reviewDetails.review.author}</p>
-                  <p className="text-gray-500 text-sm">{review.authorProfession}</p>
+                  <p className="text-gray-900 font-medium">
+                    {reviewDetails.review.author}
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    {review.authorProfession}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center text-gray-500 text-sm">
                 <Calendar className="w-4 h-4 mr-1" />
-                {format(new Date(reviewDetails?.review?.createdAt), "MMM d, yyyy")}
+                {format(
+                  new Date(reviewDetails?.review?.createdAt),
+                  "MMM d, yyyy"
+                )}
               </div>
             </div>
-            
+
             {/* Image carousel */}
-            {reviewDetails?.review?.images && reviewDetails?.review?.images.length > 0 && (
-              <div className="p-6 bg-gray-50">
-                <Carousel className="w-full">
-                  <CarouselContent>
-                    {reviewDetails?.review?.images?.map(
-                      (image: string, index: number) => (
-                        <CarouselItem key={index} className="basis-full md:basis-1/2 lg:basis-1/3">
-                          <div className="p-1">
-                            <div className="overflow-hidden rounded-lg shadow-md bg-white p-2">
-                              <Image
-                                src={image}
-                                height={250}
-                                width={250}
-                                alt={`Product Image ${index + 1}`}
-                                className="w-full h-64 object-contain rounded"
-                              />
+            {reviewDetails?.review?.images &&
+              reviewDetails?.review?.images.length > 0 && (
+                <div className="p-6 bg-gray-50">
+                  <Carousel className="w-full">
+                    <CarouselContent>
+                      {reviewDetails?.review?.images?.map(
+                        (image: string, index: number) => (
+                          <CarouselItem
+                            key={index}
+                            className="basis-full md:basis-1/2 lg:basis-1/3"
+                          >
+                            <div className="p-1">
+                              <div className="overflow-hidden rounded-lg shadow-md bg-white p-2">
+                                <Image
+                                  src={image}
+                                  height={250}
+                                  width={250}
+                                  alt={`Product Image ${index + 1}`}
+                                  className="w-full h-64 object-contain rounded"
+                                />
+                              </div>
                             </div>
-                          </div>
-                        </CarouselItem>
-                      )
-                    )}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-2" />
-                  <CarouselNext className="right-2" />
-                </Carousel>
-              </div>
-            )}
-            
+                          </CarouselItem>
+                        )
+                      )}
+                    </CarouselContent>
+                    <CarouselPrevious className="left-2" />
+                    <CarouselNext className="right-2" />
+                  </Carousel>
+                </div>
+              )}
+
             {/* Review content */}
             <div className="p-6">
               <div className="prose max-w-none text-gray-700">
-                <ReviewDescription description={reviewDetails?.review?.description} />
+                <ReviewDescription
+                  description={reviewDetails?.review?.description}
+                />
               </div>
-              
+
               {/* Tags and badges */}
               <div className="mt-6 flex flex-wrap gap-3">
                 {reviewDetails?.review?.purchaseSource && (
@@ -313,28 +327,34 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                     <span>Purchased on {review.purchaseSource}</span>
                   </div>
                 )}
-                
+
                 {reviewDetails?.review?.isPremium && (
                   <div className="flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-sm">
                     <CheckCircle className="w-4 h-4" />
-                    <span>Premium Review {reviewDetails?.review?.premiumPrice?.toFixed(2)}</span>
+                    <span>
+                      Premium Review{" "}
+                      {reviewDetails?.review?.premiumPrice?.toFixed(2)}
+                    </span>
                   </div>
                 )}
-                
+
                 {reviewDetails?.review?.categoryId && (
                   <div className="flex items-center gap-1.5 bg-purple-50 text-purple-700 px-3 py-1.5 rounded-full text-sm">
-                    <span>Category: {reviewDetails?.review?.category || "Electronics"}</span>
+                    <span>
+                      Category:{" "}
+                      {reviewDetails?.review?.category || "Electronics"}
+                    </span>
                   </div>
                 )}
               </div>
             </div>
-            
+
             {/* Voting section */}
             <div className="bg-gray-50 p-6 border-t border-gray-100">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-8">
                   <div className="flex items-center gap-2">
-                    <button 
+                    <button
                       onClick={() => handleVoteChange(0, "upvote")}
                       className="p-2 rounded-full bg-green-50 text-green-600 hover:bg-green-100 transition"
                     >
@@ -344,7 +364,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                       {reviewDetails?.review?.votes?.upvotes || 0}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleVoteChange(0, "downvote")}
@@ -357,11 +377,15 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3">
                   {user?.id === reviewDetails?.review?.authorId && (
                     <Button
-                      onClick={() => router.push(`/guest/myreviews/${reviewDetails?.review?.id}`)}
+                      onClick={() =>
+                        router.push(
+                          `/guest/myreviews/${reviewDetails?.review?.id}`
+                        )
+                      }
                       variant="outline"
                       className="flex items-center gap-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50"
                     >
@@ -369,8 +393,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
                       <span>Edit</span>
                     </Button>
                   )}
-                  
-                  {(user?.id === reviewDetails?.review?.authorId || user?.role === "ADMIN") && (
+
+                  {(user?.id === reviewDetails?.review?.authorId ||
+                    user?.role === "ADMIN") && (
                     <Button
                       onClick={handleDelete}
                       variant="outline"
@@ -386,8 +411,8 @@ const ReviewDetailsCard = (reviewDetails: any) => {
           </CardContent>
         </Card>
 
-        {/* Comments Section */}
-        <Card className="overflow-hidden border-0 shadow-xl rounded-xl">
+        {/* Comments Section 1 */}
+        {/* <Card className="overflow-hidden border-0 shadow-xl rounded-xl">
           <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-6">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-6 h-6" />
@@ -397,10 +422,9 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               Join the conversation about this review
             </CardDescription>
           </CardHeader>
-          
+
           <CardContent className="p-6">
-            {/* Comment list */}
-            <div className="space-y-6 bg-black p-4 rounded-3xl">
+            <div className="space-y-6 bg-white text-black p-4 rounded-3xl">
               {reviewDetails?.review?.comments?.length > 0 ? (
                 reviewDetails?.review?.comments?.map((comment: any) => (
                   <CommentComponent key={comment.id} comment={comment} />
@@ -408,12 +432,14 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               ) : (
                 <div className="text-center py-8">
                   <User className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-                  <p className="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
+                  <p className="text-gray-500">
+                    No comments yet. Be the first to share your thoughts!
+                  </p>
                 </div>
               )}
             </div>
           </CardContent>
-          
+
           <CardFooter className="p-6 bg-gray-50 border-t border-gray-100">
             <div className="w-full">
               <Textarea
@@ -443,7 +469,102 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               </Button>
             </div>
           </CardFooter>
-        </Card>
+        </Card> */}
+
+        {/* // Comments Section 2  */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <span className="p-2 bg-white/20 rounded-lg">
+                  <MessageCircle className="w-5 h-5 text-white" />
+                </span>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Comments</h3>
+                  <p className="text-indigo-100 text-sm">
+                    Join the conversation
+                  </p>
+                </div>
+              </div>
+              <span className="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
+                {reviewDetails?.review?.comments?.length || 0}
+              </span>
+            </div>
+          </div>
+
+          {/* Comments Content */}
+          <div className="p-5">
+            <div className="space-y-6 max-h-96 overflow-y-auto">
+              {reviewDetails?.review?.comments?.length > 0 ? (
+                reviewDetails?.review?.comments?.map((comment: any) => (
+                  <CommentComponent key={comment.id} comment={comment} />
+                ))
+              ) : (
+                <div className="text-center py-10 px-4">
+                  <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl inline-block mb-4">
+                    <MessageCircleWarning  className="w-10 h-10 mx-auto text-gray-400" />
+                    
+                  </div>
+                  <h4 className="text-gray-700 dark:text-gray-300 font-medium mb-1">
+                    No comments yet
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm">
+                    Be the first to share your thoughts!
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Comment Form */}
+          <div className="border-t border-gray-100 dark:border-gray-800 p-5 bg-gray-50 dark:bg-gray-900">
+            <div className="mb-4 relative">
+              <textarea
+                placeholder="Add your comment..."
+                value={userComment}
+                onChange={(e) => setUserComment(e.target.value)}
+                className="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 focus:border-transparent resize-none p-4 pr-12 min-h-24"
+                disabled={submittingComment}
+              />
+              <div className="absolute right-3 bottom-3">
+                <button
+                  className="text-gray-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
+                  type="button"
+                >
+                  <PaperclipIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Markdown supported
+              </div>
+              <button
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                  submittingComment || !userComment.trim()
+                    ? "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm"
+                }`}
+                onClick={handleAddComment}
+                disabled={submittingComment || !userComment.trim()}
+              >
+                {submittingComment ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Posting...</span>
+                  </>
+                ) : (
+                  <>
+                    <SendIcon className="w-4 h-4" />
+                    <span>Post Comment</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

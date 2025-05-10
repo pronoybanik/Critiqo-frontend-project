@@ -12,14 +12,18 @@ const roleBasedPrivateRoutes = {
         /^\/admin\/reviews$/,
         /^\/admin\/createcategory$/,
         /^\/profile$/,
+        /^\/reviews\/[^\/]+$/, // PRIVATE: /reviews/[reviewId]
     ],
     GUEST: [
         /^\/guest$/,
         /^\/guest\/myreviews$/,
+        /^\/guest\/myreviews\/[^\/]+$/, // ✅ Added this line for dynamic review ID
         /^\/guest\/mypurchases$/,
         /^\/profile$/,
+        /^\/reviews\/[^\/]+$/, // PRIVATE: /reviews/[reviewId]
     ]
 };
+
 
 export const middleware = async (request: NextRequest) => {
     const { pathname } = request.nextUrl;
@@ -27,36 +31,55 @@ export const middleware = async (request: NextRequest) => {
     // Get the current user
     const userInfo = await getCurrentUser();
 
-    // Public routes: Allow access without login
+    // Check if pathname is a public route
+    const isPublicRoute = authRoutes.includes(pathname) || pathname === "/reviews";
+
+    // If NOT logged in
     if (!userInfo) {
-        if (authRoutes.includes(pathname)) {
+        if (isPublicRoute) {
             return NextResponse.next();
-        } else {
-            // Redirect unauthenticated users to login
+        }
+
+        if (/^\/reviews\/[^\/]+$/.test(pathname)) {
             return NextResponse.redirect(
                 new URL(`/login?redirectPath=${pathname}`, request.url)
             );
         }
+
+        return NextResponse.redirect(
+            new URL(`/login?redirectPath=${pathname}`, request.url)
+        );
+    }
+
+    // ✅ Handle logged-in users
+
+    // If user is logged in and the route is public, allow
+    if (isPublicRoute) {
+        return NextResponse.next();
     }
 
     // Role-based access control
     if (userInfo.role && roleBasedPrivateRoutes[userInfo.role as Role]) {
         const allowedRoutes = roleBasedPrivateRoutes[userInfo.role as Role];
 
-        // Check if the route matches any allowed route for the role
         if (allowedRoutes.some((route) => route.test(pathname))) {
             return NextResponse.next();
         }
     }
 
-    // If no match, redirect unauthorized users to a 403 or home page
+    // If no access, redirect
     return NextResponse.redirect(new URL("/", request.url));
 };
 
-// export const config = {
-//     matcher: ["/login", "/admin/:path*"],
-// };
 
 export const config = {
-    matcher: ["/login", "/register", "/admin/:path*", "/guest/:path*", "/guest", "/profile"],
+    matcher: [
+        "/login",
+        "/register",
+        "/admin/:path*",
+        "/guest/:path*",
+        "/guest",
+        "/profile",
+        "/reviews/:path*", // ensures middleware runs on /reviews/[id]
+    ],
 };

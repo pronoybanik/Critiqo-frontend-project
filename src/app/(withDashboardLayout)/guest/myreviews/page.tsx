@@ -11,6 +11,7 @@ import {
   Trash2,
   Filter,
   ChevronDown,
+  Edit,
 } from "lucide-react";
 
 import {
@@ -73,7 +74,6 @@ const MyReviewsPage = () => {
 
     fetchReviews();
   }, [user?.userId]);
-
 
   // Filter reviews based on active tab
   const filteredReviews: Review[] = reviews?.filter((review: TAdminReview) => {
@@ -138,7 +138,6 @@ const MyReviewsPage = () => {
   //   // Implement edit logic here
   //   console.log(`Edit review with ID: ${reviewId}`);
   // };
-
 
   // Render loading skeletons
   const renderSkeletons = () => {
@@ -244,7 +243,6 @@ const MyReviewsPage = () => {
         </div>
       ) : (
         <div className="space-y-4">
-
           {sortedReviews.map((review: any) => (
             <Card key={review.id} className="overflow-hidden">
               <div className="flex flex-col md:flex-row">
@@ -260,8 +258,9 @@ const MyReviewsPage = () => {
                   </div>
                 )}
                 <div
-                  className={`flex flex-col flex-1 ${review.image ? "md:w-3/4" : "w-full"
-                    }`}
+                  className={`flex flex-col flex-1 ${
+                    review.image ? "md:w-3/4" : "w-full"
+                  }`}
                 >
                   <CardHeader className="pb-2">
                     <div className="flex justify-between items-start">
@@ -346,14 +345,15 @@ const MyReviewsPage = () => {
                     </span>
                   </div>
                   <CardFooter className="flex justify-end gap-2 pt-0">
-                    {/* <Button
+                    <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => route.push(`/guest/myreviews/${review?.id}`)}
+                      onClick={() =>
+                        route.push(`/guest/myreviews/${review?.id}`)
+                      }
                     >
                       <Edit size={16} className="mr-2" /> Edit
-
-                    </Button> */}
+                    </Button>
 
                     <Button
                       variant="destructive"

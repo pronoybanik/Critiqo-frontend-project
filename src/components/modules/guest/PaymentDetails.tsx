@@ -3,6 +3,7 @@ import { getPayment } from "@/services/Payment";
 import React, { useEffect, useState } from "react";
 import { Check, Clock, Copy, AlertCircle, Loader2 } from "lucide-react";
 import SecondaryButton from "@/components/shared/SecondaryButton";
+import Link from "next/link";
 
 interface PaymentData {
   id: string;
@@ -15,26 +16,25 @@ interface PaymentData {
 }
 
 const PaymentDetails = () => {
-
   const [paymentInfo, setPaymentInfo] = useState<PaymentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+
   useEffect(() => {
     const fetchPayment = async () => {
       setIsLoading(true);
-      
-        try {
-          const data = await getPayment();
-          if (data.success && Array.isArray(data.data)) {
-            setPaymentInfo(data.data);
-          }
-        } catch (error) {
-          console.error("Error fetching payment:", error);
-        } finally {
-          setIsLoading(false);
+
+      try {
+        const data = await getPayment();
+        if (data.success && Array.isArray(data.data)) {
+          setPaymentInfo(data.data);
         }
-      
+      } catch (error) {
+        console.error("Error fetching payment:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchPayment();
   }, []);
@@ -188,14 +188,26 @@ const PaymentDetails = () => {
                   {payment.userId}
                 </p>
               </div>
+
+              <div>
+                {payment.status && (
+                  <span className="text-sm text-green-400 font-semibold">
+                    Thank you for your purchase! As a premium user, you now have
+                    full access to all of my exclusive reviews and insights.
+                    Enjoy the premium experience!
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-              <span className="text-xs text-gray-500">
-                Payment ID: {payment.id.substring(0, 8)}...
-              </span>
-              <SecondaryButton className="w-52">Download Receipt</SecondaryButton>
-            </div>
+            <Link
+              href={"/reviews"}
+              className="px-6 py-3 bg-gray-50 border-t border-gray-100 flex justify-between items-center"
+            >
+              <SecondaryButton className="w-52">
+                See Premium Reviews
+              </SecondaryButton>
+            </Link>
           </div>
         );
       })}
