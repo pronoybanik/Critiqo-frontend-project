@@ -14,8 +14,8 @@ import { getTotalEarning } from "@/services/Payment";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
-  const { data: totalEarning } = await getTotalEarning()
-
+  const earningRes = await getTotalEarning();
+  const totalEarning = earningRes?.data ?? 0;
   const reviewData = data?.data;
 
   const reviewCounts = reviewData?.reduce(
@@ -76,7 +76,6 @@ const AdminDashBoardPage = async () => {
               </div>
             </div>
 
-
             {/* Premium Review Earnings */}
 
             <div className="bg-white rounded-lg shadow p-6">
@@ -89,11 +88,9 @@ const AdminDashBoardPage = async () => {
                 </div>
               </div>
               <div className="flex items-baseline">
-
                 <p className="text-2xl font-bold text-gray-900">
-                  ${totalEarning}
+                  ${Number(totalEarning).toFixed(2)}
                 </p>
-
               </div>
               {/* <div className="mt-4 h-16">
                 <div className="flex justify-between h-full items-end">
@@ -118,7 +115,6 @@ const AdminDashBoardPage = async () => {
                   ))}
                 </div>
               </div> */}
-
             </div>
 
             {/* Top Premium Reviews */}

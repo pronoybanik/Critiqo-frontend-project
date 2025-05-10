@@ -13,11 +13,8 @@ const HomePage = () => {
       <Banner></Banner>
       <Summary></Summary>
       <LatestReview></LatestReview>
-      <TopCategories></TopCategories>
       <ProductMarketing></ProductMarketing>
-
-      {/* <TopCategories></TopCategories> */}
-
+      <TopCategories></TopCategories>
       <FaqSection></FaqSection>
       <TopBrand></TopBrand>
     </div>

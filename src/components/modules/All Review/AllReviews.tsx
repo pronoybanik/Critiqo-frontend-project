@@ -4,7 +4,7 @@
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import { getAllCategories } from "@/services/Category";
 import React, { useCallback, useEffect, useState } from "react";
-import { Search, Filter, Gift, Star, RefreshCw } from "lucide-react";
+import { Search, Filter, Gift, RefreshCw } from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimayButton";
 import { TReview } from "@/types/review";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -18,22 +18,17 @@ const AllReviews = () => {
   const [status, setStatus] = useState("");
   const [catData, setCatData] = useState([]);
   const [availabilityFilter, setAvailabilityFilter] = useState("");
-  const [sortOrder, setSortOrder] = useState(""); // 'asc' | 'desc'
+  const [sortOrder, setSortOrder] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  
-
   const handleSearchQuery = (query: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
-
     params.set(query, value.toString());
-
-    router.push(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   useEffect(() => {
@@ -45,6 +40,7 @@ const AllReviews = () => {
   }, [categoryFilter]);
 
   const fetchReviews = useCallback(async () => {
+    setLoading(true);
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -57,13 +53,17 @@ const AllReviews = () => {
         sortOrder: sortOrder,
       });
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params}`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params}`
+      );
       const data = await res.json();
       setReviews(data?.data || []);
       const rPage = data?.meta?.total / data?.meta?.limit;
       setTotalPages(Math.ceil(rPage));
     } catch (err) {
       console.error("Error fetching reviews:", err);
+    } finally {
+      setLoading(false); // End loading
     }
   }, [
     currentPage,
@@ -76,7 +76,6 @@ const AllReviews = () => {
   ]);
 
   useEffect(() => {
-
     fetchReviews();
   }, [fetchReviews]);
 
@@ -93,6 +92,7 @@ const AllReviews = () => {
     setStatus("");
     setSortOrder("");
     setCurrentPage(1);
+    fetchReviews();
   };
 
   return (
@@ -104,124 +104,134 @@ const AllReviews = () => {
           <span>Discover Amazing Reviews</span>
           <Gift className="h-6 w-6 text-red-500" />
         </h1>
-        <p className="text-purple-600">Find your perfect products with our curated reviews</p>
+        <p className="text-purple-600">
+          Find your perfect products with our curated reviews
+        </p>
       </div>
 
       {/* Filters Section */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-purple-100 mb-8">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-purple-100 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
           <h2 className="text-lg font-semibold text-purple-800 flex items-center">
             <Filter className="h-5 w-5 mr-2" /> Filter Options
           </h2>
           <button
             onClick={handleReset}
-            className="flex items-center text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors border border-gray-200"
+            disabled={loading}
+            className="flex items-center justify-center text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors border border-gray-200 w-full sm:w-auto"
           >
             <RefreshCw className="h-4 w-4 mr-1" /> Reset
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-4 items-center">
-          {/* Search */}
-          <form onSubmit={handleSearchSubmit} className="flex gap-2">
-            <div className="relative">
+        <div className="flex flex-col md:flex-row md:flex-wrap gap-4 items-start">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto"
+          >
+            <div className="relative flex-grow">
               <input
                 type="text"
                 placeholder="Search reviews..."
                 value={searchText}
-                onChange={(e) => handleSearchQuery("title", e.target.value)}
-                className="border border-purple-200 rounded-lg px-4 py-2 pl-9 w-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                onChange={(e) => {
+                  setSearchText(e.target.value);
+                  handleSearchQuery("title", e.target.value);
+                }}
+                className="border border-purple-200 rounded-lg px-4 py-2 pl-9 w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-purple-400" />
             </div>
             <PrimaryButton
               type="submit"
-              className=" px-4 py-5 w-28 rounded-lg font-medium transition-colors "
+              className="px-4 py-2 rounded-lg sm:w-28"
+              disabled={loading}
             >
-              Search
+              {loading ? "Loading..." : "Search"}
             </PrimaryButton>
           </form>
 
-          {/* Category Filter */}
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">All Categories</option>
-            {catData?.map((cat: any) => (
-              <option key={cat?.id} value={cat?.id}>
-                {cat?.name}
-              </option>
-            ))}
-          </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+            >
+              <option value="">All Categories</option>
+              {catData?.map((cat: any) => (
+                <option key={cat?.id} value={cat?.id}>
+                  {cat?.name}
+                </option>
+              ))}
+            </select>
 
-          {/* Rating Filter */}
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">Any Rating</option>
-            <option value="5">5 Stars</option>
-            <option value="4">4 Stars</option>
-            <option value="3">3 Stars</option>
-            <option value="2">2 Stars</option>
-          </select>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+            >
+              <option value="">Any Rating</option>
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+            </select>
 
-          {/* Premium Filter */}
-          <select
-            value={availabilityFilter}
-            onChange={(e) => setAvailabilityFilter(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">All Reviews</option>
-            <option value="true">Premium</option>
-            <option value="false">Free</option>
-          </select>
+            <select
+              value={availabilityFilter}
+              onChange={(e) => setAvailabilityFilter(e.target.value)}
+              className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+            >
+              <option value="">All Reviews</option>
+              <option value="true">Premium</option>
+              <option value="false">Free</option>
+            </select>
 
-          {/* Sort Order */}
-          <select
-            onChange={(e) => setSortOrder(e.target.value)}
-            value={sortOrder}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">Default Sort</option>
-            <option value="desc">Newest First</option>
-            <option value="asc">Oldest First</option>
-          </select>
+            <select
+              onChange={(e) => setSortOrder(e.target.value)}
+              value={sortOrder}
+              className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400 w-full"
+            >
+              <option value="">Default Sort</option>
+              <option value="desc">Newest First</option>
+              <option value="asc">Oldest First</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Reviews Grid with festive decorations */}
+      {/* Reviews Section */}
       <div className="relative">
-        <div className="absolute -top-4 left-0 w-full flex justify-between">
-          <Star className="h-8 w-8 text-yellow-400 animate-pulse" />
-          <Star className="h-6 w-6 text-red-400 animate-pulse delay-75" />
-          <Star className="h-8 w-8 text-green-400 animate-pulse delay-100" />
-          <Star className="h-6 w-6 text-purple-400 animate-pulse delay-150" />
-          <Star className="h-8 w-8 text-blue-400 animate-pulse delay-200" />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {reviews.length > 0 ? (
-            reviews
-              .filter((item: TReview) => item.status === "PUBLISHED")
-              .sort((a: TReview, b: TReview) => {
-                const dateA = new Date(a.createdAt).getTime() || 0;
-                const dateB = new Date(b.createdAt).getTime() || 0;
-                return dateB - dateA;
-              })
-              .map((review, index) => (
-                <LatestReviewCard key={index} review={review} />
-              ))
-          ) : (
-            <div className="col-span-full py-12 text-center">
-              <p className="text-purple-700 font-medium text-lg">No reviews found.</p>
-              <p className="text-purple-500 mt-2">Try adjusting your filters</p>
-            </div>
-          )}
-        </div>
+        {/* Reviews Grid */}
+        {loading ? (
+          <div className="text-center py-12 text-purple-600 font-medium text-lg">
+            Loading reviews...
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {reviews.length > 0 ? (
+              reviews
+                .filter((item: TReview) => item.status === "PUBLISHED")
+                .sort(
+                  (a: TReview, b: TReview) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                )
+                .map((review, index) => (
+                  <LatestReviewCard key={index} review={review} />
+                ))
+            ) : (
+              <div className="col-span-full py-12 text-center">
+                <p className="text-purple-700 font-medium text-lg">
+                  No reviews found.
+                </p>
+                <p className="text-purple-500 mt-2">
+                  Try adjusting your filters
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
@@ -229,11 +239,12 @@ const AllReviews = () => {
         <div className="flex items-center space-x-2 mb-4 md:mb-0">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${currentPage === 1
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-              }`}
+            disabled={currentPage === 1 || loading}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
+              currentPage === 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+            }`}
           >
             Prev
           </button>
@@ -246,11 +257,12 @@ const AllReviews = () => {
 
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages || totalPages === 0}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${currentPage === totalPages || totalPages === 0
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-              }`}
+            disabled={currentPage === totalPages || totalPages === 0 || loading}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
+              currentPage === totalPages || totalPages === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+            }`}
           >
             Next
           </button>
@@ -277,7 +289,10 @@ const AllReviews = () => {
 
       {/* Festive Footer */}
       <div className="mt-8 text-center text-sm text-purple-600">
-        <p>✨ Discover amazing products and make informed decisions with our reviews ✨</p>
+        <p>
+          ✨ Discover amazing products and make informed decisions with our
+          reviews ✨
+        </p>
       </div>
     </div>
   );
