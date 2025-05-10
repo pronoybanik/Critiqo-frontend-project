@@ -23,12 +23,15 @@ export const getPayment = async () => {
     headers: {
       "Content-Type": "application/json",
       Authorization: (await cookies()).get("accessToken")?.value || "",
+
+      email: email,
+
     },
   });
-
   revalidateTag("PAYMENT");
   return res.json();
 };
+
 
 
 
