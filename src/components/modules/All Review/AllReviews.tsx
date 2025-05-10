@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Search, Filter, Gift, Star, RefreshCw } from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimayButton";
 import { TReview } from "@/types/review";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const AllReviews = () => {
   const [reviews, setReviews] = useState<TReview[]>([]);
@@ -19,6 +20,19 @@ const AllReviews = () => {
   const [availabilityFilter, setAvailabilityFilter] = useState("");
   const [sortOrder, setSortOrder] = useState(""); // 'asc' | 'desc'
   const [itemsPerPage, setItemsPerPage] = useState(8);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleSearchQuery = (query: string, value: string | number) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.set(query, value.toString());
+
+    router.push(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
+  };
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -40,7 +54,7 @@ const AllReviews = () => {
         sortBy: "createdAt",
         sortOrder: sortOrder,
       });
-  
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params}`);
       const data = await res.json();
       setReviews(data?.data || []);
@@ -60,6 +74,7 @@ const AllReviews = () => {
   ]);
 
   useEffect(() => {
+
     fetchReviews();
   }, [fetchReviews]);
 
@@ -112,7 +127,7 @@ const AllReviews = () => {
                 type="text"
                 placeholder="Search reviews..."
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => handleSearchQuery("title", e.target.value)}
                 className="border border-purple-200 rounded-lg px-4 py-2 pl-9 w-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-purple-400" />

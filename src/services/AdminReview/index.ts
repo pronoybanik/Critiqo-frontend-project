@@ -86,3 +86,25 @@ export const deleteReview = async (reviewId: string): Promise<any> => {
         return Error(error.message);
     }
 };
+
+export const getTotalEarning = async () => {
+
+    try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/payment/total-earning`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: (await cookies()).get("accessToken")?.value || "",
+
+            },
+        },
+
+        );
+        // revalidateTag("PAYMENT");
+        return res.json();
+
+    } catch (error: any) {
+        return Error(error.message);
+    }
+
+};
