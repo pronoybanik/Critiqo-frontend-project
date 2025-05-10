@@ -196,9 +196,9 @@ export default function SubscriptionPage() {
 
 
       // Handle based on ShurjoPay's expected response format
-      if (response?.success) {
-        toast.success("Payment Succesfully Done");
-      }
+      // if (response?.success) {
+      //   toast.success("Payment Succesfully Done");
+      // }
       // if (!response || response?.data?.checkout_url) {
       //   throw new Error(response?.message || 'Failed to create ShurjoPay session');
       // } else {

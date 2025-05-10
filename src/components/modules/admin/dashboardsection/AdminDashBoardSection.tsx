@@ -7,14 +7,14 @@ import {
   DollarSignIcon,
 } from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
-import { getAllReviewAdmin, getTotalEarning } from "@/services/AdminReview";
+import { getAllReviewAdmin } from "@/services/AdminReview";
 import { TAdminReview } from "@/types/adminreview";
 import { TReview } from "@/types/review";
+import { getTotalEarning } from "@/services/Payment";
 
 const AdminDashBoardPage = async () => {
   const data = await getAllReviewAdmin();
   const { data: totalEarning } = await getTotalEarning()
-  console.log(totalEarning)
 
   const reviewData = data?.data;
 

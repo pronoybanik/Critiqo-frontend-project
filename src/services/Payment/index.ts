@@ -23,15 +23,33 @@ export const getPayment = async () => {
     headers: {
       "Content-Type": "application/json",
       Authorization: (await cookies()).get("accessToken")?.value || "",
-
-      email: email,
-
     },
   });
   revalidateTag("PAYMENT");
   return res.json();
 };
 
+export const getTotalEarning = async () => {
+
+  try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/payment/total-earning`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: (await cookies()).get("accessToken")?.value || "",
+
+          },
+      },
+
+      );
+     
+      return res.json();
+
+  } catch (error: any) {
+      return Error(error.message);
+  }
+
+};
 
 
 
