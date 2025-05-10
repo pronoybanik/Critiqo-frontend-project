@@ -1,10 +1,10 @@
-import AllReviews from "@/components/modules/All Review/AllReviews";
+import AllReviewsWrapper from "@/components/modules/All Review/AllReviewsWrapper";
 import React from "react";
 
 const ReviewsPage = () => {
   return (
     <div>
-      <AllReviews></AllReviews>
+      <AllReviewsWrapper />
     </div>
   );
 };
