@@ -16,7 +16,7 @@ const HomePage = () => {
       <TopCategories></TopCategories>
       <ProductMarketing></ProductMarketing>
 
-      <TopCategories></TopCategories>
+      {/* <TopCategories></TopCategories> */}
 
       <FaqSection></FaqSection>
       <TopBrand></TopBrand>
