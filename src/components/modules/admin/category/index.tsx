@@ -2,12 +2,6 @@
 "use client";
 
 import React, { useState } from "react";
-import CreateCategoryModal from "./CreateCategoryModal";
-// import { ICategory } from "@/types";
-// import { NMTable } from "@/components/ui/core/NMTable";
-// import { ColumnDef } from "@tanstack/react-table";
-// import { Trash } from "lucide-react";
-// import Image from "next/image";
 import { deleteCategory } from "@/services/Category";
 import { toast } from "sonner";
 import DeleteConfirmationModal from "@/components/ui/core/NMModal/DeleteConfirmationModal";
@@ -21,6 +15,7 @@ type TCategoriesProps = {
 };
 
 const ManageCategories = ({ categories }: TCategoriesProps) => {
+  
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
@@ -75,10 +70,7 @@ const ManageCategories = ({ categories }: TCategoriesProps) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">Manage category </h1>
-        <CreateCategoryModal />
-      </div>
+   
       <NMTable data={categories} columns={columns} />
       <DeleteConfirmationModal
         name={selectedItem}

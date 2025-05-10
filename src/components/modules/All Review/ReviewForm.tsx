@@ -270,7 +270,6 @@ export default function ReviewForm({ categories }: Props) {
           {/* Submit Button */}
           <PrimaryButton
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
             disabled={isLoading}
           >
             {isLoading ? "Submitting..." : "Submit Review"}

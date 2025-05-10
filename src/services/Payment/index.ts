@@ -17,13 +17,15 @@ export const createPayment = async (data: any) => {
   return res.json();
 };
 
-export const getPayment = async (email: any) => {
+export const getPayment = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/payment/history`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: (await cookies()).get("accessToken")?.value || "",
+
       email: email,
+
     },
   });
   revalidateTag("PAYMENT");

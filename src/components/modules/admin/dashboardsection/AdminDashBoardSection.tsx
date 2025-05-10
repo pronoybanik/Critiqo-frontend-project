@@ -1,4 +1,11 @@
-import { Star, Crown, DollarSign, Eye, Vote } from "lucide-react";
+import {
+  Star,
+  Crown,
+  DollarSign,
+  Eye,
+  Vote,
+  DollarSignIcon,
+} from "lucide-react";
 import HandleLikeUnLineDelete from "../review/HandleLikeUnlineDelete";
 import { getAllReviewAdmin, getTotalEarning } from "@/services/AdminReview";
 import { TAdminReview } from "@/types/adminreview";
@@ -69,17 +76,20 @@ const AdminDashBoardPage = async () => {
               </div>
             </div>
 
+
             {/* Premium Review Earnings */}
+
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-gray-500 text-sm font-medium">
                   Premium Review Earnings
                 </h3>
                 <div className="bg-green-100 rounded-full p-2">
-                  <DollarSign size={20} className="text-green-600" />
+                  <DollarSignIcon size={20} className="text-green-600" />
                 </div>
               </div>
               <div className="flex items-baseline">
+
                 <p className="text-2xl font-bold text-gray-900">
                   ${totalEarning}
                 </p>
@@ -108,6 +118,7 @@ const AdminDashBoardPage = async () => {
                   ))}
                 </div>
               </div> */}
+
             </div>
 
             {/* Top Premium Reviews */}

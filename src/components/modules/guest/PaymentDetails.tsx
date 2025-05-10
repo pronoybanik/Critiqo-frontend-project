@@ -1,5 +1,4 @@
 "use client";
-import { useUser } from "@/context/UserContext";
 import { getPayment } from "@/services/Payment";
 import React, { useEffect, useState } from "react";
 import { Check, Clock, Copy, AlertCircle, Loader2 } from "lucide-react";
@@ -16,7 +15,6 @@ interface PaymentData {
 }
 
 const PaymentDetails = () => {
-  const { user } = useUser();
 
   const [paymentInfo, setPaymentInfo] = useState<PaymentData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,10 +23,9 @@ const PaymentDetails = () => {
   useEffect(() => {
     const fetchPayment = async () => {
       setIsLoading(true);
-      if (user?.email) {
+      
         try {
-          const data = await getPayment(user.email);
-          console.log("Payment Info:", data);
+          const data = await getPayment();
           if (data.success && Array.isArray(data.data)) {
             setPaymentInfo(data.data);
           }
@@ -37,11 +34,10 @@ const PaymentDetails = () => {
         } finally {
           setIsLoading(false);
         }
-      }
+      
     };
-
     fetchPayment();
-  }, [user?.email]);
+  }, []);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);

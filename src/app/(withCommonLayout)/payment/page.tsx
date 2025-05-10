@@ -169,7 +169,6 @@ const plans: Plans = {
 export default function SubscriptionPage() {
   const router = useRouter();
   const { user } = useUser();
-  console.log(user);
   const [billingInterval, setBillingInterval] = useState<"monthly" | "yearly">(
     "monthly"
   );
@@ -195,8 +194,6 @@ export default function SubscriptionPage() {
 
       const response = await createPayment(data);
 
-      // Log response to see what's returned
-      console.log("Payment response:", response);
 
       // Handle based on ShurjoPay's expected response format
       if (response?.success) {

@@ -8,36 +8,57 @@ import { cookies } from "next/headers";
 
 
 //get all review
-export const getAllReview = async (page?: string, limit?: string, query?: { [key: string]: string | string[] | undefined }) => {
+export const getAllReview = async () => {
   try {
-    const params = new URLSearchParams();
-    if (query?.price) {
-      params.append("minPrice", "0")
-      params.append("maxPrice", query?.price.toString())
-    }
-    if (query?.brand) {
-      params.append("brands", query?.brand.toString())
-    }
-    if (query?.category) {
-      params.append("categories", query?.category.toString())
-    }
-    // if (query?.search) {
-    //   params.append("ratings", query?.rating.toString())
-    // }
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_API}/reviews`,
       {
+        cache: 'force-cache',
         next: {
           tags: ["REVIEW"],
         },
       }
     );
+
     const data = await res.json();
     return data;
   } catch (error: any) {
     return Error(error.message);
   }
 };
+
+
+
+// export const getAllReview = async (page?: string, limit?: string, query?: { [key: string]: string | string[] | undefined }) => {
+//   try {
+//     const params = new URLSearchParams();
+//     if (query?.price) {
+//       params.append("minPrice", "0")
+//       params.append("maxPrice", query?.price.toString())
+//     }
+//     if (query?.brand) {
+//       params.append("brands", query?.brand.toString())
+//     }
+//     if (query?.category) {
+//       params.append("categories", query?.category.toString())
+//     }
+//     // if (query?.search) {
+//     //   params.append("ratings", query?.rating.toString())
+//     // }
+//     const res = await fetch(
+//       `${process.env.NEXT_PUBLIC_BASE_API}/reviews`,
+//       {
+//         next: {
+//           tags: ["REVIEW"],
+//         },
+//       }
+//     );
+//     const data = await res.json();
+//     return data;
+//   } catch (error: any) {
+//     return Error(error.message);
+//   }
+// };
 
 export const featuredReview = async (page?: string, limit?: string,) => {
   try {

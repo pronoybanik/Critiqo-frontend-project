@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React from 'react';
 import { useRef, useState } from "react";
@@ -39,7 +40,6 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  console.log(category, review)
 
   const form = useForm({
     defaultValues: {

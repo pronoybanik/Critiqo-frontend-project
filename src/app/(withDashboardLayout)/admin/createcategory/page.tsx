@@ -1,4 +1,5 @@
 import ManageCategories from "@/components/modules/admin/category";
+import CreateCategoryModal from "@/components/modules/admin/category/CreateCategoryModal";
 import { getAllCategories } from "@/services/Category";
 
 const ProductCategoryPage = async () => {
@@ -7,12 +8,20 @@ const ProductCategoryPage = async () => {
   let content = null;
 
   if (data?.length > 0) {
-    <ManageCategories categories={data} />;
+    content = <ManageCategories categories={data} />;
   } else {
     content = <p>There are no Data</p>;
   }
 
-  return <div>{content}</div>;
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-xl font-bold">Manage category </h1>
+        <CreateCategoryModal />
+      </div>
+      {content}
+    </div>
+  );
 };
 
 export default ProductCategoryPage;
