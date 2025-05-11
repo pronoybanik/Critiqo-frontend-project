@@ -75,6 +75,7 @@ const MyReviewsPage = () => {
     fetchReviews();
   }, [user?.userId]);
 
+
   // Filter reviews based on active tab
   const filteredReviews: Review[] = reviews?.filter((review: TAdminReview) => {
     if (activeTab === "all") return true;
@@ -344,16 +345,19 @@ const MyReviewsPage = () => {
                       {review?.moderationNote || "No notes available."}
                     </span>
                   </div>
+
                   <CardFooter className="flex justify-end gap-2 pt-0">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        route.push(`/guest/myreviews/${review?.id}`)
-                      }
-                    >
-                      <Edit size={16} className="mr-2" /> Edit
-                    </Button>
+                    {review?.status === "PUBLISHED" ? (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          route.push(`/guest/myreviews/${review?.id}`)
+                        }
+                      >
+                        <Edit size={16} className="mr-2" /> Edit
+                      </Button>
+                    ) : null}
 
                     <Button
                       variant="destructive"
