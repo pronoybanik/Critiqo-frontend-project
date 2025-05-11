@@ -100,10 +100,9 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
             <Image
               height={120}
               width={150}
-              src={images[0]}
+              src={images[0] || "https://ibb.co.com/DPrkCYxq"}
               alt={title}
-              // fill
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "contain" }}
               className="transition-transform duration-500 group-hover:scale-110 object-cover "
             />
           ) : (

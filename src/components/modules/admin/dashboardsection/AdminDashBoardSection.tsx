@@ -247,6 +247,7 @@ const AdminDashBoardPage = async () => {
                 </div>
               ))}
             </div>
+
             <div className="px-6 py-3 bg-gray-50 text-right">
               <button className="text-sm text-indigo-600 font-medium hover:text-indigo-800">
                 View All Activity

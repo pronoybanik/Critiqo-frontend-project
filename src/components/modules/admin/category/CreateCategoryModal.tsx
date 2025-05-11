@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import PrimaryButton from "@/components/shared/PrimayButton";
 import SecondaryButton from "@/components/shared/SecondaryButton";
-import { Button } from "@/components/ui/button";
 
 import {
   Dialog,
@@ -69,46 +69,10 @@ const CreateCategoryModal = () => {
                 </FormItem>
               )}
             />
-            {/* <div className="flex items-center justify-between mt-5">
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        className="h-36 w-72"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              {imagePreview.length > 0 ? (
-                <ImagePreviewer
-                  setImageFiles={setImageFiles}
-                  imagePreview={imagePreview}
-                  setImagePreview={setImagePreview}
-                  className="mt-8"
-                />
-              ) : (
-                <div className="mt-8">
-                  <NMImageUploader
-                    setImageFiles={setImageFiles}
-                    setImagePreview={setImagePreview}
-                    label="Upload Icon"
-                  />
-                </div>
-              )}
-            </div> */}
-
-            <Button type="submit" className="mt-5 w-full">
+            <PrimaryButton type="submit" className="mt-5 w-full">
               {isSubmitting ? "Creating...." : "Create"}
-            </Button>
+            </PrimaryButton>
           </form>
         </Form>
       </DialogContent>
