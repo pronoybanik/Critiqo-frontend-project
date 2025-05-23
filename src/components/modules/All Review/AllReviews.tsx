@@ -1,14 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import LatestReviewCard from "@/components/cards/LatestReviewCards";
 import { getAllCategories } from "@/services/Category";
-import { IReview } from "@/types/reviews";
-import React, { useEffect, useState } from "react";
-import { Search, Filter, Gift, Star, RefreshCw } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { 
+  Search, 
+  Filter, 
+  RefreshCw, 
+  Star, 
+  Grid3X3, 
+  List,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
+  X,
+  TrendingUp,
+  Menu
+} from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import { TReview } from "@/types/review";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const AllReviews = () => {
-  const [reviews, setReviews] = useState<IReview[]>([]);
+  const [reviews, setReviews] = useState<TReview[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchText, setSearchText] = useState("");
@@ -16,8 +32,21 @@ const AllReviews = () => {
   const [status, setStatus] = useState("");
   const [catData, setCatData] = useState([]);
   const [availabilityFilter, setAvailabilityFilter] = useState("");
-  const [sortOrder, setSortOrder] = useState(""); // 'asc' | 'desc'
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [sortOrder, setSortOrder] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Default to closed on mobile
+  const [viewMode, setViewMode] = useState("grid"); // grid or list
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const handleSearchQuery = (query: string, value: string | number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(query, value.toString());
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
     const fetchCategory = async () => {
@@ -27,7 +56,23 @@ const AllReviews = () => {
     fetchCategory();
   }, [categoryFilter]);
 
-  const fetchReviews = async () => {
+  // Set sidebar open by default on desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        setSidebarOpen(true);
+      } else {
+        setSidebarOpen(false);
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const fetchReviews = useCallback(async () => {
+    setLoading(true);
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -41,7 +86,7 @@ const AllReviews = () => {
       });
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params.toString()}`
+        `${process.env.NEXT_PUBLIC_BASE_API}/reviews?${params}`
       );
       const data = await res.json();
       setReviews(data?.data || []);
@@ -49,11 +94,9 @@ const AllReviews = () => {
       setTotalPages(Math.ceil(rPage));
     } catch (err) {
       console.error("Error fetching reviews:", err);
+    } finally {
+      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchReviews();
   }, [
     currentPage,
     itemsPerPage,
@@ -63,6 +106,10 @@ const AllReviews = () => {
     sortOrder,
     status,
   ]);
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,60 +124,30 @@ const AllReviews = () => {
     setStatus("");
     setSortOrder("");
     setCurrentPage(1);
+    setMobileFiltersOpen(false);
+    fetchReviews();
   };
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-12 bg-gradient-to-b from-purple-50 to-white">
-      {/* Festive Header */}
-      <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold text-purple-800 mb-2 flex items-center justify-center gap-2">
-          <Gift className="h-6 w-6 text-red-500" />
-          <span>Discover Amazing Reviews</span>
-          <Gift className="h-6 w-6 text-red-500" />
-        </h1>
-        <p className="text-purple-600">Find your perfect products with our curated reviews</p>
-      </div>
+  const publishedReviews = reviews
+    .filter((item: TReview) => item.status === "PUBLISHED")
+    .sort(
+      (a: TReview, b: TReview) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
-      {/* Filters Section */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-purple-100 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-purple-800 flex items-center">
-            <Filter className="h-5 w-5 mr-2" /> Filter Options
-          </h2>
-          <button 
-            onClick={handleReset} 
-            className="flex items-center text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors border border-gray-200"
-          >
-            <RefreshCw className="h-4 w-4 mr-1" /> Reset
-          </button>
-        </div>
-
-        <div className="flex flex-wrap gap-4 items-center">
-          {/* Search */}
-          <form onSubmit={handleSearchSubmit} className="flex gap-2">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search reviews..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                className="border border-purple-200 rounded-lg px-4 py-2 pl-9 w-60 focus:outline-none focus:ring-2 focus:ring-purple-400"
-              />
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-purple-400" />
-            </div>
-            <PrimaryButton
-              type="submit"
-              className=" px-4 py-2 w-28 rounded-lg font-medium transition-colors "
-            >
-              Search
-            </PrimaryButton>
-          </form>
-
-          {/* Category Filter */}
+  // Filter component for reuse in both desktop sidebar and mobile modal
+  const FilterComponent = ({ isMobile = false }) => (
+    <div className={`space-y-4 ${isMobile ? 'space-y-6' : ''}`}>
+      {/* Category Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Category
+        </label>
+        <div className="relative">
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none bg-white text-sm sm:text-base"
           >
             <option value="">All Categories</option>
             {catData?.map((cat: any) => (
@@ -139,131 +156,414 @@ const AllReviews = () => {
               </option>
             ))}
           </select>
+          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+        </div>
+      </div>
 
-          {/* Rating Filter */}
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">Any Rating</option>
-            <option value="5">5 Stars</option>
-            <option value="4">4 Stars</option>
-            <option value="3">3 Stars</option>
-            <option value="2">2 Stars</option>
-          </select>
-          
-          {/* Premium Filter */}
-          <select
-            value={availabilityFilter}
-            onChange={(e) => setAvailabilityFilter(e.target.value)}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            <option value="">All Reviews</option>
-            <option value="true">Premium</option>
-            <option value="false">Free</option>
-          </select>
+      {/* Rating Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Rating
+        </label>
+        <div className="space-y-2">
+          {["", "5", "4", "3", "2"].map((rating) => (
+            <label key={rating} className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
+              <input
+                type="radio"
+                name="rating"
+                value={rating}
+                checked={status === rating}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-4 h-4 text-blue-600 border-2 border-gray-300 focus:ring-blue-500"
+              />
+              <span className="text-sm sm:text-base text-gray-700 group-hover:text-blue-600 transition-colors duration-200 flex items-center">
+                {rating === "" ? (
+                  "Any Rating"
+                ) : (
+                  <>
+                    {rating} <Star className="w-3 h-3 sm:w-4 sm:h-4 ml-1 fill-current text-yellow-400" />
+                  </>
+                )}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
 
-          {/* Sort Order */}
+      {/* Premium Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Review Type
+        </label>
+        <div className="space-y-2">
+          {[
+            { value: "", label: "All Reviews" },
+            { value: "true", label: "Premium Reviews" },
+            { value: "false", label: "Free Reviews" }
+          ].map((option) => (
+            <label key={option.value} className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group">
+              <input
+                type="radio"
+                name="premium"
+                value={option.value}
+                checked={availabilityFilter === option.value}
+                onChange={(e) => setAvailabilityFilter(e.target.value)}
+                className="w-4 h-4 text-blue-600 border-2 border-gray-300 focus:ring-blue-500"
+              />
+              <span className="text-sm sm:text-base text-gray-700 group-hover:text-blue-600 transition-colors duration-200">
+                {option.label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Sort Order */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Sort By
+        </label>
+        <div className="relative">
           <select
             onChange={(e) => setSortOrder(e.target.value)}
             value={sortOrder}
-            className="border border-purple-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full border-2 border-gray-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 appearance-none bg-white text-sm sm:text-base"
           >
             <option value="">Default Sort</option>
             <option value="desc">Newest First</option>
             <option value="asc">Oldest First</option>
           </select>
+          <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
         </div>
       </div>
 
-      {/* Reviews Grid with festive decorations */}
-      <div className="relative">
-        <div className="absolute -top-4 left-0 w-full flex justify-between">
-          <Star className="h-8 w-8 text-yellow-400 animate-pulse" />
-          <Star className="h-6 w-6 text-red-400 animate-pulse delay-75" />
-          <Star className="h-8 w-8 text-green-400 animate-pulse delay-100" />
-          <Star className="h-6 w-6 text-purple-400 animate-pulse delay-150" />
-          <Star className="h-8 w-8 text-blue-400 animate-pulse delay-200" />
+      {/* Items Per Page */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Items Per Page
+        </label>
+        <div className="grid grid-cols-2 gap-2">
+          {[4, 8, 12, 20].map((size) => (
+            <button
+              key={size}
+              onClick={() => {
+                setItemsPerPage(size);
+                setCurrentPage(1);
+                if (isMobile) setMobileFiltersOpen(false);
+              }}
+              className={`py-2 px-3 sm:px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                itemsPerPage === size
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+              }`}
+            >
+              {size}
+            </button>
+          ))}
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {reviews.length > 0 ? (
-            reviews
-              .filter((item: IReview) => item.status === "PUBLISHED")
-              .sort((a: IReview, b: IReview) => {
-                const dateA = new Date(a.createdAt).getTime() || 0;
-                const dateB = new Date(b.createdAt).getTime() || 0;
-                return dateB - dateA;
-              })
-              .map((review, index) => (
-                <LatestReviewCard key={index} review={review} />
-              ))
-          ) : (
-            <div className="col-span-full py-12 text-center">
-              <p className="text-purple-700 font-medium text-lg">No reviews found.</p>
-              <p className="text-purple-500 mt-2">Try adjusting your filters</p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Header Section */}
+      <div className="bg-white shadow-sm border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+          <div className="text-center mb-4 sm:mb-6">
+            <div className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-xs sm:text-sm font-medium text-gray-700 shadow-sm mb-3 sm:mb-4">
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 text-blue-600" />
+              Explore Customer Reviews
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex flex-col md:flex-row justify-between items-center mt-12 bg-white p-4 rounded-lg shadow-sm border border-purple-100">
-        <div className="flex items-center space-x-2 mb-4 md:mb-0">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
-              currentPage === 1
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-            }`}
-          >
-            Prev
-          </button>
-          
-          <div className="px-4 py-2 bg-purple-50 rounded-lg">
-            <span className="font-medium text-purple-800">
-              Page {currentPage} of {totalPages || 1}
-            </span>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-4 px-2">
+              Discover Amazing{" "}
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Product Reviews
+              </span>
+            </h1>
+            <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+              Find your perfect products with authentic customer reviews and detailed ratings
+            </p>
           </div>
-          
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages || totalPages === 0}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center ${
-              currentPage === totalPages || totalPages === 0
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-purple-600 text-white hover:bg-purple-700 transition-colors"
-            }`}
-          >
-            Next
-          </button>
-        </div>
 
-        <div className="flex items-center">
-          <span className="text-sm text-purple-700 mr-2">Show:</span>
-          <select
-            value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(parseInt(e.target.value));
-              setCurrentPage(1);
-            }}
-            className="border border-purple-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-purple-400"
-          >
-            {[4, 8, 12, 20].map((size) => (
-              <option key={size} value={size}>
-                {size} / page
-              </option>
-            ))}
-          </select>
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSearchSubmit} className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl blur opacity-20"></div>
+              <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div className="flex items-center">
+                  <div className="flex items-center pl-3 sm:pl-6 pr-2 sm:pr-4">
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    className="flex-1 px-2 py-3 sm:py-4 text-sm sm:text-lg text-gray-900 placeholder-gray-500 bg-transparent border-none outline-none"
+                    placeholder="Search products, brands..."
+                    value={searchText}
+                    onChange={(e) => {
+                      setSearchText(e.target.value);
+                      handleSearchQuery("title", e.target.value);
+                    }}
+                  />
+                  <div className="p-1 sm:p-2">
+                    <PrimaryButton 
+                      type="submit"
+                      className="px-4 py-2 sm:px-8 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-lg sm:rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-sm sm:text-base"
+                      disabled={loading}
+                    >
+                      {loading ? "Searching..." : "Search"}
+                    </PrimaryButton>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      
-      {/* Festive Footer */}
-      <div className="mt-8 text-center text-sm text-purple-600">
-        <p>✨ Discover amazing products and make informed decisions with our reviews ✨</p>
+
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden bg-white border-b border-gray-100 px-3 sm:px-4 py-3">
+        <button
+          onClick={() => setMobileFiltersOpen(true)}
+          className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-xl font-medium shadow-lg"
+        >
+          <Filter className="w-4 h-4" />
+          <span>Filters & Sort</span>
+        </button>
+      </div>
+
+      {/* Mobile Filter Modal */}
+      {mobileFiltersOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 bg-black bg-opacity-50">
+          <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-2xl max-h-[80vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+              <button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 pb-8">
+              <FilterComponent isMobile={true} />
+              <div className="mt-6 flex space-x-3">
+                <button
+                  onClick={handleReset}
+                  className="flex-1 py-3 px-4 bg-gray-100 text-gray-700 rounded-xl font-medium"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        <div className="flex gap-4 lg:gap-8">
+          
+          {/* Desktop Sidebar - Filters */}
+          <div className={`hidden lg:block transition-all duration-300 ${sidebarOpen ? 'w-80' : 'w-12'}`}>
+            <div className="sticky top-4">
+              {/* Sidebar Toggle */}
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="w-full mb-4 bg-white rounded-xl shadow-md border border-gray-100 p-3 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-center justify-center">
+                  {sidebarOpen ? (
+                    <ChevronLeft className="w-5 h-5 text-gray-600" />
+                  ) : (
+                    <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+                  )}
+                </div>
+              </button>
+
+              {sidebarOpen && (
+                <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                  {/* Filter Header */}
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold text-white flex items-center">
+                        <Filter className="w-5 h-5 mr-2" />
+                        Filter Reviews
+                      </h2>
+                      <button
+                        onClick={handleReset}
+                        disabled={loading}
+                        className="bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center space-x-1"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        <span>Reset</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Filter Options */}
+                  <div className="p-6">
+                    <FilterComponent />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Content - Reviews */}
+          <div className="flex-1 min-w-0">
+            
+            {/* Results Header */}
+            <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 mb-4 sm:mb-6 lg:mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div>
+                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900">
+                    {loading ? "Loading..." : `${publishedReviews.length} Reviews Found`}
+                  </h3>
+                  <p className="text-gray-600 text-xs sm:text-sm mt-1">
+                    Showing page {currentPage} of {totalPages || 1}
+                  </p>
+                </div>
+                
+                {/* View Mode Toggle */}
+                <div className="flex items-center space-x-2 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-all duration-200 ${
+                      viewMode === "grid"
+                        ? "bg-white shadow-sm text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    <Grid3X3 className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-all duration-200 ${
+                      viewMode === "list"
+                        ? "bg-white shadow-sm text-blue-600"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    <List className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Reviews Grid/List */}
+            {loading ? (
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-8 sm:p-12 text-center">
+                <div className="inline-flex items-center space-x-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <span className="text-gray-600 font-medium text-sm sm:text-base">Loading amazing reviews...</span>
+                </div>
+              </div>
+            ) : (
+              <div className={`grid gap-3 sm:gap-4 lg:gap-6 ${
+                viewMode === "grid" 
+                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3" 
+                  : "grid-cols-1"
+              }`}>
+                {publishedReviews.length > 0 ? (
+                  publishedReviews.map((review, index) => (
+                    <div
+                      key={index}
+                      className="transform hover:scale-105 transition-all duration-300 hover:shadow-xl"
+                    >
+                      <LatestReviewCard review={review} />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-8 sm:p-12 text-center">
+                    <div className="max-w-md mx-auto">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                        <Search className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
+                        No reviews found
+                      </h3>
+                      <p className="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">
+                        Try adjusting your filters or search terms to find more reviews.
+                      </p>
+                      <button
+                        onClick={handleReset}
+                        className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Reset Filters
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Enhanced Pagination */}
+            {publishedReviews.length > 0 && (
+              <div className="mt-8 sm:mt-12 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
+                <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row justify-between items-center">
+                  <div className="flex items-center justify-center sm:justify-start space-x-2 sm:space-x-3 w-full sm:w-auto overflow-x-auto">
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                      disabled={currentPage === 1 || loading}
+                      className={`flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-200 text-sm sm:text-base whitespace-nowrap ${
+                        currentPage === 1
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transform hover:scale-105"
+                      }`}
+                    >
+                      <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="hidden sm:inline">Previous</span>
+                    </button>
+
+                    <div className="flex items-center space-x-1 sm:space-x-2">
+                      {[...Array(Math.min(3, totalPages))].map((_, i) => {
+                        const pageNum = i + 1;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg font-medium transition-all duration-200 text-sm sm:text-base ${
+                              currentPage === pageNum
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                      disabled={currentPage === totalPages || totalPages === 0 || loading}
+                      className={`flex items-center space-x-1 sm:space-x-2 px-3 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl font-medium transition-all duration-200 text-sm sm:text-base whitespace-nowrap ${
+                        currentPage === totalPages || totalPages === 0
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transform hover:scale-105"
+                      }`}
+                    >
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+                    </button>
+                  </div>
+
+                  <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-right">
+                    Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, publishedReviews.length)} of {publishedReviews.length} results
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
