@@ -15,6 +15,7 @@ export const getAllReview = async () => {
       {
         cache: 'force-cache',
         next: {
+          revalidate: 120,
           tags: ["REVIEW"],
         },
       }
@@ -26,6 +27,7 @@ export const getAllReview = async () => {
     return Error(error.message);
   }
 };
+
 
 
 
