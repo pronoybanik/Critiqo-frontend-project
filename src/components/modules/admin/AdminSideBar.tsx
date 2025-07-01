@@ -10,13 +10,11 @@ import {
   ChevronRight,
   LayoutDashboard,
   UsersRound,
-
   Settings,
   Bell,
   Shield,
   ChevronDown,
-  Sparkles,
-
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
