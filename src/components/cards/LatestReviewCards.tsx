@@ -76,6 +76,7 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
         stars.push(<Star key={i} className="w-4 h-4 text-gray-300" />); // Empty star
       }
     }
+    
     return stars;
   };
 
