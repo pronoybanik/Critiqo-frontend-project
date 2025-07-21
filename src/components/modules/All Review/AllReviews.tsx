@@ -23,9 +23,6 @@ const AllReviews = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  
-
   const handleSearchQuery = (query: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -94,6 +91,7 @@ const AllReviews = () => {
     setSortOrder("");
     setCurrentPage(1);
   };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 bg-gradient-to-b from-purple-50 to-white">
