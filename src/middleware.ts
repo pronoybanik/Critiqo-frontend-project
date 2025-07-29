@@ -12,15 +12,15 @@ const roleBasedPrivateRoutes = {
         /^\/admin\/reviews$/,
         /^\/admin\/createcategory$/,
         /^\/profile$/,
-        /^\/reviews\/[^\/]+$/, // PRIVATE: /reviews/[reviewId]
+        /^\/reviews\/[^\/]+$/, 
     ],
     GUEST: [
         /^\/guest$/,
         /^\/guest\/myreviews$/,
-        /^\/guest\/myreviews\/[^\/]+$/, // ✅ Added this line for dynamic review ID
+        /^\/guest\/myreviews\/[^\/]+$/,
         /^\/guest\/mypurchases$/,
         /^\/profile$/,
-        /^\/reviews\/[^\/]+$/, // PRIVATE: /reviews/[reviewId]
+        /^\/reviews\/[^\/]+$/, 
     ]
 };
 
@@ -51,7 +51,7 @@ export const middleware = async (request: NextRequest) => {
         );
     }
 
-    // ✅ Handle logged-in users
+    // Handle logged-in users
 
     // If user is logged in and the route is public, allow
     if (isPublicRoute) {
