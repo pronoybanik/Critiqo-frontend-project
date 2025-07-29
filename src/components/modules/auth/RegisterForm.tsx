@@ -21,7 +21,7 @@ import {
   Sparkles,
   ArrowRight,
   Users,
-  Star
+  Star,
 } from "lucide-react";
 import { registerUser } from "@/services/AuthService";
 import { toast } from "sonner";
@@ -35,6 +35,33 @@ interface FormFields {
   file: File | null;
 }
 
+
+const uploadToCloudinary = async (file: File): Promise<string | null> => {
+  const cloudName = "dhd25hezm"; 
+  const uploadPreset = "critiqo"; 
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  try {
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+    return data.secure_url;
+  } catch (err) {
+    console.error("Cloudinary upload error", err);
+    toast.error("Image upload failed.");
+    return null;
+  }
+};
+
 export default function Register() {
   const [formData, setFormData] = useState<FormFields>({
     name: "",
@@ -43,6 +70,7 @@ export default function Register() {
     contactNumber: "",
     file: null,
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -57,13 +85,11 @@ export default function Register() {
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      handleFile(file);
-    }
+    if (file) handleFile(file);
   };
 
   const handleFile = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       setFormData((prev) => ({ ...prev, file }));
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
@@ -77,18 +103,13 @@ export default function Register() {
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
@@ -102,9 +123,18 @@ export default function Register() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-    setLoading(true);
     e.preventDefault();
-    const data = new FormData();
+    setLoading(true);
+
+    let profilePhoto: string | null = null;
+
+    if (formData.file) {
+      profilePhoto = await uploadToCloudinary(formData.file);
+      if (!profilePhoto) {
+        setLoading(false);
+        return;
+      }
+    }
 
     const payload = {
       password: formData.password,
@@ -112,18 +142,13 @@ export default function Register() {
         name: formData.name,
         email: formData.email,
         contactNumber: formData.contactNumber,
+        profilePhoto,
       },
     };
 
-    data.append("data", JSON.stringify(payload));
-    if (formData.file) {
-      data.append("file", formData.file);
-    }
-
     try {
-      const res = await registerUser(data);
+      const res = await registerUser(payload); // assumes JSON payload
       if (res?.success) {
-        setLoading(false);
         toast.success(res.message || "Registration successful!");
         router.push("/login");
       } else {
@@ -138,7 +163,6 @@ export default function Register() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    console.log(`Registering with ${provider}`);
     toast.info(`${provider} registration coming soon!`);
   };
 
@@ -220,7 +244,8 @@ export default function Register() {
               </div>
               <div className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-xl">
                 <div className="text-2xl font-bold flex items-center justify-center">
-                  4.9<Star className="w-4 h-4 ml-1 fill-current" />
+                  4.9
+                  <Star className="w-4 h-4 ml-1 fill-current" />
                 </div>
                 <div className="text-white/80 text-sm">User Rating</div>
               </div>
@@ -299,7 +324,7 @@ export default function Register() {
                 <div className="flex items-center justify-center">
                   <div
                     className={`relative group ${
-                      dragActive ? 'scale-105' : ''
+                      dragActive ? "scale-105" : ""
                     } transition-transform duration-200`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
@@ -332,11 +357,15 @@ export default function Register() {
                       <label
                         htmlFor="profile-image"
                         className={`cursor-pointer w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center border-3 border-dashed transition-all duration-300 hover:from-blue-50 hover:to-purple-50 hover:border-blue-300 hover:scale-105 ${
-                          dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+                          dragActive
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-300"
                         }`}
                       >
                         <Upload className="h-6 w-6 text-gray-400 mb-1" />
-                        <span className="text-xs text-gray-500 font-medium">Upload</span>
+                        <span className="text-xs text-gray-500 font-medium">
+                          Upload
+                        </span>
                       </label>
                     )}
                     <input
@@ -445,11 +474,17 @@ export default function Register() {
                 <div>
                   <p className="text-sm text-blue-800">
                     By creating an account, you agree to our{" "}
-                    <Link href="/terms" className="font-medium underline hover:text-blue-600">
+                    <Link
+                      href="/terms"
+                      className="font-medium underline hover:text-blue-600"
+                    >
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="font-medium underline hover:text-blue-600">
+                    <Link
+                      href="/privacy"
+                      className="font-medium underline hover:text-blue-600"
+                    >
                       Privacy Policy
                     </Link>
                     .

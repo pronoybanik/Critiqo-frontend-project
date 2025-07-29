@@ -132,13 +132,16 @@ export const createReview = async (data: any) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews`, {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       Authorization: (await cookies()).get("accessToken")?.value || "",
     },
-    body: data,
+
+    body: JSON.stringify(data),
   });
   revalidateTag("REVIEW");
   return res.json();
 };
+
 export const updateReview = async (data: any, id: string) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews/${id}`, {
     method: "PATCH",

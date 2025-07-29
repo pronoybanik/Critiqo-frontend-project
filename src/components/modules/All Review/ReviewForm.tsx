@@ -32,6 +32,32 @@ type Props = {
   categories: { id: string; name: string }[];
 };
 
+const uploadToCloudinary = async (file: File): Promise<string | null> => {
+  const cloudName = "dhd25hezm";
+  const uploadPreset = "critiqo";
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  try {
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+    return data.secure_url;
+  } catch (err) {
+    console.error("Cloudinary upload error", err);
+    toast.error("Image upload failed.");
+    return null;
+  }
+};
+
 export default function ReviewForm({ categories }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
@@ -74,16 +100,26 @@ export default function ReviewForm({ categories }: Props) {
     try {
       setIsLoading(true);
 
-      const formData = new FormData();
+      let imageUrl: string | null = null;
 
-      const reviewData = {
-        data: { ...formValue },
+      if (photo) {
+        imageUrl = await uploadToCloudinary(photo);
+        if (!imageUrl) {
+          toast.error("Image upload failed.");
+          return;
+        }
+      }
+
+      const reviewPayload = {
+        ...formValue,
+        image: imageUrl,
       };
 
-      formData.append("data", JSON.stringify(reviewData.data));
-      if (photo) formData.append("images", photo);
+      console.log(reviewPayload);
 
-      const response = await createReview(formData);
+      const response = await createReview(reviewPayload);
+
+      console.log("Review response:", response);
 
       if (response.success) {
         toast.success("Review submitted successfully!");
@@ -268,10 +304,7 @@ export default function ReviewForm({ categories }: Props) {
           </div>
 
           {/* Submit Button */}
-          <PrimaryButton
-            type="submit"
-            disabled={isLoading}
-          >
+          <PrimaryButton type="submit" disabled={isLoading}>
             {isLoading ? "Submitting..." : "Submit Review"}
           </PrimaryButton>
         </form>
