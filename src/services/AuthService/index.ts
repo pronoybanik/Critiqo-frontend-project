@@ -93,17 +93,47 @@ export const getMyProfile = async () => {
   }
 };
 
+// export const updateProfile = async (payload: {
+//   name: string;
+//   contactNumber: string;
+//   profilePhoto?: string | null;
+// }) => {
+//   try {
+//     const accessToken = (await cookies()).get("accessToken")?.value;
 
-export const updateProfile = async (formData: FormData) => {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/update-my-profile`, {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//         Authorization: `${accessToken}`,
+//       },
+//       body: JSON.stringify(payload),
+//     });
+
+//     revalidateTag("Profile");
+//     const result = await res.json();
+//     return result;
+//   } catch (error: any) {
+//     return { success: false, error };
+//   }
+// };
+
+
+export const updateProfile = async (payload: {
+  name: string;
+  contactNumber: string;
+  profilePhoto?: string | null;
+}) => {
   try {
     const accessToken = (await cookies()).get("accessToken")?.value;
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/user/update-my-profile`, {
       method: "PATCH",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `${accessToken}`,
       },
-      body: formData,
+      body: JSON.stringify(payload),
     })
 
     revalidateTag("Profile");

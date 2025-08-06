@@ -26,6 +26,7 @@ const Footer = async () => {
   const page = "1";
   const limit = "6";
   const { data: featureds } = await featuredReview(page, limit);
+  console.log("featureds", featureds);
 
   const quickLinks = [
     { href: "/", label: "Home", icon: "🏠" },
@@ -285,7 +286,7 @@ const Footer = async () => {
                         <Image
                           width={50}
                           height={50}
-                          src={review.image}
+                          src={review?.image}
                           alt={review.title}
                           className="w-12 h-12 rounded-lg object-cover"
                         />

@@ -42,13 +42,11 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
       } else {
         toast.error("Failed to update review status");
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error updating status:", error.message);
       toast.error("Something went wrong while changing review status");
     }
   };
-
-  
 
   // Badge component
   const Badge = ({ status }: { status: string }) => {
@@ -97,7 +95,7 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
                     new Date(a.createdAt).getTime()
                 )
                 .slice(0, 4)
-                .map((review ) => (
+                .map((review) => (
                   <div
                     key={review.id}
                     className="p-2 border border-gray-100 rounded-md"
@@ -113,14 +111,18 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
                     </p>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => handleStatusChange(review.id, "PUBLISHED")}
+                        onClick={() =>
+                          handleStatusChange(review.id, "PUBLISHED")
+                        }
                         className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
                       >
                         <Check size={12} className="inline mr-1" />
                         Approve
                       </button>
                       <button
-                        onClick={() => handleStatusChange(review.id, "UNPUBLISHED")}
+                        onClick={() =>
+                          handleStatusChange(review.id, "UNPUBLISHED")
+                        }
                         className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200"
                       >
                         <X size={12} className="inline mr-1" />
@@ -129,7 +131,6 @@ const ReviewSection = ({ reviewData }: { reviewData: TAdminReview[] }) => {
                     </div>
                   </div>
                 ))}
-            
             </div>
           </div>
         </div>

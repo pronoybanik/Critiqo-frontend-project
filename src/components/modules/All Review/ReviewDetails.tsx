@@ -12,20 +12,12 @@ import {
   Calendar,
   ThumbsUp,
   ThumbsDown,
- 
   SendIcon,
   PaperclipIcon,
   MessageCircleWarning,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import CommentComponent from "./CommentComponent";
@@ -279,37 +271,23 @@ const ReviewDetailsCard = (reviewDetails: any) => {
             </div>
 
             {/* Image carousel */}
-            {reviewDetails?.review?.images &&
-              reviewDetails?.review?.images.length > 0 && (
-                <div className="p-6 bg-gray-50">
-                  <Carousel className="w-full">
-                    <CarouselContent>
-                      {reviewDetails?.review?.images?.map(
-                        (image: string, index: number) => (
-                          <CarouselItem
-                            key={index}
-                            className="basis-full md:basis-1/2 lg:basis-1/3"
-                          >
-                            <div className="p-1">
-                              <div className="overflow-hidden rounded-lg shadow-md bg-white p-2">
-                                <Image
-                                  src={image}
-                                  height={250}
-                                  width={250}
-                                  alt={`Product Image ${index + 1}`}
-                                  className="w-full h-64 object-contain rounded"
-                                />
-                              </div>
-                            </div>
-                          </CarouselItem>
-                        )
-                      )}
-                    </CarouselContent>
-                    <CarouselPrevious className="left-2" />
-                    <CarouselNext className="right-2" />
-                  </Carousel>
+            {reviewDetails?.review?.images && (
+              <div className="p-6 bg-gray-50 flex justify-center">
+                <div className="overflow-hidden rounded-lg shadow-md bg-white p-4">
+                  <Image
+                    src={
+                      typeof reviewDetails.review.images === "string"
+                        ? reviewDetails.review.images
+                        : reviewDetails.review.images[0]
+                    }
+                    height={300}
+                    width={300}
+                    alt="Product Image"
+                    className="w-full h-72 object-contain rounded"
+                  />
                 </div>
-              )}
+              </div>
+            )}
 
             {/* Review content */}
             <div className="p-6">
@@ -503,8 +481,7 @@ const ReviewDetailsCard = (reviewDetails: any) => {
               ) : (
                 <div className="text-center py-10 px-4">
                   <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl inline-block mb-4">
-                    <MessageCircleWarning  className="w-10 h-10 mx-auto text-gray-400" />
-                    
+                    <MessageCircleWarning className="w-10 h-10 mx-auto text-gray-400" />
                   </div>
                   <h4 className="text-gray-700 dark:text-gray-300 font-medium mb-1">
                     No comments yet

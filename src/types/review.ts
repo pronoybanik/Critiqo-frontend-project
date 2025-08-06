@@ -6,7 +6,7 @@ export type TReview = {
   premiumPrice: number | null;
   rating: number;
   purchaseSource: string;
-  images: string[];
+  images: string;
   image: string
   status: "DRAFT" | "PUBLISHED" | "REJECTED"; 
   category: string;

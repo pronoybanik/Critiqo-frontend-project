@@ -55,6 +55,9 @@ const MyReviewsPage = () => {
   const [sortBy, setSortBy] = useState("newest");
   // const [editingReviewId, setEditingReviewId] = useState<string | null>(null);
 
+
+  
+
   useEffect(() => {
     const fetchReviews = async () => {
       if (!user?.userId) return;
@@ -252,7 +255,7 @@ const MyReviewsPage = () => {
                     <Image
                       width={200}
                       height={200}
-                      src={review.image || []}
+                      src={review?.image }
                       alt={review.title}
                       className="w-full h-full object-cover"
                     />
