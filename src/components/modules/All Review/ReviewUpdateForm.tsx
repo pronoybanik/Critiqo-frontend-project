@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React from "react";
-import { useRef, useState } from "react";
+
+import React, { useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { X, Upload, User } from "lucide-react"; // Ensure these icons are available
+import { X, Upload, User } from "lucide-react";
 
 import { updateReview } from "@/services/Review";
 
@@ -28,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import UploadToCloudinary from "@/components/shared/UploadToCloudinary";
 
 type Props = {
   category: { id: string; name: string }[];
@@ -37,18 +38,21 @@ type Props = {
 const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(
+    review?.images ?? null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+
   const form = useForm({
     defaultValues: {
-      title: review?.title,
-      description: review?.description,
-      rating: review?.rating,
-      purchaseSource: review?.purchaseSource,
-      categoryId: review?.categoryId,
-      isPremium: false,
+      title: review?.title || "",
+      description: review?.description || "",
+      rating: review?.rating || 0,
+      purchaseSource: review?.purchaseSource || "",
+      categoryId: review?.categoryId || "",
+      isPremium: review?.isPremium || false,
     },
   });
 
@@ -61,6 +65,11 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  //  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const file = e.target.files?.[0] || null;
+  //     setProfilePhoto(file);
+  //   };
 
   const removePhoto = () => {
     setPhoto(null);
@@ -76,27 +85,40 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
     try {
       setIsLoading(true);
       const id = review?.id;
-      const formData = new FormData();
 
-      const reviewData = {
-        data: { ...formValue },
+      let uploadedImageUrl = review?.images ?? null;
+
+    
+
+      if (photo) {
+        uploadedImageUrl = await UploadToCloudinary(photo);
+        if (!uploadedImageUrl) {
+          toast.error("Image upload failed.");
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      const payload = {
+        ...formValue,
+        images: uploadedImageUrl,
       };
 
-      formData.append("data", JSON.stringify(reviewData.data));
-      if (photo) formData.append("images", photo);
+ 
 
-      const response = await updateReview(formData, id);
+      const response = await updateReview(payload, id);
+
 
       if (response.success) {
-        toast.success("Review Updated successfully!");
+        toast.success("Review updated successfully!");
         form.reset();
         removePhoto();
         router.push("/guest/myreviews");
       } else {
-        toast.error(response.message || "Failed to submit review");
+        toast.error(response.message || "Failed to update review");
       }
     } catch (err) {
-      console.error("Review submission error:", err);
+      console.error("Review update error:", err);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -219,7 +241,7 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
             )}
           />
 
-          {/* Photo Upload - Styled */}
+          {/* Photo Upload */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Product Photo
@@ -271,11 +293,12 @@ const ReviewUpdateForm: React.FC<Props> = ({ category, review }) => {
 
           {/* Submit Button */}
           <PrimaryButton type="submit" disabled={isLoading}>
-            {isLoading ? "Submitting..." : "Update Review"}
+            {isLoading ? "Updating..." : "Update Review"}
           </PrimaryButton>
         </form>
       </Form>
     </div>
   );
 };
+
 export default ReviewUpdateForm;

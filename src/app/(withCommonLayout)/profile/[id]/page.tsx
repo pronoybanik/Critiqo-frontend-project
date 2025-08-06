@@ -5,11 +5,12 @@ import { getMyProfile, updateProfile } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import UploadToCloudinary from "@/components/shared/UploadToCloudinary";
+
 
 const UpdateProfile = () => {
   const [formFields, setFormFields] = useState({
     name: "",
-
     contactNumber: "",
   });
 
@@ -43,40 +44,39 @@ const UpdateProfile = () => {
     setProfilePhoto(file);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
 
-    const formData = new FormData();
-    const payload = {
-      name: formFields.name,
+  let profilePhotoUrl: string | null = null;
 
-      contactNumber: formFields.contactNumber,
-    };
-
-    formData.append("data", JSON.stringify(payload));
-
-    if (profilePhoto) {
-      formData.append("file", profilePhoto);
+  if (profilePhoto) {
+    profilePhotoUrl = await UploadToCloudinary(profilePhoto);
+    if (!profilePhotoUrl) {
+      setLoading(false);
+      return;
     }
+  }
 
-
-    const result = await updateProfile(formData);
-
-    if (result.success) {
-      toast.success(result.message || "profile update sucessfully");
-      router.push("/profile");
-    }
-
-    if (result?.error) {
-      setMessage("Failed to update profile.");
-    } else {
-      setMessage("Profile updated successfully!");
-    }
-
-    setLoading(false);
+  const payload = {
+    name: formFields.name,
+    contactNumber: formFields.contactNumber,
+    profilePhoto: profilePhotoUrl, 
   };
+
+  const result = await updateProfile(payload); 
+
+  if (result?.success) {
+    toast.success(result.message || "Profile updated successfully!");
+    router.push("/profile");
+  } else {
+    setMessage(result.message || "Failed to update profile.");
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div className="max-w-2xl my-10 mx-auto p-6 bg-white border rounded-lg shadow mt-10">

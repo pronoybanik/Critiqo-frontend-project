@@ -48,6 +48,9 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
     rating,
   } = review;
 
+
+  
+
   // Format date to relative time (e.g. "2 days ago")
   const formattedDate = formatDistanceToNow(new Date(createdAt), {
     addSuffix: true,
@@ -55,9 +58,9 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
 
   // Truncate description to max 12 words
   const truncateDescription = (text: string, maxWords = 12) => {
-    const words = text.split(' ');
+    const words = text.split(" ");
     if (words.length > maxWords) {
-      return words.slice(0, maxWords).join(' ') + '...';
+      return words.slice(0, maxWords).join(" ") + "...";
     }
     return text;
   };
@@ -101,11 +104,11 @@ const LatestReviewCard = ({ review }: { review: TReview }) => {
       <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-lg transition-all duration-300 group-hover:translate-y-[-4px] h-full flex flex-col">
         {/* Image */}
         <div className="relative w-full h-48 overflow-hidden bg-gray-100 flex justify-center items-center rounded-t-xl">
-          {images && images.length > 0 ? (
+          {images ? (
             <Image
               height={120}
               width={150}
-              src={images[0] || "https://ibb.co.com/DPrkCYxq"}
+              src={images || "https://ibb.co.com/DPrkCYxq"}
               alt={title}
               style={{ objectFit: "contain" }}
               className="transition-transform duration-500 group-hover:scale-110 object-cover"

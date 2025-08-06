@@ -26,6 +26,7 @@ import {
 import { registerUser } from "@/services/AuthService";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import UploadToCloudinary from "@/components/shared/UploadToCloudinary";
 
 interface FormFields {
   name: string;
@@ -35,32 +36,6 @@ interface FormFields {
   file: File | null;
 }
 
-
-const uploadToCloudinary = async (file: File): Promise<string | null> => {
-  const cloudName = "dhd25hezm"; 
-  const uploadPreset = "critiqo"; 
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
-
-  try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await res.json();
-    return data.secure_url;
-  } catch (err) {
-    console.error("Cloudinary upload error", err);
-    toast.error("Image upload failed.");
-    return null;
-  }
-};
 
 export default function Register() {
   const [formData, setFormData] = useState<FormFields>({
@@ -129,7 +104,7 @@ export default function Register() {
     let profilePhoto: string | null = null;
 
     if (formData.file) {
-      profilePhoto = await uploadToCloudinary(formData.file);
+      profilePhoto = await UploadToCloudinary(formData.file);
       if (!profilePhoto) {
         setLoading(false);
         return;

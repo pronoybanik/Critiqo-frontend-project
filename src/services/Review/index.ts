@@ -29,8 +29,6 @@ export const getAllReview = async () => {
 };
 
 
-
-
 // export const getAllReview = async (page?: string, limit?: string, query?: { [key: string]: string | string[] | undefined }) => {
 //   try {
 //     const params = new URLSearchParams();
@@ -97,7 +95,6 @@ export const getSingleReviewById = async (reviewId: string) => {
 };
 
 
-
 export const addComment = async (data: Partial<Comment>) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
     method: "POST",
@@ -112,7 +109,6 @@ export const addComment = async (data: Partial<Comment>) => {
 };
 
 export const addVotes = async (data: any) => {
-
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/votes`, {
     method: "POST",
     headers: {
@@ -124,8 +120,6 @@ export const addVotes = async (data: any) => {
   revalidateTag("REVIEW");
   return res.json();
 };
-
-
 
 
 export const createReview = async (data: any) => {
@@ -143,17 +137,21 @@ export const createReview = async (data: any) => {
 };
 
 export const updateReview = async (data: any, id: string) => {
+
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/reviews/${id}`, {
     method: "PATCH",
     headers: {
-      // "Content-Type": "application/json",
+      "Content-Type": "application/json",
       Authorization: (await cookies()).get("accessToken")?.value || "",
     },
-    body: data,
+    body: JSON.stringify(data),
   });
   revalidateTag("REVIEW");
   return res.json();
+
 };
+
+
 export const replyComment = async (data: any) => {
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/comments`, {
@@ -167,6 +165,7 @@ export const replyComment = async (data: any) => {
   revalidateTag("REVIEW");
   return res.json();
 };
+
 export const deleteComment = async (replyId: string): Promise<any> => {
   try {
     const res = await fetch(

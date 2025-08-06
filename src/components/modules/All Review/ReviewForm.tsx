@@ -27,36 +27,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import PrimaryButton from "@/components/shared/PrimayButton";
+import UploadToCloudinary from "@/components/shared/UploadToCloudinary";
 
 type Props = {
   categories: { id: string; name: string }[];
 };
 
-const uploadToCloudinary = async (file: File): Promise<string | null> => {
-  const cloudName = "dhd25hezm";
-  const uploadPreset = "critiqo";
-
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
-
-  try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await res.json();
-    return data.secure_url;
-  } catch (err) {
-    console.error("Cloudinary upload error", err);
-    toast.error("Image upload failed.");
-    return null;
-  }
-};
 
 export default function ReviewForm({ categories }: Props) {
   const [isLoading, setIsLoading] = useState(false);
@@ -103,7 +79,7 @@ export default function ReviewForm({ categories }: Props) {
       let imageUrl: string | null = null;
 
       if (photo) {
-        imageUrl = await uploadToCloudinary(photo);
+        imageUrl = await UploadToCloudinary(photo);
         if (!imageUrl) {
           toast.error("Image upload failed.");
           return;
@@ -112,14 +88,10 @@ export default function ReviewForm({ categories }: Props) {
 
       const reviewPayload = {
         ...formValue,
-        image: imageUrl,
+        images: imageUrl,
       };
 
-      console.log(reviewPayload);
-
       const response = await createReview(reviewPayload);
-
-      console.log("Review response:", response);
 
       if (response.success) {
         toast.success("Review submitted successfully!");
