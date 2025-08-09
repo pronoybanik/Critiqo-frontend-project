@@ -91,7 +91,11 @@ export default function ReviewForm({ categories }: Props) {
         images: imageUrl,
       };
 
+      console.log("repaylod", reviewPayload);
+      
+      
       const response = await createReview(reviewPayload);
+      console.log("repaylod", response);
 
       if (response.success) {
         toast.success("Review submitted successfully!");
