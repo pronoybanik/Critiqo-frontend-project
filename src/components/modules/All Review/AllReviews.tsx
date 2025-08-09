@@ -43,7 +43,6 @@ const AllReviews = () => {
   const searchParams = useSearchParams();
 
 
-  
 
   const handleSearchQuery = (query: string, value: string | number) => {
     const params = new URLSearchParams(searchParams.toString());

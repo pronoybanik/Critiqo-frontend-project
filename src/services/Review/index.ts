@@ -132,6 +132,7 @@ export const createReview = async (data: any) => {
 
     body: JSON.stringify(data),
   });
+  
   revalidateTag("REVIEW");
   return res.json();
 };
