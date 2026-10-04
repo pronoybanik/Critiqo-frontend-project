@@ -70,10 +70,21 @@ export const featuredReview = async (page?: string, limit?: string,) => {
         },
       }
     );
+
+    if (!res.ok) {
+      console.error(
+        `featuredReview: request failed with ${res.status} ${res.statusText}`
+      );
+      return { data: null };
+    }
+
     const data = await res.json();
     return data;
   } catch (error: any) {
-    return Error(error.message);
+    // Keep the shape callers destructure (`{ data }`) stable so a dead or
+    // unreachable API degrades into an empty state instead of a render crash.
+    console.error("featuredReview: request failed -", error.message);
+    return { data: null };
   }
 };
 

@@ -26,7 +26,8 @@ const Footer = async () => {
   const page = "1";
   const limit = "6";
   const { data: featureds } = await featuredReview(page, limit);
-  console.log("featureds", featureds);
+  const highestRated: TReview[] = featureds?.highestRated ?? [];
+  const mostVoted: TReview[] = featureds?.mostVoted ?? [];
 
   const quickLinks = [
     { href: "/", label: "Home", icon: "🏠" },
@@ -276,7 +277,7 @@ const Footer = async () => {
                 Highest Rated Reviews
               </h3>
               <div className="space-y-4">
-                {featureds?.highestRated?.slice(0, 3).map((review: TReview) => (
+                {highestRated.slice(0, 3).map((review: TReview) => (
                   <div
                     key={review.id}
                     className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-blue-500/30 shadow-lg hover:shadow-xl rounded-xl p-4 transition-all duration-300 hover:transform hover:scale-105"
@@ -313,6 +314,11 @@ const Footer = async () => {
                     </div>
                   </div>
                 ))}
+                {highestRated.length === 0 && (
+                  <p className="text-gray-500 text-sm">
+                    No featured reviews available right now.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -323,7 +329,7 @@ const Footer = async () => {
                 Most Voted Reviews
               </h3>
               <div className="space-y-4">
-                {featureds?.mostVoted?.slice(0, 3).map((review: TReview) => (
+                {mostVoted.slice(0, 3).map((review: TReview) => (
                   <div
                     key={review.id}
                     className="group bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700/50 hover:border-green-500/30 shadow-lg hover:shadow-xl rounded-xl p-4 transition-all duration-300 hover:transform hover:scale-105"
@@ -360,6 +366,11 @@ const Footer = async () => {
                     </div>
                   </div>
                 ))}
+                {mostVoted.length === 0 && (
+                  <p className="text-gray-500 text-sm">
+                    No featured reviews available right now.
+                  </p>
+                )}
               </div>
             </div>
           </div>

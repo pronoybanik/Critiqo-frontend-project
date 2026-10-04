@@ -170,8 +170,8 @@ const CapterraSearch = () => {
                   alt="Person using smartphone"
                   width={600}
                   height={600}
-                  layout="responsive"
-                  className="rounded-lg object-cover h-full"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="rounded-lg object-cover w-full h-auto"
                 />
               </div>
 

@@ -105,8 +105,9 @@ export default function AboutSection() {
                     <Image
                       src="https://www.capterra.com/assets-capterra-bx-landing-pages/_next/image/?url=%2Fassets-capterra-bx-landing-pages%2F_next%2Fstatic%2Fmedia%2F3.11ee089e.png&w=3840&q=75"
                       alt="Our Company"
-                      layout="fill"
-                      objectFit="cover"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 576px"
+                      className="object-cover"
                       priority
                     />
                     {/* Gradient overlay */}
@@ -119,9 +120,9 @@ export default function AboutSection() {
                   <Image
                     src="https://www.capterra.com/assets-capterra-bx-landing-pages/_next/image/?url=%2Fassets-capterra-bx-landing-pages%2F_next%2Fstatic%2Fmedia%2F2.94f9fbe5.jpeg&w=3840&q=50"
                     alt="Our Company"
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-2xl"
+                    fill
+                    sizes="128px"
+                    className="rounded-2xl object-cover"
                   />
                 </div>
               </div>
@@ -290,8 +291,9 @@ export default function AboutSection() {
                   <Image
                     src={member.image}
                     alt={member.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 288px"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-indigo-900 via-purple-800/90 to-transparent opacity-0 group-hover:opacity-80 transition-opacity"></div>
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all">
@@ -367,8 +369,9 @@ export default function AboutSection() {
                   <Image
                     src={brand.image}
                     alt={brand.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 224px"
+                    className="object-cover"
                   />
                 </div>
                 <div className="md:w-3/5 p-6">
