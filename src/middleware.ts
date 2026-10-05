@@ -9,6 +9,8 @@ const roleBasedPrivateRoutes = {
     ADMIN: [
         /^\/admin$/,
         /^\/admin\/seo(?:\/.*)?$/,
+        /^\/admin\/blog\/[^\/]+$/,
+        /^\/admin\/reviews\/[^\/]+$/,
         /^\/admin\/user$/,
         /^\/admin\/reviews$/,
         /^\/admin\/createcategory$/,
