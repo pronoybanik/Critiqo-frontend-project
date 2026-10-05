@@ -8,6 +8,7 @@ const authRoutes = ["/login", "/register"];
 const roleBasedPrivateRoutes = {
     ADMIN: [
         /^\/admin$/,
+        /^\/admin\/seo(?:\/.*)?$/,
         /^\/admin\/user$/,
         /^\/admin\/reviews$/,
         /^\/admin\/createcategory$/,
@@ -68,6 +69,10 @@ export const middleware = async (request: NextRequest) => {
     }
 
     // If no access, redirect
+    if (pathname === "/admin/seo" || pathname.startsWith("/admin/seo/")) {
+        return NextResponse.redirect(new URL("/403", request.url));
+    }
+
     return NextResponse.redirect(new URL("/", request.url));
 };
 
