@@ -9,7 +9,7 @@ type TypeFilter = SeoContentType | "all";
 
 const typeLabels: Record<SeoContentType, string> = {
   page: "Page",
-  blogPost: "Blog post",
+  blog: "Blog post",
   review: "Review",
 };
 
@@ -91,7 +91,7 @@ const SeoContentList = () => {
           >
             <option value="all">All types</option>
             <option value="page">Pages</option>
-            <option value="blogPost">Blog posts</option>
+            <option value="blog">Blog posts</option>
             <option value="review">Reviews</option>
           </select>
         </label>

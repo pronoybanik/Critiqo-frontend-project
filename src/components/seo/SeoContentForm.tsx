@@ -60,7 +60,7 @@ const fields: Array<{
 ];
 
 const optionalValue = (value: string) => value.trim() || null;
-const validTypes: SeoContentType[] = ["page", "blogPost", "review"];
+const validTypes: SeoContentType[] = ["page", "blog", "review"];
 
 const SeoContentForm = () => {
   const params = useParams<{ type: string; id: string }>();

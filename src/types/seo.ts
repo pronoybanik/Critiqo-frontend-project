@@ -1,4 +1,4 @@
-export type SeoContentType = "page" | "blogPost" | "review";
+export type SeoContentType = "page" | "blog" | "review";
 
 export type SeoMeta = {
   seoTitle: string | null;
