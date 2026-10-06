@@ -109,7 +109,7 @@ const AdminSideBar = () => {
   return (
     <div
       className={`${
-        sidebarOpen ? "w-72" : "w-20"
+        sidebarOpen ? "w-72 max-md:w-20" : "w-20"
       } bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-500 ease-in-out flex flex-col shadow-2xl border-r border-gray-700/50 relative overflow-hidden`}
     >
       {/* Background decorative elements */}
@@ -118,9 +118,9 @@ const AdminSideBar = () => {
       <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tl from-purple-500/10 to-transparent rounded-full blur-2xl"></div>
 
       {/* Sidebar Header */}
-      <div className="relative flex items-center justify-between p-6 border-b border-gray-700/50">
+      <div className="relative flex items-center justify-between p-3 md:p-6 border-b border-gray-700/50">
         {sidebarOpen ? (
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 max-md:hidden">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -150,7 +150,7 @@ const AdminSideBar = () => {
 
       {/* User Profile Section */}
       {sidebarOpen && (
-        <div className="relative p-6 border-b border-gray-700/50">
+        <div className="relative p-6 border-b border-gray-700/50 max-md:hidden">
           <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl border border-gray-600/30">
             <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold text-sm">A</span>
@@ -263,7 +263,7 @@ const AdminSideBar = () => {
 
       {/* Bottom Section */}
       {sidebarOpen && (
-        <div className="relative p-4 border-t border-gray-700/50">
+        <div className="relative p-4 border-t border-gray-700/50 max-md:hidden">
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-4 border border-blue-500/20">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">

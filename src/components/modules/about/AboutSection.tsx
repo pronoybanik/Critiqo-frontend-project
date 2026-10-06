@@ -415,7 +415,7 @@ export default function AboutSection() {
                 potential through strategic design and innovative solutions.
               </p>
             </div>
-            <Link href="/contactus">
+            <Link href="/contact">
               <SecondaryButton className="py-6 px-12 text-black">
                 Get in Touch
               </SecondaryButton>

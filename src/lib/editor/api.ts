@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getBackendApiUrl } from "@/lib/backendApiUrl";
 import { getSeoContent } from "@/lib/seo/api";
 import type { SeoContent, SeoContentType } from "@/types/seo";
 
@@ -47,7 +48,7 @@ const fetchApi = async <T>(
     };
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}${path}`, {
+  const response = await fetch(getBackendApiUrl(path), {
     method,
     headers: {
       ...(token ? { Authorization: token } : {}),

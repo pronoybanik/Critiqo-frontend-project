@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { getBackendApiUrl } from "@/lib/backendApiUrl";
 import type {
   SeoApiResult,
   SeoContent,
@@ -35,7 +36,7 @@ const request = async <T>(
   }
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_API}${path}`,
+    getBackendApiUrl(path),
     {
       method,
       headers: {

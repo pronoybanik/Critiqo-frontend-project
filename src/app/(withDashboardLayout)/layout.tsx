@@ -9,15 +9,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       {/* <DashBoardNavBar /> */}
-      <div className="flex h-screen bg-gray-100">
+      <div className="flex min-h-screen min-w-0 bg-gray-100">
         {/* Sidebar */}
         {user?.role === "ADMIN" ? <AdminSideBar /> : null}
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
           {/* Header */}
           <AdminHeader />
           {/* Main Dashboard Content */}
-          <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+          <main className="min-w-0 flex-1 overflow-y-auto bg-gray-100 p-3 sm:p-6">
             {/* Metric Cards */}
             <>{children}</>
           </main>

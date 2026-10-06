@@ -142,3 +142,14 @@
   animation: borderAnimation 8s linear infinite;
   background-size: 200% 200%;
 }
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+img,
+video {
+  max-width: 100%;
+}

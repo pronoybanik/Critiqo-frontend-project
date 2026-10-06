@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getBackendApiUrl } from "@/lib/backendApiUrl";
 
 const validSchemaTypes = new Set([
   "Organization",
@@ -81,8 +82,7 @@ const proxy = async (
     );
   }
 
-  const apiBase = process.env.NEXT_PUBLIC_BASE_API;
-  if (!apiBase) {
+  if (!process.env.NEXT_PUBLIC_BASE_API) {
     return NextResponse.json(
       { success: false, message: "The API base URL is not configured." },
       { status: 500 },
@@ -90,7 +90,7 @@ const proxy = async (
   }
 
   const query = request.nextUrl.searchParams.toString();
-  const target = `${apiBase}/${path.map(encodeURIComponent).join("/")}${
+  const target = `${getBackendApiUrl(path.map(encodeURIComponent).join("/"))}${
     query ? `?${query}` : ""
   }`;
   const headers = new Headers({ Authorization: accessToken });

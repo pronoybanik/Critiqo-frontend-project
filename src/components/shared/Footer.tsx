@@ -76,9 +76,9 @@ const Footer = async () => {
         {/* Stats Section */}
         {/* Newsletter Section */}
         <div className="py-16 border-b border-gray-700/50">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <div className="mb-8">
-              <h2 className="text-3xl font-bold text-white mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
                 Stay Updated with Latest Reviews
               </h2>
               <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -88,7 +88,7 @@ const Footer = async () => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 sm:p-8 max-w-2xl mx-auto">
               <form className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 relative">
                   <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -108,7 +108,7 @@ const Footer = async () => {
                 </button>
               </form>
 
-              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-400">
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 mt-6 text-sm text-gray-400">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                   <span>No spam, ever</span>
@@ -125,7 +125,7 @@ const Footer = async () => {
             </div>
 
             {/* Social proof */}
-            <div className="mt-8 flex items-center justify-center gap-8 text-sm text-gray-400">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-blue-400" />
                 <span>10,000+ subscribers</span>
@@ -144,7 +144,7 @@ const Footer = async () => {
 
         {/* Main Footer Content */}
         <div className="py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 max-w-7xl mx-auto px-4 sm:px-6">
             {/* Company Info + App Download */}
             <div className="lg:col-span-1 space-y-8">
               {/* Logo and Description */}
@@ -152,7 +152,7 @@ const Footer = async () => {
                 <div className="mb-6">
                   <Image
                     src={logo}
-                    alt="footer logo"
+                    alt="Critiqo"
                     height={60}
                     width={180}
                     className="hover:opacity-80 transition-opacity duration-300"
@@ -168,7 +168,7 @@ const Footer = async () => {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3 text-sm">
                     <Mail className="w-4 h-4 text-blue-400" />
-                    <span>support@opinionoasis.com</span>
+                    <span>support@critiqo.com</span>
                   </div>
                   <div className="flex items-center space-x-3 text-sm">
                     <Phone className="w-4 h-4 text-green-400" />
@@ -399,10 +399,10 @@ const Footer = async () => {
             {/* Copyright */}
             <div className="text-center lg:text-right">
               <p className="text-sm text-gray-500">
-                Copyright © {new Date().getFullYear()} Team Opinion Oasis. All
+                Copyright © {new Date().getFullYear()} Team Critiqo. All
                 rights reserved.
               </p>
-              <div className="flex items-center justify-center lg:justify-end space-x-6 mt-2">
+              <div className="flex flex-wrap items-center justify-center lg:justify-end gap-x-6 gap-y-2 mt-2">
                 <Link
                   href="/terms"
                   className="text-sm text-gray-400 hover:text-blue-400 transition-colors duration-300"

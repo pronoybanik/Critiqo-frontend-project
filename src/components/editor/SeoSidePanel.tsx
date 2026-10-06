@@ -3,6 +3,10 @@
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
+import {
+  parseSchemaJson,
+  truncateGoogleText,
+} from "@/lib/seo/editorValidation.mjs";
 
 type ContentType = "blog" | "blogPost" | "review";
 type Tab = "analysis" | "preview" | "schema" | "images";
@@ -272,7 +276,7 @@ const SeoSidePanel = ({
     setSchemaSuccess("");
     let parsedSchema: unknown;
     try {
-      parsedSchema = JSON.parse(schemaJson) as unknown;
+      parsedSchema = parseSchemaJson(schemaJson);
     } catch (error: unknown) {
       const reason =
         error instanceof Error ? error.message : "The JSON could not be parsed.";
@@ -447,15 +451,13 @@ const SeoSidePanel = ({
               previewMode === "mobile" ? "max-w-[320px]" : "max-w-full"
             }`}>
               <p className="truncate text-xs text-emerald-800">
-                {displayUrl.length > 75 ? `${displayUrl.slice(0, 72)}…` : displayUrl}
+                {truncateGoogleText(displayUrl, 75)}
               </p>
               <h3 className="mt-1 break-words text-xl leading-6 text-[#1a0dab]">
-                {resultTitle.length > 60 ? `${resultTitle.slice(0, 57)}…` : resultTitle}
+                {truncateGoogleText(resultTitle, 60)}
               </h3>
               <p className="mt-1 break-words text-sm leading-5 text-[#4d5156]">
-                {resultDescription.length > 160
-                  ? `${resultDescription.slice(0, 157)}…`
-                  : resultDescription}
+                {truncateGoogleText(resultDescription, 160)}
               </p>
             </div>
             <p className="text-xs text-slate-500">

@@ -61,7 +61,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/reviews", label: "All Reviews" },
     { href: "/about", label: "About Us" },
-    { href: "/contactus", label: "Contact" },
+    { href: "/contact", label: "Contact" },
     { href: "/blog", label: "Blog" },
   ];
 
@@ -131,7 +131,7 @@ export default function Navbar() {
             <div className="relative h-8 w-24 md:w-28 transform group-hover:scale-105 transition-all duration-300">
               <Image
                 src={logo}
-                alt="etutor"
+                alt="Critiqo"
                 className="transition-all duration-300 hover:opacity-80"
               />
               {/* Subtle glow effect */}
@@ -141,7 +141,7 @@ export default function Navbar() {
 
           {/* Enhanced Desktop Navigation */}
           <nav className="relative">
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden lg:flex items-center space-x-1">
               {navLinks.map(({ href, label }) => (
                 <Link
                   key={href}
@@ -177,7 +177,7 @@ export default function Navbar() {
 
                 {/* Enhanced mega menu with animations */}
                 <div
-                  className={`absolute left-0 mt-3 w-[600px] transform transition-all duration-500 ease-out z-50
+                  className={`absolute left-1/2 -translate-x-1/2 mt-3 w-[min(600px,calc(100vw-2rem))] max-h-[calc(100vh-6rem)] overflow-y-auto transform transition-all duration-500 ease-out z-50
                     ${megaMenuOpen ? 'opacity-100 scale-100 visible translate-y-0' : 'opacity-0 scale-95 invisible -translate-y-4'}
                     bg-white/95 backdrop-blur-lg shadow-2xl rounded-2xl overflow-hidden border border-gray-100`}
                 >
@@ -322,7 +322,10 @@ export default function Navbar() {
 
             {/* Enhanced Mobile menu button */}
             <button
-              className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-full text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 focus:outline-none transition-all duration-300 transform hover:scale-110"
+              type="button"
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={mobileMenuOpen}
+              className="inline-flex lg:hidden items-center justify-center w-10 h-10 rounded-full text-gray-700 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-500 focus:outline-none transition-all duration-300 transform hover:scale-110"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <div className="relative">
@@ -334,7 +337,7 @@ export default function Navbar() {
         </div>
 
         {/* Enhanced Mobile Navigation Drawer */}
-        <div className={`md:hidden overflow-hidden transition-all duration-500 ease-out ${mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`lg:hidden overflow-hidden transition-all duration-500 ease-out ${mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="mt-4 pt-4 pb-4 border-t border-gray-100 bg-white/80 backdrop-blur-lg rounded-2xl">
             <nav className="flex flex-col space-y-2">
               {navLinks.map(({ href, label }) => (
