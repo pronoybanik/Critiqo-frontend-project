@@ -40,7 +40,7 @@ This repository contains the frontend only. Most user, review, category, vote, a
    NEXT_PUBLIC_BASE_API=http://localhost:5000/api/v1
    ```
 
-   Replace the example URL with your backend's versioned API base URL. The frontend uses `/api/v1` for existing user, review, and category routes; newly added SEO/content tools derive the backend's `/api` base from this value. The backend is not included in this repository.
+   Replace the example URL with your backend's versioned API base URL. The frontend uses this shared `/api/v1` base for user, review, category, SEO, and content routes. The backend is not included in this repository.
 
 4. Start the development server:
 
@@ -138,7 +138,7 @@ uses its existing unsigned upload setup.
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_BASE_API` | Yes | Backend versioned API base URL for existing services (for example, `https://api.example.com/api/v1`). New SEO/content endpoints use the corresponding `/api` root. |
+| `NEXT_PUBLIC_BASE_API` | Yes | Shared backend API base URL (for example, `https://api.example.com/api/v1`). |
 | `NEXT_PUBLIC_SITE_URL` | Recommended | Public frontend origin used as the metadata base, canonical fallback, and deployment URL (for example, `https://www.example.com`). |
 
 Set these values in `.env.local` for development and in the Vercel project

@@ -50,7 +50,6 @@ const ManagedContentEditor = ({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [success, setSuccess] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [panelOpen, setPanelOpen] = useState(false);
 
   const handleEditorReady = useCallback((editor: Editor | null) => {
     editorRef.current = editor;
@@ -121,7 +120,7 @@ const ManagedContentEditor = ({
   const newRecord = id === "new";
 
   return (
-    <form onSubmit={handleSave} className="mx-auto w-full min-w-0 max-w-[1600px]">
+    <div className="mx-auto w-full min-w-0 max-w-[1600px]">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm text-slate-600">
@@ -133,6 +132,7 @@ const ManagedContentEditor = ({
         </div>
         <button
           type="submit"
+          form="managed-content-form"
           disabled={isSaving}
           className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
@@ -152,7 +152,12 @@ const ManagedContentEditor = ({
       )}
 
       <div className="grid min-w-0 grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_19rem]">
-        <section className="min-w-0 space-y-4">
+        <form
+          id="managed-content-form"
+          onSubmit={handleSave}
+          className="min-w-0 space-y-4"
+        >
+          <section className="min-w-0 space-y-4">
           <div className="grid min-w-0 grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
             <label className="block min-w-0">
               <span className="mb-1.5 block text-sm font-medium text-slate-700">Title</span>
@@ -219,38 +224,26 @@ const ManagedContentEditor = ({
             onEditorReady={handleEditorReady}
             ariaLabel={`${type === "blog" ? "Blog post" : "Review"} content editor`}
           />
-        </section>
+          </section>
+        </form>
 
-        <aside className="min-w-0 xl:sticky xl:top-4">
-          <button
-            type="button"
-            aria-expanded={panelOpen}
-            aria-controls="seo-panel-slot"
-            onClick={() => setPanelOpen((open) => !open)}
-            className="flex w-full items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-semibold text-slate-800 shadow-sm xl:hidden"
-          >
-            SEO panel
-            <span aria-hidden="true">{panelOpen ? "−" : "+"}</span>
-          </button>
-          <div
-            id="seo-panel-slot"
-            className={`${panelOpen ? "mt-3 block" : "hidden"} min-w-0 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600 xl:mt-0 xl:block`}
-          >
-            <h2 className="font-semibold text-slate-800">SEO panel</h2>
-            <p className="mt-2 leading-5">SEO controls will be added here.</p>
+        <aside className="min-w-0 xl:sticky xl:top-4 space-y-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-slate-900">Publishing</h3>
+            <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm text-slate-700">
+              <input
+                type="checkbox"
+                form="managed-content-form"
+                checked={published}
+                onChange={(event) => setPublished(event.target.checked)}
+                className="size-4 rounded border-slate-300 accent-indigo-600"
+              />
+              Publish this content
+            </label>
           </div>
-          <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
-            <input
-              type="checkbox"
-              checked={published}
-              onChange={(event) => setPublished(event.target.checked)}
-              className="size-4 accent-indigo-600"
-            />
-            Publish this content
-          </label>
         </aside>
       </div>
-    </form>
+    </div>
   );
 };
 

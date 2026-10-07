@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import {
   Home,
+  Globe,
   Star,
   Clock,
   CheckCircle,
@@ -95,6 +96,32 @@ const AdminSideBar = () => {
       color: "text-indigo-400",
       hoverColor: "hover:bg-indigo-500/20",
       description: "Manage categories"
+    },
+    {
+      id: "seo",
+      label: "SEO Management",
+      icon: <Globe size={20} />,
+      link: "/admin/seo",
+      color: "text-cyan-400",
+      hoverColor: "hover:bg-cyan-500/20",
+      description: "Manage SEO content and settings",
+      hasSubItems: true,
+      subItems: [
+        {
+          id: "seo-content",
+          label: "SEO Content",
+          icon: <Globe size={18} />,
+          link: "/admin/seo",
+          color: "text-cyan-400",
+        },
+        {
+          id: "seo-settings",
+          label: "Site Settings",
+          icon: <Settings size={18} />,
+          link: "/admin/seo/settings",
+          color: "text-indigo-400",
+        },
+      ],
     },
   ];
 
@@ -245,7 +272,7 @@ const AdminSideBar = () => {
                             </span>
                           </div>
                           
-                          {subItem.count && (
+                          {"count" in subItem && subItem.count && (
                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
                               {subItem.count}
                             </div>

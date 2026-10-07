@@ -6,7 +6,7 @@ const getBackendApiBase = (): string => {
 
   const normalizedBase = configuredBase.replace(/\/+$/, "");
   if (/\/api\/v\d+$/i.test(normalizedBase)) {
-    return normalizedBase.replace(/\/v\d+$/i, "");
+    return normalizedBase;
   }
   if (/\/api$/i.test(normalizedBase)) return normalizedBase;
   return `${normalizedBase}/api`;

@@ -21,9 +21,29 @@ type ApiResponse<T> = {
   error?: ApiErrorSource[];
 };
 
+export type SeoAnalysisCheck = {
+  id: string;
+  status: "pass" | "warn" | "fail";
+  message: string;
+  value: unknown;
+};
+
+export type SeoAnalysis = {
+  score: number;
+  checks: SeoAnalysisCheck[];
+};
+
+export type SeoAnalysisPayload = {
+  html: string;
+  seoTitle: string;
+  metaDescription: string;
+  slug: string;
+  focusKeyword: string;
+};
+
 const request = async <T>(
   path: string,
-  method: "GET" | "PUT",
+  method: "GET" | "PUT" | "POST" | "PATCH",
   body?: unknown,
 ): Promise<SeoApiResult<T>> => {
   const token = (await cookies()).get("accessToken")?.value;
@@ -100,6 +120,11 @@ export const updateSeoContent = async (
     payload,
   );
 
+export const analyzeSeoContent = async (
+  payload: SeoAnalysisPayload,
+): Promise<SeoApiResult<SeoAnalysis>> =>
+  request("/admin/seo/analyze", "POST", payload);
+
 export const getSiteSettings = async (): Promise<SeoApiResult<SiteSettings>> =>
   request("/admin/site-settings", "GET");
 
@@ -107,3 +132,50 @@ export const updateSiteSettings = async (
   payload: SiteSettingsPayload,
 ): Promise<SeoApiResult<SiteSettings>> =>
   request("/admin/site-settings", "PUT", payload);
+
+export type SeoImageItem = {
+  id: string;
+  url: string;
+  alt: string | null;
+  title: string | null;
+  fileName: string | null;
+  issues?: Array<{ type: string; reason: string }>;
+};
+
+export const generateSchemaMarkup = async (
+  type: SeoContentType,
+  id: string,
+  schemaType: string,
+): Promise<SeoApiResult<{ schemaType: string; json: unknown }>> =>
+  request(
+    `/admin/schema/${encodeURIComponent(type === "blog" ? "blogPost" : type)}/${encodeURIComponent(id)}/generate?schemaType=${encodeURIComponent(schemaType)}`,
+    "GET",
+  );
+
+export const saveSchemaMarkup = async (
+  type: SeoContentType,
+  id: string,
+  schemaType: string,
+  json: unknown,
+): Promise<SeoApiResult<unknown>> =>
+  request(
+    `/admin/schema/${encodeURIComponent(type === "blog" ? "blogPost" : type)}/${encodeURIComponent(id)}`,
+    "PUT",
+    { schemaType, json },
+  );
+
+export const getContentImages = async (
+  type: SeoContentType,
+  id: string,
+): Promise<SeoApiResult<SeoImageItem[]>> =>
+  request(
+    `/admin/images/${encodeURIComponent(type === "blog" ? "blogPost" : type)}/${encodeURIComponent(id)}`,
+    "GET",
+  );
+
+export const updateContentImage = async (
+  imageId: string,
+  payload: { alt?: string | null; title?: string | null; fileName?: string | null },
+): Promise<SeoApiResult<unknown>> =>
+  request(`/admin/images/${encodeURIComponent(imageId)}`, "PATCH", payload);
+
