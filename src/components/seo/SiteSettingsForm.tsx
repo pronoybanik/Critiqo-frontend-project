@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 import { getSiteSettings, updateSiteSettings } from "@/lib/seo/api";
 import type { SiteSettingsPayload } from "@/types/seo";
 
@@ -111,7 +112,14 @@ const SiteSettingsForm = () => {
   };
 
   if (isLoading) {
-    return <p role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">Loading site settings…</p>;
+    return (
+      <div role="status" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white p-10 text-sm text-slate-600 shadow-sm">
+        <div className="flex items-center gap-3 font-medium">
+          <Loader2 className="size-5 animate-spin text-indigo-600" />
+          Loading site settings…
+        </div>
+      </div>
+    );
   }
 
   const inputClass =
@@ -170,9 +178,16 @@ const SiteSettingsForm = () => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
       >
-        {isSubmitting ? "Saving…" : "Save site settings"}
+        {isSubmitting ? (
+          <>
+            <Loader2 className="size-4 animate-spin" />
+            Saving site settings…
+          </>
+        ) : (
+          "Save site settings"
+        )}
       </button>
     </form>
   );

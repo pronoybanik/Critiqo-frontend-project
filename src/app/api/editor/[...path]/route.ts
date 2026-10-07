@@ -100,22 +100,40 @@ const proxy = async (
     body = await request.text();
   }
 
-  const upstream = await fetch(target, {
-    method: request.method,
-    headers,
-    body,
-    cache: "no-store",
-    signal: request.signal,
-  });
-  const responseBody = await upstream.text();
-  return new Response(responseBody, {
-    status: upstream.status,
-    headers: {
-      "Content-Type":
-        upstream.headers.get("Content-Type") ?? "application/json",
-      "Cache-Control": "no-store",
-    },
-  });
+  try {
+    const upstream = await fetch(target, {
+      method: request.method,
+      headers,
+      body,
+      cache: "no-store",
+      signal: request.signal,
+    });
+    const responseBody = await upstream.text();
+    return new Response(responseBody, {
+      status: upstream.status,
+      headers: {
+        "Content-Type":
+          upstream.headers.get("Content-Type") ?? "application/json",
+        "Cache-Control": "no-store",
+      },
+    });
+  } catch (error: unknown) {
+    const err = error as { code?: string; cause?: { code?: string }; message?: string };
+    const isConnRefused =
+      err?.code === "ECONNREFUSED" ||
+      err?.cause?.code === "ECONNREFUSED" ||
+      (error instanceof Error && error.message.includes("ECONNREFUSED"));
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: isConnRefused
+          ? "Unable to connect to backend server. Please verify backend server is running on port 5000."
+          : `Proxy error: ${error instanceof Error ? error.message : "Fetch failed"}`,
+      },
+      { status: 503 },
+    );
+  }
 };
 
 export const GET = proxy;

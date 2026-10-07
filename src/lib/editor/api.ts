@@ -48,15 +48,32 @@ const fetchApi = async <T>(
     };
   }
 
-  const response = await fetch(getBackendApiUrl(path), {
-    method,
-    headers: {
-      ...(token ? { Authorization: token } : {}),
-      ...(body ? { "Content-Type": "application/json" } : {}),
-    },
-    ...(body ? { body: JSON.stringify(body) } : {}),
-    cache: "no-store",
-  });
+  let response: Response;
+  try {
+    response = await fetch(getBackendApiUrl(path), {
+      method,
+      headers: {
+        ...(token ? { Authorization: token } : {}),
+        ...(body ? { "Content-Type": "application/json" } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+      cache: "no-store",
+    });
+  } catch (error: unknown) {
+    const err = error as { code?: string; cause?: { code?: string }; message?: string };
+    const isConnRefused =
+      err?.code === "ECONNREFUSED" ||
+      err?.cause?.code === "ECONNREFUSED" ||
+      (error instanceof Error && error.message.includes("ECONNREFUSED"));
+
+    return {
+      ok: false,
+      message: isConnRefused
+        ? "Unable to connect to the backend server. Please make sure the backend server (Critiqo-server) is running on port 5000."
+        : `Network error while reaching backend API: ${error instanceof Error ? error.message : "Fetch failed"}`,
+      fieldErrors: {},
+    };
+  }
 
   let result: ApiResponse<T>;
   try {

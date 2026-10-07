@@ -8,6 +8,33 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { useForm, type FieldPath } from "react-hook-form";
 import { z } from "zod";
 import {
+  ArrowLeft,
+  Save,
+  Globe,
+  Share2,
+  Twitter,
+  Eye,
+  BarChart3,
+  Code,
+  ImageIcon,
+  ShieldAlert,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  RefreshCw,
+  Sparkles,
+  Smartphone,
+  Monitor,
+  ExternalLink,
+  ChevronUp,
+  Tag,
+  Link2,
+  FileText,
+  Info,
+  Check,
+  Loader2,
+} from "lucide-react";
+import {
   analyzeSeoContent,
   generateSchemaMarkup,
   getContentImages,
@@ -69,27 +96,6 @@ const seoFormSchema = z.object({
 
 type SeoFormValues = z.infer<typeof seoFormSchema>;
 
-const fields: Array<{
-  name: Exclude<FieldPath<SeoFormValues>, "noindex">;
-  label: string;
-  section: string;
-  multiline?: boolean;
-  counter?: number;
-  placeholder?: string;
-}> = [
-  { name: "seoTitle", label: "SEO title", section: "Search metadata", counter: 60 },
-  { name: "metaDescription", label: "Meta description", section: "Search metadata", multiline: true, counter: 160 },
-  { name: "slug", label: "URL slug", section: "Search metadata", placeholder: "lowercase-words-separated-by-hyphens" },
-  { name: "focusKeyword", label: "Focus keyword", section: "Search metadata" },
-  { name: "canonicalUrl", label: "Canonical URL", section: "Search metadata", placeholder: "https://example.com/page" },
-  { name: "ogTitle", label: "Open Graph title", section: "Open Graph", counter: 60 },
-  { name: "ogDescription", label: "Open Graph description", section: "Open Graph", multiline: true, counter: 160 },
-  { name: "ogImage", label: "Open Graph image URL", section: "Open Graph", placeholder: "https://example.com/image.jpg" },
-  { name: "twitterTitle", label: "Twitter card title", section: "Twitter card", counter: 60 },
-  { name: "twitterDescription", label: "Twitter card description", section: "Twitter card", multiline: true, counter: 160 },
-  { name: "twitterImage", label: "Twitter card image URL", section: "Twitter card", placeholder: "https://example.com/image.jpg" },
-];
-
 const optionalValue = (value: string) => value.trim() || null;
 const validTypes: SeoContentType[] = ["page", "blog", "review"];
 const checkLabels: Record<string, string> = {
@@ -113,10 +119,20 @@ const checkOrder = [
   "paragraph-length",
 ];
 const checkStatusClass = {
-  pass: "text-emerald-700",
-  warn: "text-amber-700",
-  fail: "text-rose-700",
+  pass: "text-emerald-700 bg-emerald-50 border-emerald-200",
+  warn: "text-amber-700 bg-amber-50 border-amber-200",
+  fail: "text-rose-700 bg-rose-50 border-rose-200",
 } as const;
+
+const NAV_TABS = [
+  { id: "metadata", label: "Search Metadata", icon: Globe },
+  { id: "og", label: "Open Graph", icon: Share2 },
+  { id: "twitter", label: "Twitter Card", icon: Twitter },
+  { id: "preview", label: "Google SERP", icon: Eye },
+  { id: "audit", label: "SEO Audit", icon: BarChart3 },
+  { id: "schema", label: "Schema JSON-LD", icon: Code },
+  { id: "images", label: "Content Images", icon: ImageIcon },
+] as const;
 
 const SeoContentForm = () => {
   const params = useParams<{ type: string; id: string }>();
@@ -127,7 +143,9 @@ const SeoContentForm = () => {
   const [loadError, setLoadError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [success, setSuccess] = useState("");
-  
+  const [activeTab, setActiveTab] = useState<string>("metadata");
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   // Analysis State
   const [analysis, setAnalysis] = useState<SeoAnalysis | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
@@ -287,6 +305,27 @@ const SeoContentForm = () => {
     };
   }, [id, reset, type]);
 
+  // Handle Scroll to Top Button visibility & Tab observer
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToSection = (sectionId: string) => {
+    setActiveTab(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const runSeoAnalysis = async (
     values: Pick<
       SeoFormValues,
@@ -441,10 +480,8 @@ const SeoContentForm = () => {
     }
     if (!result.ok) {
       for (const [field, message] of Object.entries(result.fieldErrors)) {
-        const knownField = fields.find((candidate) => candidate.name === field)?.name ??
-          (field === "noindex" ? "noindex" : undefined);
-        if (knownField) {
-          setError(knownField, { type: "server", message });
+        if (field in seoFormSchema.shape || field === "noindex") {
+          setError(field as keyof SeoFormValues, { type: "server", message });
         }
       }
       setLoadError(result.message);
@@ -470,182 +507,595 @@ const SeoContentForm = () => {
 
   if (isLoading) {
     return (
-      <div role="status" className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Loading SEO management panel…
+      <div role="status" className="flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-12 shadow-sm text-sm text-slate-600">
+        <div className="flex items-center gap-3 font-medium">
+          <Loader2 className="size-6 animate-spin text-indigo-600" />
+          Loading SEO management panel…
+        </div>
       </div>
     );
   }
 
   if (loadError && !contentTitle) {
     return (
-      <div role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-800">
-        {loadError}
+      <div role="alert" className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-800 shadow-sm">
+        <AlertTriangle className="size-5 shrink-0 text-rose-600" />
+        <div>
+          <h3 className="font-semibold text-rose-900">Error Loading Content</h3>
+          <p className="mt-1">{loadError}</p>
+        </div>
       </div>
     );
   }
 
-  const sections = ["Search metadata", "Open Graph", "Twitter card"];
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0">
-          <Link href="/admin/seo" className="text-sm font-medium text-indigo-700 hover:underline">
-            ← Back to SEO Content List
-          </Link>
-          <div className="mt-2 flex items-center gap-3">
-            <h1 className="break-words text-2xl font-bold text-slate-900">{contentTitle}</h1>
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold capitalize text-slate-700">
-              {type}
-            </span>
+    <div className="relative min-h-screen space-y-6 pb-20 scroll-smooth">
+      {/* Sticky Header Section */}
+      <div className="sticky top-0 z-20 rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-sm backdrop-blur-md sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="min-w-0">
+            <Link
+              href="/admin/seo"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-600 hover:text-indigo-800 hover:underline"
+            >
+              <ArrowLeft className="size-3.5" /> Back to SEO List
+            </Link>
+            <div className="mt-1.5 flex items-center gap-3">
+              <h1 className="break-words text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+                {contentTitle}
+              </h1>
+              <span className="shrink-0 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-0.5 text-xs font-semibold capitalize text-indigo-700">
+                {type}
+              </span>
+            </div>
           </div>
-          <p className="mt-1 text-sm text-slate-600">
-            Manage search metadata, Google preview, schema JSON-LD, content images, and SEO score calculations.
-          </p>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                void runSeoAnalysis({
+                  seoTitle: watchedValues.seoTitle,
+                  metaDescription: watchedValues.metaDescription,
+                  slug: watchedValues.slug,
+                  focusKeyword: watchedValues.focusKeyword,
+                })
+              }
+              disabled={analysisLoading || isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Sparkles className={`size-4 text-amber-500 ${analysisLoading ? "animate-spin" : ""}`} />
+              {analysisLoading ? "Checking Score…" : "Check Score"}
+            </button>
+            <button
+              type="submit"
+              form="seo-metadata-form"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 shadow-sm transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Save SEO Settings
+                </>
+              )}
+            </button>
+          </div>
         </div>
-        <button
-          type="submit"
-          form="seo-metadata-form"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          {isSubmitting ? "Saving…" : "Save SEO Settings"}
-        </button>
-      </div>
 
-      {loadError && (
-        <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3.5 text-sm text-rose-800">
-          {loadError}
-        </p>
-      )}
-      {success && (
-        <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 p-3.5 text-sm text-emerald-800">
-          {success}
-        </p>
-      )}
-
-      {/* Google Search Result Preview */}
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900">Google Search Preview</h2>
-            <p className="text-xs text-slate-500">Live preview of how search engines display your snippet.</p>
-          </div>
-          <div className="flex rounded-lg border border-slate-200 p-1" aria-label="Preview view mode">
-            {(["desktop", "mobile"] as const).map((mode) => (
+        {/* Quick Navigation Sticky Tabs */}
+        <div className="mt-4 flex gap-1 overflow-x-auto border-t border-slate-100 pt-3 scrollbar-none">
+          {NAV_TABS.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
               <button
-                key={mode}
+                key={tab.id}
                 type="button"
-                aria-pressed={previewMode === mode}
-                onClick={() => setPreviewMode(mode)}
-                className={`rounded-md px-3 py-1 text-xs font-medium capitalize ${
-                  previewMode === mode
-                    ? "bg-indigo-50 text-indigo-700 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                onClick={() => scrollToSection(tab.id)}
+                className={`inline-flex items-center gap-2 shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all ${
+                  isActive
+                    ? "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 font-semibold"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                {mode}
+                <Icon className="size-3.5" />
+                {tab.label}
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
+      </div>
 
-        <div className={`mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-xs ${
-          previewMode === "mobile" ? "max-w-md mx-auto" : "w-full"
-        }`}>
-          <div className="flex items-center gap-2">
-            <div className="flex size-6 items-center justify-center rounded-full bg-slate-100 text-xs font-bold text-slate-600">
-              C
-            </div>
-            <div className="min-w-0 flex-1 truncate text-xs text-slate-700">
-              <span className="font-semibold text-slate-900">Critiqo</span>
-              <span className="ml-1 text-slate-400">›</span>
-              <span className="ml-1 text-slate-600 truncate">{truncateGoogleText(previewUrl, 60)}</span>
-            </div>
-          </div>
-          <h3 className="mt-1.5 break-words text-lg font-medium leading-snug text-[#1a0dab] hover:underline">
-            {truncateGoogleText(previewTitle, 60)}
-          </h3>
-          <p className="mt-1 break-words text-sm leading-relaxed text-[#4d5156]">
-            {truncateGoogleText(previewDescription, 160)}
-          </p>
+      {/* Top Feedback Messages */}
+      {loadError && (
+        <div role="alert" className="flex items-center gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+          <AlertTriangle className="size-5 shrink-0 text-rose-600" />
+          <span>{loadError}</span>
         </div>
-      </section>
+      )}
+      {success && (
+        <div role="status" className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800">
+          <CheckCircle2 className="size-5 shrink-0 text-emerald-600" />
+          <span>{success}</span>
+        </div>
+      )}
 
-      {/* SEO Metadata Form */}
+      {/* Form Container */}
       <form id="seo-metadata-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {sections.map((section) => (
-          <section key={section} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-            <h2 className="mb-4 text-base font-semibold text-slate-900">{section}</h2>
-            <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">
-              {fields
-                .filter((field) => field.section === section)
-                .map((field) => {
-                  const fieldError = errors[field.name]?.message;
-                  const characterCount = watchedValues[field.name]?.length ?? 0;
-                  return (
-                    <label key={field.name} className={`block min-w-0 ${field.multiline ? "sm:col-span-2" : ""}`}>
-                      <span className="mb-1.5 block text-sm font-medium text-slate-700">{field.label}</span>
-                      {field.multiline ? (
-                        <textarea
-                          {...register(field.name)}
-                          rows={3}
-                          maxLength={field.counter}
-                          placeholder={field.placeholder}
-                          aria-invalid={Boolean(fieldError)}
-                          className="w-full resize-y rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 aria-[invalid=true]:border-rose-400"
-                        />
-                      ) : (
-                        <input
-                          {...register(field.name)}
-                          maxLength={field.counter}
-                          placeholder={field.placeholder}
-                          aria-invalid={Boolean(fieldError)}
-                          className="w-full min-w-0 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 aria-[invalid=true]:border-rose-400"
-                        />
-                      )}
-                      <div className="mt-1 flex justify-between gap-2 text-xs">
-                        {fieldError ? (
-                          <span className="text-rose-700">{fieldError}</span>
-                        ) : <span />}
-                        {field.counter && (
-                          <span className="shrink-0 text-slate-500">{characterCount}/{field.counter}</span>
-                        )}
-                      </div>
-                    </label>
-                  );
-                })}
+        {/* SECTION 1: Core Search Metadata */}
+        <section
+          id="metadata"
+          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        >
+          <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+              <Globe className="size-5" />
             </div>
-          </section>
-        ))}
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Search Metadata</h2>
+              <p className="text-xs text-slate-500">
+                Primary title, URL slug, description, and keywords indexed by search engines.
+              </p>
+            </div>
+          </div>
 
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              {...register("noindex")}
-              className="mt-0.5 size-4 rounded border-slate-300 accent-indigo-600"
-            />
-            <span>
-              <span className="block text-sm font-medium text-slate-800">Noindex this content</span>
-              <span className="mt-1 block text-xs leading-5 text-slate-500">
-                Ask search engines not to include this page in search results.
-              </span>
-              {errors.noindex?.message && (
-                <span className="mt-1 block text-xs text-rose-700">{errors.noindex.message}</span>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {/* SEO Title */}
+            <div className="sm:col-span-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="seoTitle" className="block text-sm font-semibold text-slate-800">
+                  SEO Title
+                </label>
+                <span
+                  className={`text-xs font-semibold ${
+                    (watchedValues.seoTitle?.length || 0) > 60
+                      ? "text-rose-600 font-bold"
+                      : (watchedValues.seoTitle?.length || 0) > 50
+                      ? "text-amber-600"
+                      : "text-slate-500"
+                  }`}
+                >
+                  {watchedValues.seoTitle?.length || 0}/60 chars
+                </span>
+              </div>
+              <input
+                id="seoTitle"
+                {...register("seoTitle")}
+                maxLength={60}
+                placeholder="Target title (under 60 characters)"
+                aria-invalid={Boolean(errors.seoTitle)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 aria-[invalid=true]:border-rose-400"
+              />
+              {errors.seoTitle?.message ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.seoTitle.message}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-500">
+                  Recommended length is 50-60 characters for optimal desktop display.
+                </p>
               )}
-            </span>
-          </label>
+            </div>
+
+            {/* URL Slug */}
+            <div>
+              <label htmlFor="slug" className="mb-1.5 block text-sm font-semibold text-slate-800">
+                URL Slug
+              </label>
+              <div className="flex rounded-xl border border-slate-300 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100 overflow-hidden">
+                <span className="inline-flex items-center border-r border-slate-200 bg-slate-50 px-3 text-xs text-slate-500 font-mono">
+                  critiqo.com/
+                </span>
+                <input
+                  id="slug"
+                  {...register("slug")}
+                  placeholder="my-page-slug"
+                  aria-invalid={Boolean(errors.slug)}
+                  className="w-full min-w-0 px-3 py-2.5 text-sm text-slate-900 outline-none"
+                />
+              </div>
+              {errors.slug?.message ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.slug.message}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-500">
+                  Use lowercase letters, numbers, and hyphens.
+                </p>
+              )}
+            </div>
+
+            {/* Focus Keyword */}
+            <div>
+              <label htmlFor="focusKeyword" className="mb-1.5 block text-sm font-semibold text-slate-800">
+                Focus Keyword
+              </label>
+              <div className="relative">
+                <Tag className="absolute left-3.5 top-3 size-4 text-slate-400" />
+                <input
+                  id="focusKeyword"
+                  {...register("focusKeyword")}
+                  placeholder="e.g. best tech reviews"
+                  className="w-full rounded-xl border border-slate-300 pl-10 pr-4 py-2.5 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                />
+              </div>
+              <p className="mt-1 text-xs text-slate-500">
+                Primary keyword to evaluate content density and placement.
+              </p>
+            </div>
+
+            {/* Canonical URL */}
+            <div className="sm:col-span-2">
+              <label htmlFor="canonicalUrl" className="mb-1.5 block text-sm font-semibold text-slate-800">
+                Canonical URL
+              </label>
+              <div className="relative">
+                <Link2 className="absolute left-3.5 top-3 size-4 text-slate-400" />
+                <input
+                  id="canonicalUrl"
+                  {...register("canonicalUrl")}
+                  placeholder="https://critiqo.com/original-page-url"
+                  aria-invalid={Boolean(errors.canonicalUrl)}
+                  className="w-full rounded-xl border border-slate-300 pl-10 pr-4 py-2.5 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 aria-[invalid=true]:border-rose-400"
+                />
+              </div>
+              {errors.canonicalUrl?.message ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.canonicalUrl.message}</p>
+              ) : (
+                <p className="mt-1 text-xs text-slate-500">
+                  Specify the preferred authoritative URL to prevent duplicate content penalties.
+                </p>
+              )}
+            </div>
+
+            {/* Meta Description */}
+            <div className="sm:col-span-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="metaDescription" className="block text-sm font-semibold text-slate-800">
+                  Meta Description
+                </label>
+                <span
+                  className={`text-xs font-semibold ${
+                    (watchedValues.metaDescription?.length || 0) > 160
+                      ? "text-rose-600 font-bold"
+                      : (watchedValues.metaDescription?.length || 0) > 140
+                      ? "text-amber-600"
+                      : "text-slate-500"
+                  }`}
+                >
+                  {watchedValues.metaDescription?.length || 0}/160 chars
+                </span>
+              </div>
+              <textarea
+                id="metaDescription"
+                {...register("metaDescription")}
+                rows={3}
+                maxLength={160}
+                placeholder="Provide a compelling summary for search result snippets..."
+                aria-invalid={Boolean(errors.metaDescription)}
+                className="w-full resize-y rounded-xl border border-slate-300 px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 aria-[invalid=true]:border-rose-400"
+              />
+              {errors.metaDescription?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.metaDescription.message}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Search Indexing Directive (Noindex toggle) */}
+          <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="checkbox"
+                {...register("noindex")}
+                className="mt-1 size-4 rounded border-slate-300 text-indigo-600 accent-indigo-600 focus:ring-indigo-500"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-slate-800">Noindex directive</span>
+                  {watchedValues.noindex && (
+                    <span className="rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-700">
+                      Index Restricted
+                    </span>
+                  )}
+                </div>
+                <p className="mt-0.5 text-xs text-slate-600">
+                  Instruct search crawlers not to index or show this page in public search results.
+                </p>
+                {errors.noindex?.message && (
+                  <p className="mt-1 text-xs font-semibold text-rose-600">{errors.noindex.message}</p>
+                )}
+              </div>
+            </label>
+          </div>
+        </section>
+
+        {/* SECTION 2: Open Graph Metadata */}
+        <section
+          id="og"
+          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        >
+          <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <Share2 className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Open Graph (Facebook & Social)</h2>
+              <p className="text-xs text-slate-500">
+                Controls how content displays when shared on Facebook, LinkedIn, Discord, and messaging apps.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="ogTitle" className="block text-sm font-semibold text-slate-800">
+                  OG Title
+                </label>
+                <span className="text-xs text-slate-500">
+                  {watchedValues.ogTitle?.length || 0}/60
+                </span>
+              </div>
+              <input
+                id="ogTitle"
+                {...register("ogTitle")}
+                maxLength={60}
+                placeholder="Social media share title"
+                aria-invalid={Boolean(errors.ogTitle)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.ogTitle?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.ogTitle.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="ogImage" className="mb-1.5 block text-sm font-semibold text-slate-800">
+                OG Image URL
+              </label>
+              <input
+                id="ogImage"
+                {...register("ogImage")}
+                placeholder="https://example.com/social-cover.jpg"
+                aria-invalid={Boolean(errors.ogImage)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.ogImage?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.ogImage.message}</p>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="ogDescription" className="block text-sm font-semibold text-slate-800">
+                  OG Description
+                </label>
+                <span className="text-xs text-slate-500">
+                  {watchedValues.ogDescription?.length || 0}/160
+                </span>
+              </div>
+              <textarea
+                id="ogDescription"
+                {...register("ogDescription")}
+                rows={2}
+                maxLength={160}
+                placeholder="Summary displayed below title on social posts..."
+                aria-invalid={Boolean(errors.ogDescription)}
+                className="w-full resize-y rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.ogDescription?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.ogDescription.message}</p>
+              )}
+            </div>
+
+            {/* OG Live Image Preview Thumbnail */}
+            {watchedValues.ogImage && /^https?:\/\/.+/i.test(watchedValues.ogImage) && (
+              <div className="sm:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <span className="text-xs font-semibold text-slate-500 block mb-2">OG Image Preview:</span>
+                <div className="relative h-36 w-full max-w-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
+                  <Image
+                    src={watchedValues.ogImage}
+                    alt="OG Preview"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* SECTION 3: Twitter Card Metadata */}
+        <section
+          id="twitter"
+          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        >
+          <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
+              <Twitter className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Twitter Card Metadata</h2>
+              <p className="text-xs text-slate-500">
+                Tailor tweet cards for maximum engagement on X / Twitter.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="twitterTitle" className="block text-sm font-semibold text-slate-800">
+                  Twitter Card Title
+                </label>
+                <span className="text-xs text-slate-500">
+                  {watchedValues.twitterTitle?.length || 0}/60
+                </span>
+              </div>
+              <input
+                id="twitterTitle"
+                {...register("twitterTitle")}
+                maxLength={60}
+                placeholder="Tweet card headline"
+                aria-invalid={Boolean(errors.twitterTitle)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.twitterTitle?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.twitterTitle.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="twitterImage" className="mb-1.5 block text-sm font-semibold text-slate-800">
+                Twitter Card Image URL
+              </label>
+              <input
+                id="twitterImage"
+                {...register("twitterImage")}
+                placeholder="https://example.com/twitter-card.jpg"
+                aria-invalid={Boolean(errors.twitterImage)}
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.twitterImage?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.twitterImage.message}</p>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="twitterDescription" className="block text-sm font-semibold text-slate-800">
+                  Twitter Card Description
+                </label>
+                <span className="text-xs text-slate-500">
+                  {watchedValues.twitterDescription?.length || 0}/160
+                </span>
+              </div>
+              <textarea
+                id="twitterDescription"
+                {...register("twitterDescription")}
+                rows={2}
+                maxLength={160}
+                placeholder="Tweet card summary description..."
+                aria-invalid={Boolean(errors.twitterDescription)}
+                className="w-full resize-y rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+              />
+              {errors.twitterDescription?.message && (
+                <p className="mt-1 text-xs text-rose-600">{errors.twitterDescription.message}</p>
+              )}
+            </div>
+
+            {/* Twitter Live Image Preview Thumbnail */}
+            {watchedValues.twitterImage && /^https?:\/\/.+/i.test(watchedValues.twitterImage) && (
+              <div className="sm:col-span-2 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <span className="text-xs font-semibold text-slate-500 block mb-2">Twitter Card Image Preview:</span>
+                <div className="relative h-36 w-full max-w-sm rounded-lg overflow-hidden border border-slate-200 bg-white">
+                  <Image
+                    src={watchedValues.twitterImage}
+                    alt="Twitter Card Preview"
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </section>
       </form>
 
-      {/* SEO Score Check & Detailed Analysis */}
-      <section className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900">SEO Score & Analysis</h2>
-            <p className="text-xs text-slate-500">Evaluate content against search engine guidelines.</p>
+      {/* SECTION 4: Google Search Snippet Preview */}
+      <section
+        id="preview"
+        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+              <Eye className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Google Search Preview</h2>
+              <p className="text-xs text-slate-500">
+                Live interactive preview of how search engines display your page snippet.
+              </p>
+            </div>
           </div>
+
+          <div className="flex rounded-xl border border-slate-200 bg-slate-100 p-1" aria-label="Preview view mode">
+            <button
+              type="button"
+              aria-pressed={previewMode === "desktop"}
+              onClick={() => setPreviewMode("desktop")}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                previewMode === "desktop"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Monitor className="size-3.5" /> Desktop
+            </button>
+            <button
+              type="button"
+              aria-pressed={previewMode === "mobile"}
+              onClick={() => setPreviewMode("mobile")}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
+                previewMode === "mobile"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Smartphone className="size-3.5" /> Mobile
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <div
+            className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all ${
+              previewMode === "mobile" ? "max-w-md mx-auto" : "w-full"
+            }`}
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="flex size-7 items-center justify-center rounded-full bg-slate-900 text-xs font-extrabold text-white">
+                C
+              </div>
+              <div className="min-w-0 flex-1 text-xs text-slate-700">
+                <span className="font-semibold text-slate-900">Critiqo</span>
+                <span className="mx-1 text-slate-400">›</span>
+                <span className="text-slate-600 truncate">{truncateGoogleText(previewUrl, 60)}</span>
+              </div>
+            </div>
+            <h3 className="mt-2 break-words text-xl font-medium leading-snug text-[#1a0dab] hover:underline cursor-pointer">
+              {truncateGoogleText(previewTitle, 60)}
+            </h3>
+            <p className="mt-1.5 break-words text-sm leading-relaxed text-[#4d5156]">
+              {truncateGoogleText(previewDescription, 160)}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* SECTION 5: SEO Score & Audit */}
+      <section
+        id="audit"
+        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+              <BarChart3 className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">SEO Score & Detailed Audit</h2>
+              <p className="text-xs text-slate-500">
+                Real-time algorithmic check against key SEO factors.
+              </p>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={() =>
@@ -657,103 +1107,133 @@ const SeoContentForm = () => {
               })
             }
             disabled={analysisLoading || isSubmitting}
-            className="rounded-lg bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 border border-indigo-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-50 border border-indigo-200 px-4 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
           >
-            {analysisLoading ? "Checking score…" : "Check score"}
+            <Sparkles className={`size-3.5 ${analysisLoading ? "animate-spin" : ""}`} />
+            {analysisLoading ? "Evaluating..." : "Run Analysis"}
           </button>
         </div>
 
         {analysis ? (
-          <div className="mt-4 flex flex-wrap items-center gap-4 rounded-xl bg-slate-50 p-4 border border-slate-100">
-            <div
-              className={`flex size-20 shrink-0 items-center justify-center rounded-full border-4 text-2xl font-bold ${
-                analysis.score < 50
-                  ? "border-rose-400 bg-rose-50 text-rose-700"
-                  : analysis.score < 80
+          <div className="mt-5 space-y-6">
+            <div className="flex flex-wrap items-center gap-6 rounded-2xl bg-slate-50/80 p-5 border border-slate-200/80">
+              <div
+                className={`flex size-24 shrink-0 items-center justify-center rounded-full border-4 text-3xl font-extrabold shadow-sm ${
+                  analysis.score < 50
+                    ? "border-rose-400 bg-rose-50 text-rose-700"
+                    : analysis.score < 80
                     ? "border-amber-400 bg-amber-50 text-amber-700"
                     : "border-emerald-400 bg-emerald-50 text-emerald-700"
-              }`}
-            >
-              {analysis.score}
+                }`}
+              >
+                {analysis.score}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-bold text-slate-900">
+                    Overall SEO Score: <span className="text-indigo-600">{analysis.score} / 100</span>
+                  </h3>
+                </div>
+                <p className="mt-1 text-xs leading-relaxed text-slate-600">
+                  {analysis.score >= 80
+                    ? "Great job! Your metadata and content structure adhere to modern SEO best practices."
+                    : analysis.score >= 50
+                    ? "Good foundation. Address the flagged warnings below to boost your search rating."
+                    : "Needs improvement. Critical SEO checks failed. Review and update form fields."}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-slate-900">
-                SEO Score: <span className="font-bold">{analysis.score} / 100</span>
-              </p>
-              <p className="mt-0.5 text-xs text-slate-500">
-                {analysis.score >= 80
-                  ? "Excellent! Your content metadata meets standard SEO recommendations."
-                  : analysis.score >= 50
-                    ? "Good start. Review the highlighted warnings below for further optimization."
-                    : "Action required. Address the failing checks below to improve search visibility."}
-              </p>
+
+            {/* Scrollable Audit Items Container */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                SEO Check Breakdown ({analysis.checks.length} Rules Audited)
+              </h3>
+              <div className="max-h-96 overflow-y-auto pr-1 space-y-3 scrollbar-thin">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {checkOrder.map((checkId) => {
+                    const check = analysis.checks.find((item) => item.id === checkId);
+                    if (!check) return null;
+                    return (
+                      <div
+                        key={check.id}
+                        className={`flex items-start gap-3 rounded-xl border p-4 text-xs transition-all ${
+                          checkStatusClass[check.status]
+                        }`}
+                      >
+                        <div className="mt-0.5 shrink-0">
+                          {check.status === "pass" ? (
+                            <CheckCircle2 className="size-4 text-emerald-600" />
+                          ) : check.status === "warn" ? (
+                            <AlertTriangle className="size-4 text-amber-600" />
+                          ) : (
+                            <XCircle className="size-4 text-rose-600" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold text-slate-900">
+                              {checkLabels[check.id] || check.id}
+                            </span>
+                            <span className="font-semibold uppercase tracking-wider text-[10px]">
+                              {check.status}
+                            </span>
+                          </div>
+                          <p className="mt-1 leading-relaxed text-slate-700">{check.message}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         ) : (
-          <p className="mt-3 break-words text-sm text-slate-600">
-            Click &quot;Check score&quot; to calculate the SEO score for this content.
-          </p>
+          <div className="mt-5 rounded-2xl border border-dashed border-slate-300 p-8 text-center">
+            <Sparkles className="mx-auto size-8 text-amber-400" />
+            <p className="mt-2 text-sm font-medium text-slate-700">No SEO score calculated yet</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Click &quot;Run Analysis&quot; or save your settings to generate a full SEO audit.
+            </p>
+          </div>
         )}
 
         {analysisError && (
-          <p role="alert" className="mt-3 break-words rounded-lg bg-rose-50 p-3 text-xs text-rose-700 border border-rose-200">
-            {analysisError}
-          </p>
-        )}
-
-        {analysis && (
-          <div className="mt-5 space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">SEO Check Audit Breakdown</h3>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {checkOrder.map((checkId) => {
-                const check = analysis.checks.find((item) => item.id === checkId);
-                if (!check) return null;
-                return (
-                  <li
-                    key={check.id}
-                    className="flex min-w-0 items-start gap-3 rounded-lg border border-slate-200 p-3 text-sm bg-white"
-                  >
-                    <span
-                      className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                        check.status === "pass"
-                          ? "bg-emerald-100 text-emerald-800"
-                          : check.status === "warn"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-rose-100 text-rose-800"
-                      }`}
-                    >
-                      {check.status === "pass" ? "✓" : check.status === "warn" ? "!" : "×"}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-medium text-slate-900">{checkLabels[check.id]}</span>
-                        <span className={`text-xs font-semibold capitalize ${checkStatusClass[check.status]}`}>
-                          {check.status}
-                        </span>
-                      </div>
-                      <p className="mt-1 break-words text-xs text-slate-600">{check.message}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+          <div role="alert" className="mt-4 flex items-center gap-2 rounded-xl bg-rose-50 p-3.5 text-xs text-rose-700 border border-rose-200">
+            <AlertTriangle className="size-4 shrink-0 text-rose-600" />
+            <span>{analysisError}</span>
           </div>
         )}
       </section>
 
-      {/* Schema Markup Management */}
-      <section className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <h2 className="text-base font-semibold text-slate-900">Schema Markup (JSON-LD)</h2>
-        <p className="text-xs text-slate-500">Manage structured data for rich snippet search results.</p>
+      {/* SECTION 6: Schema Markup (JSON-LD) */}
+      <section
+        id="schema"
+        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+      >
+        <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
+            <Code className="size-5" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Schema Markup (JSON-LD)</h2>
+            <p className="text-xs text-slate-500">
+              Inject structured microdata for Google rich search results (Rich Snippets).
+            </p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSaveSchema} className="mt-4 space-y-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="min-w-[180px] flex-1">
-              <label className="block text-xs font-medium text-slate-700">Schema Type</label>
+        <form onSubmit={handleSaveSchema} className="space-y-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="min-w-[200px] flex-1">
+              <label htmlFor="schemaTypeSelect" className="block text-xs font-semibold text-slate-700 mb-1">
+                Schema Type
+              </label>
               <select
+                id="schemaTypeSelect"
                 value={schemaType}
                 onChange={(event) => setSchemaType(event.target.value as SchemaType)}
-                className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
               >
                 {schemaTypes.map((item) => (
                   <option key={item.value} value={item.value}>
@@ -766,79 +1246,116 @@ const SeoContentForm = () => {
               type="button"
               disabled={schemaLoading}
               onClick={() => void handleGenerateSchema()}
-              className="mt-5 rounded-lg border border-indigo-300 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50 disabled:opacity-50"
+              className="mt-5 inline-flex items-center gap-2 rounded-xl border border-purple-300 bg-purple-50 px-4 py-2 text-xs font-semibold text-purple-700 hover:bg-purple-100 disabled:opacity-50"
             >
-              {schemaLoading ? "Generating…" : "Generate Schema"}
+              <Sparkles className={`size-3.5 ${schemaLoading ? "animate-spin" : ""}`} />
+              {schemaLoading ? "Generating..." : "Generate Auto Schema"}
             </button>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700">JSON-LD Data</label>
-            <textarea
-              value={schemaJson}
-              onChange={(event) => {
-                setSchemaJson(event.target.value);
-                setSchemaError("");
-                setSchemaSuccess("");
-              }}
-              rows={10}
-              spellCheck={false}
-              placeholder={'{\n  "@context": "https://schema.org"\n}'}
-              className="mt-1 w-full rounded-lg border border-slate-300 p-3 font-mono text-xs leading-relaxed outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            />
+            <label htmlFor="schemaJsonTextarea" className="block text-xs font-semibold text-slate-700 mb-1">
+              JSON-LD Code Editor
+            </label>
+            <div className="relative rounded-xl border border-slate-800 bg-slate-900 p-4 shadow-inner">
+              <textarea
+                id="schemaJsonTextarea"
+                value={schemaJson}
+                onChange={(event) => {
+                  setSchemaJson(event.target.value);
+                  setSchemaError("");
+                  setSchemaSuccess("");
+                }}
+                rows={10}
+                spellCheck={false}
+                placeholder={'{\n  "@context": "https://schema.org"\n}'}
+                className="w-full max-h-[380px] overflow-y-auto bg-transparent font-mono text-xs leading-relaxed text-emerald-400 outline-none placeholder:text-slate-600 scrollbar-thin"
+              />
+            </div>
           </div>
 
           {schemaError && (
-            <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
-              {schemaError}
-            </p>
+            <div role="alert" className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-800">
+              <AlertTriangle className="size-4 shrink-0 text-rose-600" />
+              <span>{schemaError}</span>
+            </div>
           )}
           {schemaSuccess && (
-            <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800">
-              {schemaSuccess}
-            </p>
+            <div role="status" className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-xs text-emerald-800">
+              <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+              <span>{schemaSuccess}</span>
+            </div>
           )}
 
-          <button
-            type="submit"
-            disabled={schemaSaving || !schemaJson.trim()}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {schemaSaving ? "Saving Schema…" : "Save Schema Markup"}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={schemaSaving || !schemaJson.trim()}
+              className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-xs font-semibold text-white hover:bg-purple-700 disabled:opacity-50 shadow-sm"
+            >
+              {schemaSaving ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  Saving Schema…
+                </>
+              ) : (
+                <>
+                  <Save className="size-3.5" />
+                  Save Schema Markup
+                </>
+              )}
+            </button>
+          </div>
         </form>
       </section>
 
-      {/* Content Images Audit & Metadata */}
-      <section className="min-w-0 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-slate-900">Content Images & Alt Metadata</h2>
-            <p className="text-xs text-slate-500">Audit image alt attributes and filenames for image SEO.</p>
+      {/* SECTION 7: Content Images Audit & Metadata */}
+      <section
+        id="images"
+        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+              <ImageIcon className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Content Images & Alt Metadata</h2>
+              <p className="text-xs text-slate-500">
+                Audit embedded images for missing alt tags, descriptive filenames, and titles.
+              </p>
+            </div>
           </div>
+
           <button
             type="button"
             onClick={() => void reloadImages()}
             disabled={imagesLoading}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
+            <RefreshCw className={`size-3.5 ${imagesLoading ? "animate-spin" : ""}`} />
             {imagesLoading ? "Refreshing…" : "Refresh Images"}
           </button>
         </div>
 
         {imagesError && (
-          <p role="alert" className="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-800">
-            {imagesError}
-          </p>
+          <div role="alert" className="flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs text-rose-800">
+            <AlertTriangle className="size-4 shrink-0 text-rose-600" />
+            <span>{imagesError}</span>
+          </div>
         )}
 
         {!imagesLoading && !imagesError && images.length === 0 && (
-          <p className="mt-4 rounded-lg border border-dashed border-slate-300 p-4 text-center text-sm text-slate-500">
-            No embedded content images were found for this item.
-          </p>
+          <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center">
+            <ImageIcon className="mx-auto size-8 text-slate-400" />
+            <p className="mt-2 text-sm font-medium text-slate-700">No embedded images found</p>
+            <p className="mt-1 text-xs text-slate-500">
+              This content does not contain any embedded images requiring alt metadata.
+            </p>
+          </div>
         )}
 
-        <div className="mt-4 space-y-4">
+        <div className="max-h-[600px] overflow-y-auto space-y-4 pr-1 scrollbar-thin">
           {images.map((image) => {
             const values = imageValues[image.id] ?? {
               alt: image.alt ?? "",
@@ -846,72 +1363,79 @@ const SeoContentForm = () => {
               fileName: image.fileName ?? "",
             };
             return (
-              <div key={image.id} className="rounded-xl border border-slate-200 p-4 bg-slate-50/50">
+              <div
+                key={image.id}
+                className="rounded-2xl border border-slate-200 p-4 bg-slate-50/50 hover:border-slate-300 transition-all"
+              >
                 <div className="flex flex-wrap items-start gap-4">
-                  <Image
-                    src={image.url}
-                    alt={values.alt || "Content image"}
-                    width={72}
-                    height={72}
-                    unoptimized
-                    className="size-18 shrink-0 rounded-lg border border-slate-200 object-cover bg-white"
-                  />
+                  <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+                    <Image
+                      src={image.url}
+                      alt={values.alt || "Content image"}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <p className="break-all text-xs font-mono text-slate-500">{image.url}</p>
+                    <p className="break-all text-xs font-mono text-slate-500 bg-white px-2.5 py-1 rounded-md border border-slate-200 inline-block">
+                      {image.url}
+                    </p>
                     {image.issues && image.issues.length > 0 ? (
-                      <ul className="mt-2 flex flex-wrap gap-1.5">
+                      <div className="mt-2 flex flex-wrap gap-1.5">
                         {image.issues.map((issue, index) => (
-                          <li
+                          <span
                             key={`${issue.type}-${index}`}
                             title={issue.reason}
-                            className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800"
+                            className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800"
                           >
+                            <AlertTriangle className="size-3" />
                             {issue.type.replaceAll("-", " ")}
-                          </li>
+                          </span>
                         ))}
-                      </ul>
+                      </div>
                     ) : (
-                      <span className="mt-2 inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
-                        No image issues detected
+                      <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
+                        <CheckCircle2 className="size-3" /> No image issues detected
                       </span>
                     )}
                   </div>
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <label className="block min-w-0">
-                    <span className="mb-1 block text-xs font-medium text-slate-700">Alt text</span>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-700">Alt text</label>
                     <input
                       value={values.alt}
                       onChange={(event) => updateImageField(image.id, "alt", event.target.value)}
                       placeholder="Descriptive alt text"
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                     />
-                  </label>
-                  <label className="block min-w-0">
-                    <span className="mb-1 block text-xs font-medium text-slate-700">Title attribute</span>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-700">Title attribute</label>
                     <input
                       value={values.title}
                       onChange={(event) => updateImageField(image.id, "title", event.target.value)}
                       placeholder="Image title"
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                     />
-                  </label>
-                  <label className="block min-w-0">
-                    <span className="mb-1 block text-xs font-medium text-slate-700">File name</span>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-700">File name</label>
                     <input
                       value={values.fileName}
                       onChange={(event) => updateImageField(image.id, "fileName", event.target.value)}
                       placeholder="image-filename.jpg"
-                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
                     />
-                  </label>
+                  </div>
                 </div>
 
                 {imageMessages[image.id] && (
                   <p
                     role="status"
-                    className={`mt-2 text-xs font-medium ${
+                    className={`mt-2 text-xs font-semibold ${
                       imageMessages[image.id].includes("saved") ? "text-emerald-700" : "text-rose-700"
                     }`}
                   >
@@ -924,9 +1448,19 @@ const SeoContentForm = () => {
                     type="button"
                     disabled={imageSaving === image.id}
                     onClick={() => void handleSaveImage(image)}
-                    className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50 transition-all"
                   >
-                    {imageSaving === image.id ? "Saving…" : "Save Image Metadata"}
+                    {imageSaving === image.id ? (
+                      <>
+                        <Loader2 className="size-3 animate-spin" />
+                        Saving…
+                      </>
+                    ) : (
+                      <>
+                        <Save className="size-3" />
+                        Save Image Metadata
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -934,6 +1468,18 @@ const SeoContentForm = () => {
           })}
         </div>
       </section>
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 z-30 flex size-11 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition-all hover:bg-indigo-700 hover:scale-105 active:scale-95"
+          aria-label="Scroll to top"
+        >
+          <ChevronUp className="size-6" />
+        </button>
+      )}
     </div>
   );
 };
