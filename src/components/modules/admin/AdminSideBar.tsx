@@ -22,7 +22,7 @@ import Link from "next/link";
 const AdminSideBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [expandedMenu, setExpandedMenu] = useState(null);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
 
   const navItems = [
     {
@@ -129,7 +129,7 @@ const AdminSideBar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const toggleSubMenu = (itemId : any) => {
+  const toggleSubMenu = (itemId: string) => {
     setExpandedMenu(expandedMenu === itemId ? null : itemId);
   };
 

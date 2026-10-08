@@ -5,7 +5,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { useForm, type FieldPath } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   ArrowLeft,
@@ -17,7 +17,6 @@ import {
   BarChart3,
   Code,
   ImageIcon,
-  ShieldAlert,
   CheckCircle2,
   AlertTriangle,
   XCircle,
@@ -25,13 +24,9 @@ import {
   Sparkles,
   Smartphone,
   Monitor,
-  ExternalLink,
   ChevronUp,
   Tag,
   Link2,
-  FileText,
-  Info,
-  Check,
   Loader2,
 } from "lucide-react";
 import {

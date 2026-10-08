@@ -9,7 +9,6 @@ import {
   X,
   Filter,
   FileEdit,
-  CheckCircle2,
   AlertCircle,
   ShieldAlert,
   RotateCcw,

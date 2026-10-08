@@ -39,7 +39,7 @@ const ProductMarketing = () => {
   }, []);
 
   // Handle mouse movement for interactive effects
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: (e.clientX - rect.left) / rect.width,
