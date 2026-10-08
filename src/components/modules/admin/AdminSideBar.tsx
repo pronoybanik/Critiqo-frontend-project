@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
-  Home,
+  // Home,
   Globe,
   Star,
   Clock,
@@ -12,10 +12,10 @@ import {
   LayoutDashboard,
   UsersRound,
   Settings,
-  Bell,
+  // Bell,
   Shield,
   ChevronDown,
-  Sparkles
+  // Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -137,7 +137,7 @@ const AdminSideBar = () => {
     <div
       className={`${
         sidebarOpen ? "w-72 max-md:w-20" : "w-20"
-      } bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-500 ease-in-out flex flex-col shadow-2xl border-r border-gray-700/50 relative overflow-hidden`}
+      } h-full bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-500 ease-in-out flex flex-col shadow-2xl border-r border-gray-700/50 relative overflow-hidden`}
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 to-purple-900/10"></div>
