@@ -14,31 +14,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ??
-      "https://critiqo-frontend-project.vercel.app",
-  ),
-  title: {
-    default: "Critiqo | Trusted Product Reviews",
-    template: "%s",
-  },
-  description:
-    "Discover trusted product reviews, compare real experiences, and make informed buying decisions with Critiqo.",
-  openGraph: {
-    siteName: "Critiqo",
-    type: "website",
-    title: "Critiqo | Trusted Product Reviews",
-    description:
-      "Discover trusted product reviews, compare real experiences, and make informed buying decisions with Critiqo.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Critiqo | Trusted Product Reviews",
-    description:
-      "Discover trusted product reviews, compare real experiences, and make informed buying decisions with Critiqo.",
-  },
-};
+import { getPublicSiteSettings } from "@/lib/seo/pageMetadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSiteSettings();
+  const baseUrl =
+    settings?.baseUrl ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://critiqo-frontend-project.vercel.app";
+  const siteName = settings?.siteName || "Critiqo";
+  const title = settings?.defaultTitle || `${siteName} | Trusted Product Reviews`;
+  const description =
+    settings?.defaultDescription ||
+    "Discover trusted product reviews, compare real experiences, and make informed buying decisions with Critiqo.";
+  const ogImage = settings?.defaultOgImage;
+
+  return {
+    metadataBase: new URL(baseUrl),
+    title: {
+      default: title,
+      template: `%s | ${siteName}`,
+    },
+    description,
+    openGraph: {
+      siteName,
+      type: "website",
+      title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImage ? [ogImage] : [],
+    },
+  };
+}
 
 export default function RootLayout({
   children,

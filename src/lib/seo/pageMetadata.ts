@@ -34,6 +34,32 @@ const siteOrigin =
   process.env.NEXT_PUBLIC_SITE_URL ??
   "https://critiqo-frontend-project.vercel.app";
 
+export type PublicSiteSettings = {
+  siteName: string;
+  baseUrl: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultOgImage: string | null;
+};
+
+export const getPublicSiteSettings = async (): Promise<PublicSiteSettings | null> => {
+  if (!process.env.NEXT_PUBLIC_BASE_API) return null;
+  try {
+    const response = await fetch(getBackendApiUrl("/seo/site-settings"), {
+      cache: "no-store",
+    });
+    if (!response.ok) return null;
+    const envelope = (await response.json()) as {
+      success?: boolean;
+      data?: PublicSiteSettings;
+    };
+    return envelope.success ? envelope.data ?? null : null;
+  } catch (error) {
+    console.warn("Unable to fetch public site settings", error);
+    return null;
+  }
+};
+
 export const fallbackPublicSeoRecord = (
   fallback: SeoPageFallback,
 ): PublicSeoRecord => {
@@ -69,7 +95,7 @@ export const getPublicContentSeo = async (
   try {
     const response = await fetch(
       getBackendApiUrl(`/seo/${type}/${encodeURIComponent(slug)}`),
-      { next: { revalidate: 300 } },
+      { cache: "no-store" },
     );
     if (!response.ok) {
       console.warn(`Public SEO request failed (${response.status}) for ${type}/${slug}`);
