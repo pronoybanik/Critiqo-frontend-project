@@ -5,7 +5,7 @@ import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import {
   ArrowLeft,
@@ -120,13 +120,48 @@ const checkStatusClass = {
 } as const;
 
 const NAV_TABS = [
-  { id: "metadata", label: "Search Metadata", icon: Globe },
-  { id: "og", label: "Open Graph", icon: Share2 },
-  { id: "twitter", label: "Twitter Card", icon: Twitter },
-  { id: "preview", label: "Google SERP", icon: Eye },
-  { id: "audit", label: "SEO Audit", icon: BarChart3 },
-  { id: "schema", label: "Schema JSON-LD", icon: Code },
-  { id: "images", label: "Content Images", icon: ImageIcon },
+  {
+    id: "metadata",
+    label: "Search Metadata",
+    icon: Globe,
+    description: "Primary title, URL slug, description, focus keywords & indexing directives.",
+  },
+  {
+    id: "og",
+    label: "Open Graph",
+    icon: Share2,
+    description: "Meta tags for Facebook, LinkedIn, Discord, and messaging apps.",
+  },
+  {
+    id: "twitter",
+    label: "Twitter Card",
+    icon: Twitter,
+    description: "Card metadata tailored for X / Twitter posts.",
+  },
+  {
+    id: "preview",
+    label: "Google SERP",
+    icon: Eye,
+    description: "Interactive live preview of how your page appears in Google search results.",
+  },
+  {
+    id: "audit",
+    label: "SEO Audit",
+    icon: BarChart3,
+    description: "Algorithmic audit check against title, description, headings, and keyword density.",
+  },
+  {
+    id: "schema",
+    label: "Schema JSON-LD",
+    icon: Code,
+    description: "Structured data microdata generator and JSON-LD code editor.",
+  },
+  {
+    id: "images",
+    label: "Content Images",
+    icon: ImageIcon,
+    description: "Audit embedded images for missing alt tags, titles, and descriptive filenames.",
+  },
 ] as const;
 
 const SeoContentForm = () => {
@@ -300,7 +335,7 @@ const SeoContentForm = () => {
     };
   }, [id, reset, type]);
 
-  // Handle Scroll to Top Button visibility & Tab observer
+  // Handle Scroll to Top Button visibility
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -313,12 +348,9 @@ const SeoContentForm = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    setActiveTab(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const runSeoAnalysis = async (
@@ -447,6 +479,23 @@ const SeoContentForm = () => {
     }));
   };
 
+  const onInvalid = (formErrors: FieldErrors<SeoFormValues>) => {
+    if (
+      formErrors.seoTitle ||
+      formErrors.metaDescription ||
+      formErrors.slug ||
+      formErrors.focusKeyword ||
+      formErrors.canonicalUrl ||
+      formErrors.noindex
+    ) {
+      setActiveTab("metadata");
+    } else if (formErrors.ogTitle || formErrors.ogDescription || formErrors.ogImage) {
+      setActiveTab("og");
+    } else if (formErrors.twitterTitle || formErrors.twitterDescription || formErrors.twitterImage) {
+      setActiveTab("twitter");
+    }
+  };
+
   const onSubmit = async (values: SeoFormValues) => {
     setSuccess("");
     const payload: SeoUpdatePayload = {
@@ -480,6 +529,7 @@ const SeoContentForm = () => {
         }
       }
       setLoadError(result.message);
+      onInvalid(errors);
       return;
     }
 
@@ -499,6 +549,9 @@ const SeoContentForm = () => {
     watchedValues.metaDescription.trim() ||
     "Add a meta description to preview how this content will appear in search engine result pages.";
   const previewUrl = `https://critiqo.com/${previewSlug}`;
+
+  const currentTabObj = NAV_TABS.find((t) => t.id === activeTab) || NAV_TABS[0];
+  const activeTabIdx = NAV_TABS.findIndex((t) => t.id === activeTab);
 
   if (isLoading) {
     return (
@@ -525,8 +578,8 @@ const SeoContentForm = () => {
 
   return (
     <div className="relative min-h-screen space-y-6 pb-20 scroll-smooth">
-      {/* Sticky Header Section */}
-      <div className="sticky top-0 z-20 rounded-2xl border border-slate-200/80 bg-white/95 p-4 shadow-sm backdrop-blur-md sm:p-6">
+      {/* Header Section */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="min-w-0">
             <Link
@@ -548,63 +601,100 @@ const SeoContentForm = () => {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() =>
+              onClick={() => {
+                handleTabChange("audit");
                 void runSeoAnalysis({
                   seoTitle: watchedValues.seoTitle,
                   metaDescription: watchedValues.metaDescription,
                   slug: watchedValues.slug,
                   focusKeyword: watchedValues.focusKeyword,
-                })
-              }
+                });
+              }}
               disabled={analysisLoading || isSubmitting}
               className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Sparkles className={`size-4 text-amber-500 ${analysisLoading ? "animate-spin" : ""}`} />
               {analysisLoading ? "Checking Score…" : "Check Score"}
             </button>
-            <button
-              type="submit"
-              form="seo-metadata-form"
-              disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 shadow-sm transition-all"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Saving…
-                </>
-              ) : (
-                <>
-                  <Save className="size-4" />
-                  Save SEO Settings
-                </>
-              )}
-            </button>
+            {["metadata", "og", "twitter"].includes(activeTab) && (
+              <button
+                type="submit"
+                form="seo-metadata-form"
+                disabled={isSubmitting}
+                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 shadow-sm transition-all"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Saving…
+                  </>
+                ) : (
+                  <>
+                    <Save className="size-4" />
+                    Save SEO Settings
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Quick Navigation Sticky Tabs */}
-        <div className="mt-4 flex gap-1 overflow-x-auto border-t border-slate-100 pt-3 scrollbar-none">
+        {/* Tab Header Buttons */}
+        <div className="mt-5 flex gap-2 overflow-x-auto border-t border-slate-100 pt-3 pb-1 scrollbar-none">
           {NAV_TABS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
+            const hasError =
+              (tab.id === "metadata" &&
+                Boolean(
+                  errors.seoTitle ||
+                    errors.metaDescription ||
+                    errors.slug ||
+                    errors.focusKeyword ||
+                    errors.canonicalUrl ||
+                    errors.noindex,
+                )) ||
+              (tab.id === "og" &&
+                Boolean(errors.ogTitle || errors.ogDescription || errors.ogImage)) ||
+              (tab.id === "twitter" &&
+                Boolean(errors.twitterTitle || errors.twitterDescription || errors.twitterImage));
+
             return (
               <button
                 key={tab.id}
                 type="button"
-                onClick={() => scrollToSection(tab.id)}
-                className={`inline-flex items-center gap-2 shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all ${
+                onClick={() => handleTabChange(tab.id)}
+                className={`relative inline-flex items-center gap-2 shrink-0 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all ${
                   isActive
-                    ? "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 font-semibold"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-100"
+                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900 border border-slate-200/80"
                 }`}
               >
-                <Icon className="size-3.5" />
-                {tab.label}
+                <Icon className={`size-4 ${isActive ? "text-white" : "text-slate-500"}`} />
+                <span>{tab.label}</span>
+                {hasError && (
+                  <span
+                    className="size-2 rounded-full bg-rose-500 animate-pulse"
+                    title="Validation error in this tab"
+                  />
+                )}
               </button>
             );
           })}
         </div>
+      </div>
+
+      {/* Active Tab Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-4 text-xs">
+        <div className="flex items-center gap-2.5 text-indigo-900">
+          <currentTabObj.icon className="size-4 text-indigo-600 shrink-0" />
+          <span className="font-bold">{currentTabObj.label}</span>
+          <span className="text-slate-400">•</span>
+          <span className="text-slate-600">{currentTabObj.description}</span>
+        </div>
+        <span className="rounded-md bg-indigo-100/80 px-2.5 py-1 font-mono font-bold text-indigo-700">
+          Tab {activeTabIdx + 1} of {NAV_TABS.length}
+        </span>
       </div>
 
       {/* Top Feedback Messages */}
@@ -621,12 +711,14 @@ const SeoContentForm = () => {
         </div>
       )}
 
-      {/* Form Container */}
-      <form id="seo-metadata-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {/* Main Form Container for Form Tabs */}
+      <form id="seo-metadata-form" onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
         {/* SECTION 1: Core Search Metadata */}
         <section
           id="metadata"
-          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+          className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+            activeTab === "metadata" ? "block" : "hidden"
+          }`}
         >
           <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
@@ -804,12 +896,35 @@ const SeoContentForm = () => {
               </div>
             </label>
           </div>
+
+          {/* Save Button for Metadata Tab */}
+          <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 shadow-sm transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Save Search Metadata
+                </>
+              )}
+            </button>
+          </div>
         </section>
 
         {/* SECTION 2: Open Graph Metadata */}
         <section
           id="og"
-          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+          className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+            activeTab === "og" ? "block" : "hidden"
+          }`}
         >
           <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="flex size-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
@@ -901,12 +1016,35 @@ const SeoContentForm = () => {
               </div>
             )}
           </div>
+
+          {/* Save Button for Open Graph Tab */}
+          <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 shadow-sm transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Save Open Graph Settings
+                </>
+              )}
+            </button>
+          </div>
         </section>
 
         {/* SECTION 3: Twitter Card Metadata */}
         <section
           id="twitter"
-          className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+          className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+            activeTab === "twitter" ? "block" : "hidden"
+          }`}
         >
           <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
             <div className="flex size-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
@@ -998,13 +1136,36 @@ const SeoContentForm = () => {
               </div>
             )}
           </div>
+
+          {/* Save Button for Twitter Tab */}
+          <div className="mt-8 flex justify-end border-t border-slate-100 pt-5">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 shadow-sm transition-all"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Saving…
+                </>
+              ) : (
+                <>
+                  <Save className="size-4" />
+                  Save Twitter Card Settings
+                </>
+              )}
+            </button>
+          </div>
         </section>
       </form>
 
       {/* SECTION 4: Google Search Snippet Preview */}
       <section
         id="preview"
-        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+          activeTab === "preview" ? "block" : "hidden"
+        }`}
       >
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
@@ -1071,12 +1232,24 @@ const SeoContentForm = () => {
             </p>
           </div>
         </div>
+
+        <div className="mt-6 flex justify-end border-t border-slate-100 pt-4">
+          <button
+            type="button"
+            onClick={() => handleTabChange("metadata")}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+          >
+            Edit Titles & Descriptions
+          </button>
+        </div>
       </section>
 
       {/* SECTION 5: SEO Score & Audit */}
       <section
         id="audit"
-        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+          activeTab === "audit" ? "block" : "hidden"
+        }`}
       >
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
@@ -1139,7 +1312,7 @@ const SeoContentForm = () => {
               </div>
             </div>
 
-            {/* Scrollable Audit Items Container */}
+            {/* Audit Items Container */}
             <div className="space-y-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                 SEO Check Breakdown ({analysis.checks.length} Rules Audited)
@@ -1204,7 +1377,9 @@ const SeoContentForm = () => {
       {/* SECTION 6: Schema Markup (JSON-LD) */}
       <section
         id="schema"
-        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+          activeTab === "schema" ? "block" : "hidden"
+        }`}
       >
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4 mb-5">
           <div className="flex size-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600">
@@ -1307,7 +1482,9 @@ const SeoContentForm = () => {
       {/* SECTION 7: Content Images Audit & Metadata */}
       <section
         id="images"
-        className="scroll-mt-36 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
+        className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 ${
+          activeTab === "images" ? "block" : "hidden"
+        }`}
       >
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-5">
           <div className="flex items-center gap-3">
