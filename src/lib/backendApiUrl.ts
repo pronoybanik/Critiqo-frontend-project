@@ -1,8 +1,8 @@
 const getBackendApiBase = (): string => {
-  const configuredBase = process.env.NEXT_PUBLIC_BASE_API;
-  if (!configuredBase) {
-    throw new Error("NEXT_PUBLIC_BASE_API is not configured.");
-  }
+  const configuredBase =
+    process.env.NEXT_PUBLIC_BASE_API ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:5000/api/v1";
 
   const normalizedBase = configuredBase.replace(/\/+$/, "");
   if (/\/api\/v\d+$/i.test(normalizedBase)) {
@@ -14,3 +14,4 @@ const getBackendApiBase = (): string => {
 
 export const getBackendApiUrl = (path: string): string =>
   `${getBackendApiBase()}/${path.replace(/^\/+/, "")}`;
+
