@@ -43,9 +43,9 @@ export type PublicSiteSettings = {
 };
 
 export const getPublicSiteSettings = async (): Promise<PublicSiteSettings | null> => {
-  if (!process.env.NEXT_PUBLIC_BASE_API) return null;
   try {
-    const response = await fetch(getBackendApiUrl("/seo/site-settings"), {
+    const url = getBackendApiUrl("/seo/site-settings");
+    const response = await fetch(url, {
       cache: "no-store",
     });
     if (!response.ok) return null;
@@ -54,8 +54,7 @@ export const getPublicSiteSettings = async (): Promise<PublicSiteSettings | null
       data?: PublicSiteSettings;
     };
     return envelope.success ? envelope.data ?? null : null;
-  } catch (error) {
-    console.warn("Unable to fetch public site settings", error);
+  } catch {
     return null;
   }
 };
@@ -90,15 +89,10 @@ export const getPublicContentSeo = async (
   slug: string,
   fallback: SeoPageFallback,
 ): Promise<PublicSeoRecord> => {
-  if (!process.env.NEXT_PUBLIC_BASE_API) return fallbackPublicSeoRecord(fallback);
-
   try {
-    const response = await fetch(
-      getBackendApiUrl(`/seo/${type}/${encodeURIComponent(slug)}`),
-      { cache: "no-store" },
-    );
+    const url = getBackendApiUrl(`/seo/${type}/${encodeURIComponent(slug)}`);
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
-      console.warn(`Public SEO request failed (${response.status}) for ${type}/${slug}`);
       return fallbackPublicSeoRecord(fallback);
     }
 
@@ -126,8 +120,7 @@ export const getPublicContentSeo = async (
         ? data.schema
         : fallbackPublicSeoRecord(fallback).schema,
     };
-  } catch (error) {
-    console.warn(`Unable to load public SEO for ${type}/${slug}`, error);
+  } catch {
     return fallbackPublicSeoRecord(fallback);
   }
 };
