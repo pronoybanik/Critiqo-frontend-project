@@ -10,21 +10,21 @@ import {
   ArrowUp,
 } from "lucide-react";
 
+const data = {
+  reviews: 12300,
+  users: 5820,
+  activities: 2345,
+  comments: 8910,
+};
+
+const growthData = {
+  reviews: 18,
+  users: 12,
+  activities: 7,
+  comments: 15,
+};
+
 const Summary = () => {
-  const data = {
-    reviews: 12300,
-    users: 5820,
-    activities: 2345,
-    comments: 8910,
-  };
-
-  const growthData = {
-    reviews: 18,
-    users: 12,
-    activities: 7,
-    comments: 15,
-  };
-
   const [counters, setCounters] = useState({
     reviews: 0,
     users: 0,

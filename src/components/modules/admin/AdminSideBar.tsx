@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import {
   Home,
+  Globe,
   Star,
   Clock,
   CheckCircle,
@@ -21,18 +22,18 @@ import Link from "next/link";
 const AdminSideBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [expandedMenu, setExpandedMenu] = useState(null);
+  const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
 
   const navItems = [
-    {
-      id: "Home",
-      label: "Home",
-      icon: <Home size={20} />,
-      link: "/",
-      color: "text-blue-400",
-      hoverColor: "hover:bg-blue-500/20",
-      description: "Back to main site"
-    },
+    // {
+    //   id: "Home",
+    //   label: "Home",
+    //   icon: <Home size={20} />,
+    //   link: "/",
+    //   color: "text-blue-400",
+    //   hoverColor: "hover:bg-blue-500/20",
+    //   description: "Back to main site"
+    // },
     {
       id: "dashboard",
       label: "Dashboard",
@@ -96,20 +97,46 @@ const AdminSideBar = () => {
       hoverColor: "hover:bg-indigo-500/20",
       description: "Manage categories"
     },
+    {
+      id: "seo",
+      label: "SEO Management",
+      icon: <Globe size={20} />,
+      link: "/admin/seo",
+      color: "text-cyan-400",
+      hoverColor: "hover:bg-cyan-500/20",
+      description: "Manage SEO content and settings",
+      hasSubItems: true,
+      subItems: [
+        {
+          id: "seo-content",
+          label: "SEO Content",
+          icon: <Globe size={18} />,
+          link: "/admin/seo",
+          color: "text-cyan-400",
+        },
+        {
+          id: "seo-settings",
+          label: "Site Settings",
+          icon: <Settings size={18} />,
+          link: "/admin/seo/settings",
+          color: "text-indigo-400",
+        },
+      ],
+    },
   ];
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const toggleSubMenu = (itemId : any) => {
+  const toggleSubMenu = (itemId: string) => {
     setExpandedMenu(expandedMenu === itemId ? null : itemId);
   };
 
   return (
     <div
       className={`${
-        sidebarOpen ? "w-72" : "w-20"
+        sidebarOpen ? "w-72 max-md:w-20" : "w-20"
       } bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white transition-all duration-500 ease-in-out flex flex-col shadow-2xl border-r border-gray-700/50 relative overflow-hidden`}
     >
       {/* Background decorative elements */}
@@ -118,9 +145,9 @@ const AdminSideBar = () => {
       <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tl from-purple-500/10 to-transparent rounded-full blur-2xl"></div>
 
       {/* Sidebar Header */}
-      <div className="relative flex items-center justify-between p-6 border-b border-gray-700/50">
+      <div className="relative flex items-center justify-between p-3 md:p-6 border-b border-gray-700/50">
         {sidebarOpen ? (
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 max-md:hidden">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
@@ -149,8 +176,8 @@ const AdminSideBar = () => {
       </div>
 
       {/* User Profile Section */}
-      {sidebarOpen && (
-        <div className="relative p-6 border-b border-gray-700/50">
+      {/* {sidebarOpen && (
+        <div className="relative p-6 border-b border-gray-700/50 max-md:hidden">
           <div className="flex items-center space-x-3 p-3 bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl border border-gray-600/30">
             <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
               <span className="text-white font-semibold text-sm">A</span>
@@ -165,7 +192,7 @@ const AdminSideBar = () => {
             <Settings className="w-4 h-4 text-gray-400 hover:text-white transition-colors duration-200 cursor-pointer" />
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Navigation */}
       <nav className="relative flex-1 overflow-y-auto py-4 px-3">
@@ -245,7 +272,7 @@ const AdminSideBar = () => {
                             </span>
                           </div>
                           
-                          {subItem.count && (
+                          {"count" in subItem && subItem.count && (
                             <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full font-medium shadow-sm">
                               {subItem.count}
                             </div>
@@ -262,8 +289,8 @@ const AdminSideBar = () => {
       </nav>
 
       {/* Bottom Section */}
-      {sidebarOpen && (
-        <div className="relative p-4 border-t border-gray-700/50">
+      {/* {sidebarOpen && (
+        <div className="relative p-4 border-t border-gray-700/50 max-md:hidden">
           <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-4 border border-blue-500/20">
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -295,7 +322,7 @@ const AdminSideBar = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

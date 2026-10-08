@@ -39,7 +39,7 @@ const ProductMarketing = () => {
   }, []);
 
   // Handle mouse movement for interactive effects
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: (e.clientX - rect.left) / rect.width,
@@ -80,19 +80,15 @@ const ProductMarketing = () => {
 
       {/* Enhanced animated background elements */}
       <div
-        className="absolute top-20 left-10 w-64 h-64 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl"
+        className="absolute top-20 left-10 w-64 h-64 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-3xl animate-scale-slow"
         style={{
-          transform: `translateY(${scrollY * 0.2}px) scale(${
-            1 + Math.sin(Date.now() / 2000) * 0.1
-          })`,
+          transform: `translateY(${scrollY * 0.2}px)`,
         }}
       ></div>
       <div
-        className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-gradient-to-r from-red-500/15 to-orange-500/15 blur-3xl"
+        className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-gradient-to-r from-red-500/15 to-orange-500/15 blur-3xl animate-scale-slower"
         style={{
-          transform: `translateY(${-scrollY * 0.15}px) scale(${
-            1 + Math.cos(Date.now() / 1500) * 0.1
-          })`,
+          transform: `translateY(${-scrollY * 0.15}px)`,
         }}
       ></div>
       <div
@@ -188,9 +184,6 @@ const ProductMarketing = () => {
             {/* Enhanced glowing background effect */}
             <div
               className="absolute inset-0 bg-gradient-to-r from-red-500/30 via-purple-500/30 to-blue-500/30 rounded-full blur-3xl animate-pulse"
-              style={{
-                transform: `scale(${1 + Math.sin(Date.now() / 1000) * 0.1})`,
-              }}
             ></div>
 
             {/* Rotating rings */}
@@ -211,12 +204,9 @@ const ProductMarketing = () => {
 
             {/* Product image with enhanced floating animation */}
             <div
-              className="relative z-10 transform transition-all duration-500 hover:scale-110"
+              className="relative z-10 transform transition-all duration-500 hover:scale-110 animate-float"
               style={{
-                transform: `translateY(${
-                  Math.sin(Date.now() / 1000) * 15
-                }px) rotate(${scrollY * 0.02}deg)`,
-                filter: "drop-shadow(0 0 40px rgba(255, 0, 100, 0.4))",
+                transform: `rotate(${scrollY * 0.02}deg)`,
               }}
             >
               <Image
@@ -229,10 +219,7 @@ const ProductMarketing = () => {
 
             {/* Enhanced floating spec callouts */}
             <div
-              className="absolute top-1/4 -left-8 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg"
-              style={{
-                transform: `translateY(${Math.sin(Date.now() / 1200) * 5}px)`,
-              }}
+              className="absolute top-1/4 -left-8 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg animate-float-slow"
             >
               <div className="flex items-center space-x-2">
                 <Volume2 className="w-4 h-4 text-red-400" />
@@ -242,10 +229,7 @@ const ProductMarketing = () => {
             </div>
 
             <div
-              className="absolute bottom-1/4 -right-8 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg"
-              style={{
-                transform: `translateY(${Math.cos(Date.now() / 1200) * 5}px)`,
-              }}
+              className="absolute bottom-1/4 -right-8 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg animate-float-slower"
             >
               <div className="flex items-center space-x-2">
                 <Zap className="w-4 h-4 text-yellow-400" />
@@ -255,12 +239,7 @@ const ProductMarketing = () => {
             </div>
 
             <div
-              className="absolute top-1/2 right-4 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg"
-              style={{
-                transform: `translateY(${
-                  Math.sin(Date.now() / 800 + 1) * 8
-                }px)`,
-              }}
+              className="absolute top-1/2 right-4 bg-gradient-to-r from-white/15 to-white/5 backdrop-blur-md px-4 py-3 rounded-xl text-white border border-white/20 shadow-lg animate-float"
             >
               <div className="flex items-center space-x-2">
                 <Bluetooth className="w-4 h-4 text-blue-400" />
@@ -287,6 +266,46 @@ const ProductMarketing = () => {
         .animate-gradient {
           background-size: 200% 200%;
           animation: gradient 3s ease infinite;
+        }
+
+        .animate-scale-slow {
+          animation: scale 4s ease-in-out infinite;
+        }
+
+        .animate-scale-slower {
+          animation: scale 5s ease-in-out infinite;
+        }
+
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-float-slow {
+          animation: float 3.5s ease-in-out infinite;
+        }
+
+        .animate-float-slower {
+          animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes scale {
+          0%,
+          100% {
+            scale: 1;
+          }
+          50% {
+            scale: 1.1;
+          }
+        }
+
+        @keyframes float {
+          0%,
+          100% {
+            translate: 0 0;
+          }
+          50% {
+            translate: 0 -8px;
+          }
         }
 
         @keyframes spin {
